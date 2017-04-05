@@ -139,6 +139,8 @@ int main(string[] args){
 
 version=TEST;
 void test(){
+	import dparse,dexpr;
+	//writeln("[⅟√3̅7̅4̅4̅8̅7̅·√1̅0̅0̅0̅≤0]".dParse.simplify(one));
 	//writeln(dDiff("x".dVar,"x/(x^2-y^2)^(1/2)".dParse).simplify(one)); // TODO: Fix?
 	/+//auto v="x".dVar;
 	//writeln(dInt(v,dE.dPow(2.dℤ.dMult(3.dℤ.dPlus(3.dℤ).dPlus(3.dℤ))).dPow(v.dPlus(v))));
