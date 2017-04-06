@@ -556,18 +556,15 @@ class DPlus: DCommutAssocOp{
 	static MapX!(Q!(DExprSet,DExpr,DExpr),DExprSet) insertMemo;
 	static void insertAndSimplify(ref DExprSet summands,DExpr summand,DExpr facts){
 		// swCount++;sw.start(); scope(exit) sw.stop();
-		if(q(summands,summand,facts) in insertMemo){
-			summands=insertMemo[q(summands,summand,facts)].dup;
-			return;
+		foreach(i;0..2){
+			if(auto dp=cast(DPlus)summand){
+				foreach(s;dp.summands)
+					insertAndSimplify(summands,s,facts);
+				return;
+			}
+			if(!i) summand=summand.simplify(facts);
 		}
-		auto origIndex=q(summands.dup,summand,facts);
-		scope(exit) insertMemo[origIndex]=summands.dup;
-		summand=summand.simplify(facts);
-		if(auto dp=cast(DPlus)summand){
-			foreach(s;dp.summands)
-				insertAndSimplify(summands,s,facts);
-			return;
-		}
+
 		if(auto p=cast(DPow)summand){
 			if(cast(DPlus)p.operands[0]){
 				auto expanded=expandPow(p);
@@ -815,15 +812,14 @@ class DMult: DCommutAssocOp{
 		}
 	}
 	static void insertAndSimplify(ref DExprSet factors,DExpr factor,DExpr facts)in{assert(factor&&facts);}body{
-		if(q(factors,factor,facts) in insertMemo){
-			factors=insertMemo[q(factors,factor,facts)].dup;
-			return;
+		foreach(i;0..2){
+			if(auto dp=cast(DMult)factor){
+				foreach(f;dp.factors)
+					insertAndSimplify(factors,f,facts);
+				return;
+			}
+			if(!i) factor=factor.simplify(facts);
 		}
-		auto origIndex=q(factors.dup,factor,facts);
-		scope(exit) insertMemo[origIndex]=factors.dup;
-		//if(zero in factors||factor is zero){ factors.clear(); factors.insert(zero); return; }
-		//dw(factors," ",factor," ",facts);
-		factor=factor.simplify(facts);
 		if(auto dm=cast(DMult)factor){
 			foreach(f;dm.factors)
 				insertAndSimplify(factors,f,facts);
