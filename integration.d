@@ -17,7 +17,7 @@ DExpr definiteIntegral(DExpr expr,DExpr facts=one){
 
 private DExpr definiteIntegralImpl(DExpr expr,DExpr facts=one){
 	auto var=dDeBruijnVar(1);
-	auto nexpr=expr.simplify(facts.incDeBruijnVar(1,0));
+	auto nexpr=expr.simplify(facts.incDeBruijnVar(1,0).simplify(one));
 	if(expr !is nexpr) expr=nexpr;
 	if(expr is zero) return zero;
 	// TODO: move (most of) the following into the implementation of definiteIntegral
@@ -68,7 +68,7 @@ private DExpr definiteIntegralImpl(DExpr expr,DExpr facts=one){
 					DExprSet doesNotWork;
 					bool simpler=false;
 					foreach(k;distributeMult(p,expr.withoutFactor(f))){
-						k=k.simplify(facts.incDeBruijnVar(1,0));
+						k=k.simplify(facts.incDeBruijnVar(1,0).simplify(one));
 						auto ow=k.splitMultAtVar(var);
 						ow[0]=ow[0].incDeBruijnVar(-1,0).simplify(facts);
 						if(ow[0] is zero){ simpler=true; continue; }
@@ -87,7 +87,7 @@ private DExpr definiteIntegralImpl(DExpr expr,DExpr facts=one){
 			}
 		}
 	}
-	nexpr=expr.linearizeConstraints!(x=>!!cast(DDelta)x)(var).simplify(facts.incDeBruijnVar(1,0)); // TODO: only linearize the first feasible delta.
+	nexpr=expr.linearizeConstraints!(x=>!!cast(DDelta)x)(var).simplify(facts.incDeBruijnVar(1,0).simplify(one)); // TODO: only linearize the first feasible delta.
 	if(nexpr !is expr) return definiteIntegral(nexpr,facts);
 	/+if(auto r=deltaSubstitution(true))
 	 return r;+/
@@ -95,7 +95,7 @@ private DExpr definiteIntegralImpl(DExpr expr,DExpr facts=one){
 	if(expr is one) return null; // (infinite integral)
 
 	if(opt.integrationLevel!=IntegrationLevel.deltas){
-		nexpr=expr.linearizeConstraints!(x=>!!cast(DIvr)x)(var).simplify(facts.incDeBruijnVar(1,0));
+		nexpr=expr.linearizeConstraints!(x=>!!cast(DIvr)x)(var).simplify(facts.incDeBruijnVar(1,0).simplify(one));
 		if(nexpr !is expr) return definiteIntegral(nexpr,facts);
 		if(auto r=definiteIntegralContinuous(expr,facts))
 			return r;
@@ -136,7 +136,7 @@ private DExpr definiteIntegralImpl(DExpr expr,DExpr facts=one){
 		if(!hasInt) return null;
 		auto fubiExpr=fubiExprNumVars[0], numFubiVars=fubiExprNumVars[1];
 		fubiExpr=fubiExpr.incDeBruijnVar(1,0).substitute(dDeBruijnVar(numFubiVars+1),dDeBruijnVar(1)).incDeBruijnVar(-1,numFubiVars);
-		auto r=definiteIntegral(fubiExpr,facts.incDeBruijnVar(numFubiVars-1,0));
+		auto r=definiteIntegral(fubiExpr,facts.incDeBruijnVar(numFubiVars-1,0).simplify(one));
 		if(!r) return null;
 		foreach_reverse(v;0..numFubiVars-1) r=dInt(r);
 		return r.simplify(facts);
@@ -185,8 +185,8 @@ private DExpr definiteIntegralContinuous(DExpr expr,DExpr facts)out(res){
 	assert(expr.factors.all!(x=>x.hasFreeVar(var)));
 	assert(expr.factors.all!(x=>!cast(DDelta)x));
 	auto ivrsNonIvrs=splitIvrs(expr), ivrs=ivrsNonIvrs[0], nonIvrs=ivrsNonIvrs[1];
-	ivrs=ivrs.simplify(facts.incDeBruijnVar(1,0));
-	nonIvrs=nonIvrs.simplify(facts.incDeBruijnVar(1,0));
+	ivrs=ivrs.simplify(facts.incDeBruijnVar(1,0).simplify(one));
+	nonIvrs=nonIvrs.simplify(facts.incDeBruijnVar(1,0).simplify(one));
 	DExpr lower=null;
 	DExpr upper=null;
 	foreach(f;ivrs.factors){
