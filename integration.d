@@ -23,7 +23,7 @@ private DExpr definiteIntegralImpl(DExpr expr,DExpr facts=one){
 	// TODO: move (most of) the following into the implementation of definiteIntegral
 	auto ow=expr.splitMultAtVar(var);
 	ow[0]=ow[0].incDeBruijnVar(-1,0).simplify(facts);
-	if(ow[0] !is one){
+	if(ow[0] !is one || ow[1] != expr){
 		if(auto r=definiteIntegral(ow[1],facts))
 			return (ow[0]*r).simplify(facts);
 		return null;
