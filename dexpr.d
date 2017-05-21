@@ -1003,9 +1003,12 @@ class DMult: DCommutAssocOp{
 
 				}
 			}
-			/+// TODO: do we want auto-distribution?
-			if(cast(DPlus)e1) return dDistributeMult(e1,e2);
-			if(cast(DPlus)e2) return dDistributeMult(e2,e1);+/
+			// TODO: refine condition
+			// (for example, only expand polynomial products in a sum of polynomials)
+			if(isPolynomial(e1) && isPolynomial(e2)){
+				if(cast(DPlus)e1) return dDistributeMult(e1,e2);
+				if(cast(DPlus)e2) return dDistributeMult(e2,e1);
+			}
 
 			return null;
 		}
@@ -1415,6 +1418,29 @@ DExpr polyNormalize(DExpr e,DVar v=null,long limit=-1){
 	if(r !is e) return polyNormalize(r,v,limit);
 	return r;
 
+}
+
+bool isPolynomial(DExpr e){
+	if(cast(DVar)e) return true;
+	if(e.isFraction()) return true;
+	if(auto p=cast(DPow)e){
+		if(auto c=cast(Dℤ)p.operands[1])
+			return c.c >=0 && isPolynomial(p.operands[0]);
+		return false;
+	}
+	if(auto m=cast(DMult)e){
+		foreach(f;m.factors)
+			if(!isPolynomial(f))
+				return false;
+		return true;
+	}
+	if(auto m=cast(DPlus)e){
+		foreach(s;m.summands)
+			if(!isPolynomial(s))
+				return false;
+		return true;
+	}
+	return false;
 }
 
 DPolynomial asPolynomialIn(DExpr e,DVar v,long limit=-1){
