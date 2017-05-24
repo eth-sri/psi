@@ -69,6 +69,33 @@ DExpr uniformIntCond(DExpr a,DExpr b){
 	return dIvr(DIvr.Type.neqZ,norm);
 }
 
+DExpr binomialPDF(DVar var,DExpr n,DExpr p){
+	n=n.incDeBruijnVar(1,0), p=p.incDeBruijnVar(1,0);
+	auto k=dDeBruijnVar(1);
+	return dSumSmp(dNChooseK(n,k)*p^^k*(1-p)^^(n-k)*dDelta(k-var),one);
+}
+DExpr binomialCond(DExpr n,DExpr p){
+	return dIsℤ(n)*dIvr(DIvr.Type.leZ,-n)*dBounded!"[]"(p,zero,one);
+}
+
+DExpr negBinomialPDF(DVar var,DExpr r,DExpr p){
+	r=r.incDeBruijnVar(1,0), p=p.incDeBruijnVar(1,0);
+	auto k=dDeBruijnVar(1);
+	return dSumSmp(dIvr(DIvr.Type.leZ,-k)*(dGamma(r+k)/(dGamma(r)*dGamma(k+1)))*p^^r*(1-p)^^k*dDelta(k-var),one);
+}
+DExpr negBinomialCond(DExpr r,DExpr p){
+	return dIvr(DIvr.Type.lZ,-r)*dIvr(DIvr.Type.leZ,-p)*dIvr(DIvr.Type.leZ,p-1);
+}
+
+DExpr geometricPDF(DVar var,DExpr p){
+	p=p.incDeBruijnVar(1,0);
+	auto i=dDeBruijnVar(1);
+	return dSumSmp(dIvr(DIvr.Type.leZ,-i)*p*(1-p)^^i*dDelta(i-var),one);
+}
+DExpr geometricCond(DExpr p){
+	return dIvr(DIvr.Type.leZ,-p)*dIvr(DIvr.Type.leZ,p-1);
+}
+
 DExpr poissonPDF(DVar var,DExpr λ){
 	auto tmp=freshVar();
 	return dE^^-λ*dSumSmp(tmp,dIvr(DIvr.Type.leZ,-tmp)*dDelta(var-tmp)*λ^^tmp/dGamma(tmp+1),one);

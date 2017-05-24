@@ -354,6 +354,36 @@ private struct Analyzer{
 						auto var=dist.getTmpVar("__u");
 						dist.distribute(nnorm.substitute(tmp,var)/norm);
 						return var;
+					case "Binomial":
+						if(ce.args.length!=2){
+							err.error("expected two arguments (n,p) to Binomial",ce.loc);
+							unwind();
+						}
+						auto n=doIt(ce.args[0]),p=doIt(ce.args[1]);
+						dist.assertTrue(binomialCond(n,p),"invalid arguments");
+						auto var=dist.getTmpVar("__b");
+						dist.distribute(binomialPDF(var,n,p));
+						return var;
+					case "NegBinomial":
+						if(ce.args.length!=2){
+							err.error("expected two arguments (r,p) to NegBinomial",ce.loc);
+							unwind();
+						}
+						auto r=doIt(ce.args[0]),p=doIt(ce.args[1]);
+						dist.assertTrue(negBinomialCond(r,p),"invalid arguments");
+						auto var=dist.getTmpVar("__n");
+						dist.distribute(negBinomialPDF(var,r,p));
+						return var;
+					case "Geometric":
+						if(ce.args.length!=1){
+							err.error("expected one argument (p) to Geometric",ce.loc);
+							unwind();
+						}
+						auto p=doIt(ce.args[0]);
+						dist.assertTrue(geometricCond(p),"invalid arguments");
+						auto var=dist.getTmpVar("__g");
+						dist.distribute(geometricPDF(var,p));
+						return var;
 					case "Poisson":
 						if(ce.args.length!=1){
 							err.error("expected one argument (λ) to Poisson",ce.loc);
