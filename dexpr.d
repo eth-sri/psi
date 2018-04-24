@@ -93,7 +93,7 @@ abstract class DExpr{
 		}
 		writeln("tot: ",tot);
 	}+/
-	
+
 	static MapX!(Q!(DExpr,DExpr),DExpr) simplifyCache;
 	final DExpr simplify(string file=__FILE__,int line=__LINE__)(DExpr facts){
 		/+static int nested=0;nested++; scope(exit) nested--;
@@ -212,7 +212,7 @@ abstract class DExpr{
 	final DExpr opBinaryRight(string op)(ℚ e)if(ValidBinary!op&&op!="~"){
 		return mixin("e.dℚ "~op~" this");
 	}
-	
+
 	final DExpr opBinary(string op)(real e)if(ValidBinary!op&&op!="~"){
 		return mixin("this "~op~" e.dFloat");
 	}
@@ -946,7 +946,7 @@ class DPlus: DCommutAssocOp{
 					}
 				}
 			}
-			
+
 			if(auto r=combineFloat(e1,e2)) return r;
 
 			if(auto r=recursiveCombine(e1,e2,facts))
@@ -2710,7 +2710,7 @@ class DIvr: DExpr{ // iverson brackets
 			}
 		}
 	}
-	
+
 	static DExpr staticSimplify(Type type,DExpr e,DExpr facts=one){
 		auto ne=e.simplify(facts);
 		if(ne != e) return dIvr(type,ne).simplify(facts);
@@ -3926,7 +3926,7 @@ class DIUpdate: DOp{
 					" ↦ "~n.toStringImpl(formatting,Precedence.none,binders)~"]");
 	}
 	mixin Visitors;
-	
+
 	override DExpr simplifyImpl(DExpr facts){
 		auto r=staticSimplify(e,i,n,facts);
 		return r?r:this;
@@ -4261,7 +4261,7 @@ class DField: DOp{
 		return addp(prec, e.toStringImpl(formatting,Precedence.field,binders)~"."~f);
 	}
 	mixin Visitors;
-	
+
 	override DExpr simplifyImpl(DExpr facts){
 		auto r=staticSimplify(e,f,facts);
 		return r?r:this;
