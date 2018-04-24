@@ -798,7 +798,6 @@ class DΠ: DExpr{
 		if(formatting==Format.maple) return "Pi";
 		if(formatting==Format.mathematica) return "Pi";
 		if(formatting==Format.sympy) return "pi";
-
 		else return "π";
 	}
 	mixin Constant;
