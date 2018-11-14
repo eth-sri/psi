@@ -382,9 +382,15 @@ class ProductTy: Type{
 		if(!compatible(dom,arg.type)) return null;
 		Expression[string] subst;
 		if(isTuple){
+			auto tdom=cast(TupleTy)dom;
+			assert(!!tdom);
 			foreach(i,n;names){
 				import lexer;
-				subst[n]=new IndexExp(arg,[new LiteralExp(Token(Tok!"0",to!string(i)))],false).eval();
+				auto lit=new LiteralExp(Token(Tok!"0",to!string(i)));
+				lit.type=ℤt;
+				auto exp=new IndexExp(arg,[lit],false).eval();
+				exp.type=tdom.types[i];
+				subst[n]=exp;
 			}
 		}else{
 			assert(names.length==1);

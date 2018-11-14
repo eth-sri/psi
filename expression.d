@@ -279,7 +279,7 @@ class IndexExp: Expression{ //e[a...]
 	override IndexExp substituteImpl(Expression[string] subst){
 		auto ne=e.substitute(subst);
 		auto na=a.dup;
-		foreach(ref x;na) x=substitute(subst);
+		foreach(ref x;na) x=x.substitute(subst);
 		if(ne==e&&na==a) return this;
 		auto r=new IndexExp(ne,na,trailingComma);
 		r.loc=loc;
