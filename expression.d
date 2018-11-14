@@ -285,6 +285,10 @@ class IndexExp: Expression{ //e[a...]
 		r.loc=loc;
 		return r;
 	}
+	override bool opEquals(Object rhs){
+		auto idx=cast(IndexExp)rhs;
+		return idx&&idx.e==e&&idx.a==a;
+	}
 	override bool unifyImpl(Expression rhs,ref Expression[string] subst){
 		auto idx=cast(IndexExp)rhs;
 		if(!idx||a.length!=idx.a.length) return false;
