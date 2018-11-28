@@ -82,18 +82,27 @@ struct DParser{
 		if(code.startsWith("(") && !code.startsWith("(̅"))
 			return parseParenthesized('(',')')^^e;
 		string arg;
-		dchar cur=0;
-		string tmp=code;
-		for(int i=0;!tmp.empty;){
-			dchar c=tmp.front;
-			if(i&1){
-				if(c=='̅'){
-					arg~=cur;
-				}else break;
-			}else cur=c;
-			tmp.popFront();
-			if(i&1) code=tmp;
-			i++;
+		if(code.front!='̅'){ // legacy support
+			auto tmp=code;
+			dchar cur=0;
+			for(int i=0;!tmp.empty;){
+				dchar c=tmp.front;
+				if(i&1){
+					if(c=='̅'){
+						arg~=cur;
+					}else break;
+				}else cur=c;
+				tmp.popFront();
+				if(i&1) code=tmp;
+				i++;
+			}
+		}else{
+			string tmp=code;
+			for(int i=0;!code.empty&&code.front=='̅';){
+				code.popFront();
+				arg~=code.front;
+				code.popFront();
+			}
 		}
 		return dParse(arg)^^e;
 	}
