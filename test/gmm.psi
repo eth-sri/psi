@@ -1,7 +1,33 @@
 // skipped
-// Idea: fit a simple gaussian mixture model
-// TODO: improve language
+// TODO: psi --expectation gmm.psi causes a stack overflow
+
+n_components := 2; // K
+n_points := 5; // N
+mu_0 := 0;
+lambda := 1;
+nu := 1;
+sigma_squared_0 := 1;
+
+data := [0,0,0,1,1];
 
 def main(){
-    // TODO
+    phi := array(n_components, 1/n_components);
+
+    mu := array(n_components,1);
+    sigma_squared := array(n_components, 1);
+    for i in [0..n_components){
+        sigma_squared[i] = inverseGamma(nu, sigma_squared_0);
+        mu[i] = gauss(mu_0, lambda*sigma_squared[i]);
+    }
+
+    for i in [0..n_points){
+        z := categorical(phi);
+        x := gauss(mu[z],sigma_squared[z]);
+        cobserve(x, data[i]);
+    }
+    return mu[0];
+}
+
+def inverseGamma(alpha, beta){
+    return 1/gamma(alpha, beta);
 }
