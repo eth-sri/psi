@@ -253,7 +253,9 @@ Expression makeDeclaration(Expression expr,ref bool success,Scope sc){
 	}
 	if(auto be=cast(BinaryExp!(Tok!":="))expr){
 		if(auto id=cast(Identifier)be.e1){
-			auto vd=new VarDecl(id);
+			auto nid=new Identifier(id.name);
+			nid.loc=id.loc;
+			auto vd=new VarDecl(nid);
 			vd.loc=id.loc;
 			success&=sc.insert(vd);
 			id.name=vd.getName;
@@ -267,7 +269,9 @@ Expression makeDeclaration(Expression expr,ref bool success,Scope sc){
 			foreach(exp;tpl.e){
 				auto id=cast(Identifier)exp;
 				if(!id) goto LnoIdTuple;
-				vds~=new VarDecl(id);
+				auto nid=new Identifier(id.name);
+				nid.loc=id.loc;
+				vds~=new VarDecl(nid);
 				vds[$-1].loc=id.loc;
 				success&=sc.insert(vds[$-1]);
 				id.name=vds[$-1].getName;

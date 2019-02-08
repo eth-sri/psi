@@ -12,5 +12,5 @@ def main(null:List){
     for i in [2..20){
         x = List(i,x);
     }
-    return x; // expected: δ({.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ {.tail ↦ null,.head ↦ 1},.head ↦ 2},.head ↦ 3},.head ↦ 4},.head ↦ 5},.head ↦ 6},.head ↦ 7},.head ↦ 8},.head ↦ 9},.head ↦ 10},.head ↦ 11},.head ↦ 12},.head ↦ 13},.head ↦ 14},.head ↦ 15},.head ↦ 16},.head ↦ 17},.head ↦ 18},.head ↦ 19})[x]
+    return x; // expected: δ({.head ↦ 19,.tail ↦ {.head ↦ 18,.tail ↦ {.head ↦ 17,.tail ↦ {.head ↦ 16,.tail ↦ {.head ↦ 15,.tail ↦ {.head ↦ 14,.tail ↦ {.head ↦ 13,.tail ↦ {.head ↦ 12,.tail ↦ {.head ↦ 11,.tail ↦ {.head ↦ 10,.tail ↦ {.head ↦ 9,.tail ↦ {.head ↦ 8,.tail ↦ {.head ↦ 7,.tail ↦ {.head ↦ 6,.tail ↦ {.head ↦ 5,.tail ↦ {.head ↦ 4,.tail ↦ {.head ↦ 3,.tail ↦ {.head ↦ 2,.tail ↦ {.head ↦ 1,.tail ↦ null}}}}}}}}}}}}}}}}}}})[x]
 }
