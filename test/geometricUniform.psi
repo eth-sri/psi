@@ -1,0 +1,6 @@
+
+def main(){
+	n := geometric(1/4);
+	m := uniform(0,n);
+	return Expectation(m); // expected: δ(3/2)[r]
+}
