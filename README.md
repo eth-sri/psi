@@ -267,15 +267,15 @@ def main(){
 x := [1,2,3,4,5,6]; // declare array
 return x[uniformInt(0,x.length-1)]; // index randomly into array
 
-x := ([] : R[]); // declare empty array of real numbers
-y := x ~ [1]; // y is the concatenation of x with [1]. ~= is also supported
+y := ([] : R[]); // declare empty array of real numbers
+z := x ~ [1]; // y is the concatenation of x with [1]. ~= is also supported
 
-z := array(uniformInt(1,3),[1,2,3]); // declare array of arrays of random size, initialized with [1,2,3] at all indices
+v := array(uniformInt(1,3),[1,2,3]); // declare array of arrays of random size, initialized with [1,2,3] at all indices
 
 w := x[2..x.length-1]; // slice array (w is [3,4,5])
 ```
 
-*Note:* Verifying that array indices and lengths are integers within the array bounds can be costly. Use --noboundscheck to disable bounds checking at the cost of undefined results in case a bounds actually occurs with positive probability.
+*Note:* Verifying that array indices and lengths are integers within the array bounds can be costly. Use --noboundscheck to disable bounds checking at the cost of undefined results in case a bounds violation actually occurs with positive probability.
 
 The length of an array `a` can be obtained using the expression `a.length`.
 
@@ -378,7 +378,7 @@ The function `errorPr` computes the probability of error for the given distribut
 
 Any expression can be annotated with a type using the `(expression : Type)` annotation.
 
-A type can be `R` (real numbers), a `Type[]`, the type of a tuple `Type1 x Type2 x ... x Typen`, `Distribution[a]` or the name of a custom data type (see below).
+A type can be `R` (real numbers), a `Type[]`, the type of a tuple `Type1 x Type2 x ... x Typen`, `Distribution[a]`, a function type, or the name of a custom data type (see below).
 The empty tuple has type `1`.
 
 One can annotate method return types:
