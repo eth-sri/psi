@@ -3269,7 +3269,7 @@ class DInt: DOp{
 			writeln("warning: replacing integral by 1");
 			return "1";
 		}else if(formatting==Format.lisp){
-			return text("(integrate ",DDeBruijnVar.displayName(1,formatting,binders+1)," ",expr.toStringImpl(formatting,Precedence.none,binders),")");
+			return text("(integrate ",DDeBruijnVar.displayName(1,formatting,binders+1)," ",expr.toStringImpl(formatting,Precedence.none,binders+1),")");
 		}else{
 			return addp(prec,symbol(formatting,binders)~"d"~DDeBruijnVar.displayName(1,formatting,binders+1)~expr.toStringImpl(formatting,Precedence.intg,binders+1));
 		}
