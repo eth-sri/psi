@@ -19,9 +19,9 @@ The commit of HEAD at build time is displayed when running `./psi --help`.
 
 #### Quick build
 
-1. Run `dependencies.sh` to download the DMD D compiler and unzip it.
+1. Run `dependencies-release.sh` to download the LDC D compiler and unzip it.
 
-2. Run `build.sh` to build PSI.
+2. Run `build-release.sh` to build PSI.
 
 ##### Additional information
 
@@ -40,7 +40,7 @@ Feel free to write a pull request with working build scripts for your favourite 
 ### Example
 
 ```
-$ ./dependencies.sh && ./build.sh
+$ ./dependencies-release.sh && ./build-release.sh
 ```
 
 ## Running the tests
@@ -49,9 +49,6 @@ $ ./dependencies.sh && ./build.sh
 cd test
 ./runtests
 ```
-
-
-*NOTE:* The tests will currently only pass with the debug build. (See Build Instructions.)
 
 ## Using PSI on your own models
 
