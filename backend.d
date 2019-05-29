@@ -1,7 +1,7 @@
 // Written in the D programming language
 // License: http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0
 
-import options,declaration,distrib,error,dexpr,util;
+import options,expression,declaration,distrib,error,dexpr,util;
 import symbolic,dp;
 import std.stdio, std.path, std.algorithm;
 

@@ -60,7 +60,7 @@ hash_t g_hash=0;
 abstract class DExpr{
 	hash_t hash;
 	this(){ hash = ++g_hash; }
-	final override hash_t toHash()@trusted{ return hash; }
+	final override hash_t toHash()const @safe{ return hash; }
 	final override bool opEquals(Object r){ return this is r; }
 
 	final override string toString(){ return toString(Format.default_); }

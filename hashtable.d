@@ -124,7 +124,7 @@ struct HashMap(K_, V_, alias eq_ , alias h_){
 		foreach(k,v;rhs) if(k !in this) return false;
 		return true;
 	}
-	hash_t toHash()(){
+	hash_t toHash()()const{
 		hash_t r=0;
 		foreach(ref x;es) foreach(ref b;x) r+=FNV(b.k.toHash(),FNV(b.v.toHash(),fnvb)); // TODO: improve
 		return r;
@@ -165,7 +165,7 @@ struct HSet(T_,alias eq, alias h){
 	void clear(){ payload.clear(); }
 	auto dup(){ return HSet(payload.dup,hash); }
 	@property size_t length(){ return payload.length; }
-	hash_t toHash(){ return hash; }
+	hash_t toHash()const{ return hash; }
 	bool opBinaryRight(string op: "in")(T t){
 		return t in payload;
 	}
