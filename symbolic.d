@@ -4,7 +4,7 @@
 import std.stdio, std.conv, std.format, std.string, std.range, std.algorithm;
 
 import options, backend;
-import lexer, expression, declaration, type, semantic_, error;
+import ast.lexer, ast.expression, ast.declaration, ast.type, ast.semantic_, ast.error;
 import distrib, dexpr, util;
 
 class Symbolic: Backend{
@@ -115,7 +115,7 @@ private struct Analyzer{
 		return var;
 	}
 	DExpr transformExp(Exp e){
-		import scope_,context;
+		import ast.scope_,context;
 		DExpr readLocal(string name){
 			auto v=dVar(name);
 			if(v in dist.freeVars||dist.hasArg(v)) return v;
@@ -279,7 +279,7 @@ private struct Analyzer{
 				assert(!!funty);
 				Expression[] resty;
 				bool isTuple=true;
-				if(auto tplres=cast(TupleTy)funty.cod) resty=tplres.types;
+				if(auto tplres=funty.cod.isTupleTy) resty=iota(tplres.length).map!(i=>tplres[i]).array;
 				else{ resty=[funty.cod]; isTuple=false; }
 				auto fun=doIt(ce.e);
 				DNVar[] results=iota(0,resty.length).map!(x=>dist.getTmpVar("__r")).array;
@@ -305,7 +305,7 @@ private struct Analyzer{
 					if(!opt.noBoundsCheck) dist.assertTrue(dIsℤ(di)*dGeZ(di)*dLt(di,dField(de,"length")),formatError("array access out of bounds",idx.loc));
 					auto r=dIndex(de,di);
 					return r;
-				}else if(auto tt=cast(TupleTy)idx.e.type){
+				}else if(auto tt=idx.e.type.isTupleTy()){
 					assert(idx.a.length==1);
 					return doIt(idx.e)[doIt(idx.a[0])];
 				}
@@ -609,7 +609,7 @@ private struct Analyzer{
 						return;
 					}
 				}
-				if(cast(TupleTy)idx.e.type||cast(ArrayTy)idx.e.type){
+				if(idx.e.type.isTupleTy||cast(ArrayTy)idx.e.type){
 					auto old=transformExp(idx.e);
 					assert(idx.a.length==1);
 					auto index=transformExp(idx.a[0]);
@@ -631,10 +631,10 @@ private struct Analyzer{
 					dist.initialize(tmp,rhs,ty);
 					assignTo(lhs,tmp,ty,loc);
 				}else{
-					auto tt=cast(TupleTy)ty;
+					auto tt=ty.isTupleTy;
 					assert(!!tt);
-					assert(tpl.e.length==tt.types.length);
-					foreach(k,exp;tpl.e) assignToImpl(exp,rhs[k.dℚ],tt.types[k]);
+					assert(tpl.e.length==tt.length);
+					foreach(k,exp;tpl.e) assignToImpl(exp,rhs[k.dℚ],tt[k]);
 				}
 			}else if(auto tae=cast(TypeAnnotationExp)lhs){
 				assignToImpl(tae.e,rhs,ty);
@@ -709,13 +709,13 @@ private struct Analyzer{
 				}
 			}else if(auto tpl=cast(TupleExp)de.e1){
 				auto rhs=transformExp(de.e2);
-				auto tt=cast(TupleTy)de.e2.type;
+				auto tt=de.e2.type.isTupleTy;
 				assert(!!tt);
-				assert(tpl.e.length==tt.types.length);
+				assert(tpl.e.length==tt.length);
 				foreach(k,exp;tpl.e){
 					auto id=cast(Identifier)exp;
 					if(!id) goto LbadDefLhs;
-					defineVar(id,rhs[k.dℚ],tt.types[k]);
+					defineVar(id,rhs[k.dℚ],tt[k]);
 				}
 			}else{
 			LbadDefLhs:
@@ -819,9 +819,9 @@ private struct Analyzer{
 			auto odist=dist.dup;
 			odist.distribution=odist.error=zero; // code after return is unreachable
 			auto exp = transformExp(re.e);
-			auto tty=cast(TupleTy)re.e.type;
+			auto tty=re.e.type.isTupleTy;
 			DNVar[] orderedVars;
-			bool isTuple=!!tty, needIndex=tty&&tty.types.length!=0;
+			bool isTuple=!!tty, needIndex=tty&&tty.length!=0;
 			void keepOnly(SetX!DNVar keep){
 				foreach(w;dist.freeVars.dup){
 					if(w in keep) continue;
@@ -850,7 +850,7 @@ private struct Analyzer{
 				orderedVars=functionDef.retNames.map!(n=>dist.declareVar(n)).array;
 				foreach(i,var;orderedVars){
 					assert(!!var);
-					dist.initialize(var,needIndex?dIndex(exp,i.dℚ):exp,needIndex?tty.types[i]:re.e.type);
+					dist.initialize(var,needIndex?dIndex(exp,i.dℚ):exp,needIndex?tty[i]:re.e.type);
 				}
 				keepOnly(setx(orderedVars));
 			}

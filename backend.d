@@ -1,7 +1,7 @@
 // Written in the D programming language
 // License: http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0
 
-import options,expression,declaration,distrib,error,dexpr,util;
+import options,ast.expression,ast.declaration,distrib,ast.error,dexpr,util;
 import symbolic,dp;
 import std.stdio, std.path, std.algorithm;
 
@@ -35,7 +35,7 @@ abstract class Backend{
 }
 
 void printResult(Backend be,string path,FunctionDef fd,ErrorHandler err,bool isMain){
-	import type, std.conv : text;
+	import ast.type, std.conv : text;
 	if(opt.expectation||opt.cdf){
 		bool check(Expression ty){
 			if(isSubtype(ty,ℂ)) return true;
@@ -130,7 +130,7 @@ void printResult(Backend be,string path,FunctionDef fd,ErrorHandler err,bool isM
 			auto varset=expectation.freeVars.setx;
 			if(opt.plot && (varset.length==1||varset.length==2)){
 				writeln("plotting... ");
-				import hashtable;
+				import util.hashtable;
 				//matlabPlot(expectation.toString(Format.matlab),varset.element.toString(Format.matlab));
 				gnuplot(expectation,cast(SetX!DNVar)varset,"expectation",opt.plotRange,opt.plotFile);
 			}
@@ -166,7 +166,7 @@ void printResult(Backend be,string path,FunctionDef fd,ErrorHandler err,bool isM
 		auto varset=expectation.freeVars.setx;
 		if(opt.plot && (varset.length==1||varset.length==2)){
 			writeln("plotting... ");
-			import hashtable;
+			import util.hashtable;
 			//matlabPlot(expectation.toString(Format.matlab),varset.element.toString(Format.matlab));
 			gnuplot(expectation,cast(SetX!DNVar)varset,"expectation",opt.plotRange,opt.plotFile);
 		}
@@ -190,7 +190,7 @@ void printResult(Backend be,string path,FunctionDef fd,ErrorHandler err,bool isM
 	}
 	bool plotCDF=opt.cdf;
 	if(!dist.distribution.isContinuousMeasure()) plotCDF=true;
-	import hashtable;
+	import util.hashtable;
 	SetX!DNVar varset=dist.freeVars.dup;
 	foreach(a;dist.args) varset.insert(a);
 	if(opt.plot && (varset.length==1||varset.length==2)){

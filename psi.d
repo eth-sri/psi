@@ -4,8 +4,9 @@
 import std.stdio, std.path, std.array, std.string, std.algorithm, std.conv;
 import file=std.file;
 import util;
-import lexer, parser, expression, declaration, error, help;
-import options, scope_, semantic_, summarize, backend;
+import ast.lexer, ast.parser, ast.expression, ast.declaration, ast.error;
+import options, ast.scope_, ast.semantic_, ast.summarize;
+import help, backend;
 
 static this(){ opt.importPath ~= buildPath(dirName(file.thisExePath),"library"); }
 
@@ -97,6 +98,7 @@ int main(string[] args){
 			case "--python": opt.formatting=Format.python; break;
 			case "--sympy": opt.formatting=Format.sympy; break;
 			case "--lisp": opt.formatting=Format.lisp; break;
+			case "--error-json": opt.errorFormat=ErrorFormat.json; break;
 			case "--raw": opt.outputForm=OutputForm.raw; break;
 			case "--raw-error": opt.outputForm=OutputForm.rawError; break;
 			case "--dexpr": opt.dexpr=true; break;
@@ -163,7 +165,7 @@ int main(string[] args){
 
 version=TEST;
 void test(){
-	import dparse,type,dexpr,integration,summation;
+	import ast.type,dparse,dexpr,integration,summation;
 	//writeln(dMin([cast(DExpr)"a".dVar,"b".dVar,"c".dVar,"d".dVar].setx).simplify(one));
 	//writeln("∫dξ₁(-90·x_1²·x_2⁵)·[-16+x_1≤0]·[-2+-3·x_1+2·x_2≤0]·[-22+-ξ₁≤0]·[-4+-x_2+7·ξ₁+9·x_1≤0]·[-5+-x_2+4·x_1+7·ξ₁≤0]·[-5·ξ₁+-7+5·x_1≤0]·[-61+-x_2≤0]·[-70+ξ₁≤0]·[-75+x_2≤0]·[-77+-x_1≤0]·[-9+7·ξ₁+x_1+x_2≤0]·[8+x_2+ξ₁≤0]".dParse.simplify(one));
 	//writeln("[0≤a]·[0≤b]·∫dx [a·x≤c]·[d≤b·x]".dParse.simplify(one));

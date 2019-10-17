@@ -8,10 +8,10 @@ import std.typecons: q=tuple,Q=Tuple;
 import std.exception: enforce;
 
 import backend,options;
-import distrib,error;
-import dexpr,hashtable,util;
-import expression,declaration,type;
-import semantic_,scope_,context;
+import distrib;
+import dexpr,util.hashtable,util;
+import ast.expression,ast.declaration,ast.type,ast.error;
+import ast.semantic_,ast.scope_,context;
 
 import std.random, sample; // (for InferenceMethod.simulate)
 
@@ -641,7 +641,7 @@ DDPDist dDPDist(Dist dist)in{assert(!dist.tmpVars.length);}body{
 	return r;
 }
 
-import lexer: Tok;
+import ast.lexer: Tok;
 alias ODefExp=BinaryExp!(Tok!":=");
 DExpr readLocal(string name){ return dField(db1,name); }
 DExpr readFunction(Identifier id)in{ assert(id && id.scope_ && cast(FunctionDef)id.meaning); }body{
@@ -945,7 +945,7 @@ struct Interpreter{
 											}
 											dist.distribute(newDist);
 											auto tmp=dist.declareVar("`tmp");
-											dist.initialize(tmp,dTuple(cast(DExpr[])retVars.map!(v=>v.tmp).array),contextTy());
+											dist.initialize(tmp,dTuple(cast(DExpr[])retVars.map!(v=>v.tmp).array),contextTy);
 											foreach(v;info.retVars) dist.marginalize(v.tmp);
 											dist.simplify();
 											auto smpl=distInit();
