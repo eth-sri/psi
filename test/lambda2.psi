@@ -11,9 +11,9 @@ def map(lambda: ℝ → ℝ){
     }
 }
 
-def all(lambda: ℝ → ℝ){
+def all(lambda: ℝ → 𝔹){
     return (arr: ℝ[]){
-        result := 1;
+        result := true;
         for i in [0..arrayLength){
             result &&= lambda(arr[i]);
         }

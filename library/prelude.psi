@@ -25,7 +25,7 @@ def array[a](length: ℝ, init:a): a[]{
 }
 
 // first-class inference
-dat Distribution[a]{ } // TODO: dat Distribution[a];
+dat Distribution[+a]{ } // TODO: dat Distribution[+a];
 def infer[a](f:𝟙→ a):Distribution[a]{
 	assert(sampleFrom("(r;f)=>δ(∫dy f()[y])[r]",f)!=0);
 	return sampleFrom("(r;f)=>δ(Λx.f()[x]/∫dy f()[y])[r]",f):Distribution[a];
@@ -101,60 +101,60 @@ def Uniform(a:ℝ,b:ℝ):Distribution[ℝ]{
 /+def cosUniform() ⇒ sampleFrom("(r)=>[-1+-r≠0]·[-1+-r≤0]·[-1+r≤0]·[-r+1≠0]·⅟π·⅟√-̅r̅²̅+̅1̅");
 def CosUniform() ⇒ infer(() ⇒ sampleFrom("(r)=>[-1+-r≠0]·[-1+-r≤0]·[-1+r≤0]·[-r+1≠0]·⅟π·⅟√-̅r̅²̅+̅1̅"));+/
 
-def flip(p:ℝ):ℝ{
+def flip(p:ℝ):𝔹{
 	assert(0<=p&p<=1); // TODO: p in [0..1]
-	return sampleFrom("(x;p)=>(1-p)·δ(0)[x]+p·δ(0)[1-x]",p):ℝ;
+	return sampleFrom("(x;p)=>(1-p)·δ(0)[x]+p·δ(0)[1-x]",p):𝔹;
 }
-def Flip(p:ℝ):Distribution[ℝ]{
+def Flip(p:ℝ):Distribution[𝔹]{
 	assert(0<=p&p<=1); // TODO: p in [0..1]
-	return infer(()=>sampleFrom("(x;p)=>(1-p)·δ(0)[x]+p·δ(0)[1-x]",p):ℝ);
+	return infer(()=>sampleFrom("(x;p)=>(1-p)·δ(0)[x]+p·δ(0)[1-x]",p):𝔹);
 }
 def bernoulli(p:ℝ) ⇒ flip(p);
 def Bernoulli(p:ℝ) ⇒ Flip(p);
 
-def uniformInt(a:ℝ,b:ℝ):ℝ{
+def uniformInt(a:ℝ,b:ℝ):ℤ{
 	assert((sampleFrom("(r;a,b)=>δ(0)[-r+∑_i[a≤i]·[i≤b]]",a,b):ℝ)!=0);
-	return sampleFrom("(x;a,b)=>(∑_i[a≤i]·[i≤b]·δ(0)[i-x])·⅟(∑_i[a≤i]·[i≤b])",a,b):ℝ;
+	return sampleFrom("(x;a,b)=>(∑_i[a≤i]·[i≤b]·δ(0)[i-x])·⅟(∑_i[a≤i]·[i≤b])",a,b):ℤ;
 }
-def UniformInt(a:ℝ,b:ℝ):Distribution[ℝ]{
+def UniformInt(a:ℝ,b:ℝ):Distribution[ℤ]{
 	assert((sampleFrom("(r;a,b)=>δ(0)[-r+∑_i[a≤i]·[i≤b]]",a,b):ℝ)!=0);
-	return infer(() ⇒ sampleFrom("(x;a,b)=>(∑_i[a≤i]·[i≤b]·δ(0)[i-x])·⅟(∑_i[a≤i]·[i≤b])",a,b):ℝ);
+	return infer(() ⇒ sampleFrom("(x;a,b)=>(∑_i[a≤i]·[i≤b]·δ(0)[i-x])·⅟(∑_i[a≤i]·[i≤b])",a,b):ℤ);
 }
 
-def binomial(n:ℝ,p:ℝ):ℝ{
+def binomial(n:ℝ,p:ℝ):ℕ{
 	assert(0<=p&p<=1 & n>=0 & inℤ(n));
-	return sampleFrom("(x;n,p)=>∑_ξ₁(-p+1)^(-ξ₁+n)·(∫dξ₂[-ξ₂≤0]·ξ₂^n·⅟e^ξ₂)·[-n+ξ₁≤0]·[-ξ₁≤0]·p^ξ₁·δ(0)[-ξ₁+x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-ξ₁+n)·⅟e^ξ₂)·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",n,p):ℝ;
+	return sampleFrom("(x;n,p)=>∑_ξ₁(-p+1)^(-ξ₁+n)·(∫dξ₂[-ξ₂≤0]·ξ₂^n·⅟e^ξ₂)·[-n+ξ₁≤0]·[-ξ₁≤0]·p^ξ₁·δ(0)[-ξ₁+x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-ξ₁+n)·⅟e^ξ₂)·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",n,p):ℕ;
 }
-def Binomial(n:ℝ,p:ℝ):Distribution[ℝ]{
+def Binomial(n:ℝ,p:ℝ):Distribution[ℕ]{
 	assert(0<=p&p<=1 & n>=0 & inℤ(n));
-	return infer(() ⇒ sampleFrom("(x;n,p)=>∑_ξ₁(-p+1)^(-ξ₁+n)·(∫dξ₂[-ξ₂≤0]·ξ₂^n·⅟e^ξ₂)·[-n+ξ₁≤0]·[-ξ₁≤0]·p^ξ₁·δ(0)[-ξ₁+x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-ξ₁+n)·⅟e^ξ₂)·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",n,p):ℝ);
+	return infer(() ⇒ sampleFrom("(x;n,p)=>∑_ξ₁(-p+1)^(-ξ₁+n)·(∫dξ₂[-ξ₂≤0]·ξ₂^n·⅟e^ξ₂)·[-n+ξ₁≤0]·[-ξ₁≤0]·p^ξ₁·δ(0)[-ξ₁+x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-ξ₁+n)·⅟e^ξ₂)·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",n,p):ℕ);
 }
 
-def negBinomial(r:ℝ,p:ℝ):ℝ{
+def negBinomial(r:ℝ,p:ℝ):ℕ{
 	assert(r>0 & 0<=p&p<=1);
-	return sampleFrom("(x;r,p)=>∑_ξ₁(-p+1)^ξ₁·(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r+ξ₁)·⅟e^ξ₂)·[-ξ₁≤0]·p^r·δ(0)[-ξ₁+x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r)·⅟e^ξ₂)·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",r,p):ℝ;
+	return sampleFrom("(x;r,p)=>∑_ξ₁(-p+1)^ξ₁·(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r+ξ₁)·⅟e^ξ₂)·[-ξ₁≤0]·p^r·δ(0)[-ξ₁+x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r)·⅟e^ξ₂)·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",r,p):ℕ;
 }
-def NegBinomial(r:ℝ,p:ℝ):Distribution[ℝ]{
+def NegBinomial(r:ℝ,p:ℝ):Distribution[ℕ]{
 	assert(r>0 & 0<=p&p<=1);
-	return infer(() ⇒ sampleFrom("(x;r,p)=>∑_ξ₁(-p+1)^ξ₁·(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r+ξ₁)·⅟e^ξ₂)·[-ξ₁≤0]·p^r·δ(0)[-ξ₁+x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r)·⅟e^ξ₂)·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",r,p):ℝ);
+	return infer(() ⇒ sampleFrom("(x;r,p)=>∑_ξ₁(-p+1)^ξ₁·(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r+ξ₁)·⅟e^ξ₂)·[-ξ₁≤0]·p^r·δ(0)[-ξ₁+x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r)·⅟e^ξ₂)·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",r,p):ℕ);
 }
 
-def geometric(p:ℝ):ℝ{
+def geometric(p:ℝ):ℕ{
 	assert(0<=p & p<=1);
-	return sampleFrom("(x;p)=>∑_i[0≤i]·(1-p)^i·p·δ(0)[i-x]",p);
+	return sampleFrom("(x;p)=>∑_i[0≤i]·(1-p)^i·p·δ(0)[i-x]",p):ℕ;
 }
-def Geometric(p:ℝ):Distribution[ℝ]{
+def Geometric(p:ℝ):Distribution[ℕ]{
 	assert(0<=p & p<=1);
-	return infer(() ⇒ sampleFrom("(x;p)=>∑_i[0≤i]·(1-p)^i·p·δ(0)[i-x]",p));
+	return infer(() ⇒ sampleFrom("(x;p)=>∑_i[0≤i]·(1-p)^i·p·δ(0)[i-x]",p):ℕ);
 }
 
-def poisson(λ:ℝ):ℝ{
+def poisson(λ:ℝ):ℕ{
 	assert(λ>=0);
-	return sampleFrom("(x;l)=>(∑_ξ₁[-ξ₁≤0]·δ(0)[-ξ₁+x]·l^ξ₁·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂))·⅟e^l",λ);
+	return sampleFrom("(x;l)=>(∑_ξ₁[-ξ₁≤0]·δ(0)[-ξ₁+x]·l^ξ₁·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂))·⅟e^l",λ):ℕ;
 }
-def Poisson(λ:ℝ):Distribution[ℝ]{
+def Poisson(λ:ℝ):Distribution[ℕ]{
 	assert(λ>=0);
-	return infer(() ⇒ sampleFrom("(x;l)=>(∑_ξ₁[-ξ₁≤0]·δ(0)[-ξ₁+x]·l^ξ₁·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂))·⅟e^l",λ));
+	return infer(() ⇒ sampleFrom("(x;l)=>(∑_ξ₁[-ξ₁≤0]·δ(0)[-ξ₁+x]·l^ξ₁·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂))·⅟e^l",λ):ℕ);
 }
 
 def beta(α:ℝ,β:ℝ):ℝ{
@@ -220,13 +220,13 @@ def Weibull(λ:ℝ,k:ℝ):Distribution[ℝ]{
 	return infer(() ⇒ sampleFrom("(x;l,k)=>([k=0]·[l≠0]+[l=0])·δ(0)[x]+[-x≤0]·[k≠0]·[l≠0]·k·x^(-1+k)·⅟e^(x^k·⅟l^k)·⅟l^k",λ,k):ℝ);
 }
 
-def categorical(p:ℝ[]):ℝ{
+def categorical(p:ℝ[]):ℕ{
 	assert(sampleFrom("(r;p)=>δ(0)[-r+[∑_i[0≤i]·[i<p.length]·[p@[i]<0]=0]·[∑_i[0≤i]·[i<p.length]·p@[i]=1]]",p):𝔹);
-	return sampleFrom("(x;p)=>∑_i[0≤i]·[i<p.length]·p@[i]·δ(0)[i-x]",p):ℝ;
+	return sampleFrom("(x;p)=>∑_i[0≤i]·[i<p.length]·p@[i]·δ(0)[i-x]",p):ℕ;
 }
-def Categorical(p:ℝ[]):Distribution[ℝ]{
+def Categorical(p:ℝ[]):Distribution[ℕ]{
 	assert(sampleFrom("(r;p)=>δ(0)[-r+[∑_i[0≤i]·[i<p.length]·[p@[i]<0]=0]·[∑_i[0≤i]·[i<p.length]·p@[i]=1]]",p):𝔹);
-	return infer(() ⇒ sampleFrom("(x;p)=>∑_i[0≤i]·[i<p.length]·p@[i]·δ(0)[i-x]",p):ℝ);
+	return infer(() ⇒ sampleFrom("(x;p)=>∑_i[0≤i]·[i<p.length]·p@[i]·δ(0)[i-x]",p):ℕ);
 }
 
 def dirac[a](x:a) ⇒ x;

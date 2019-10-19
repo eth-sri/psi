@@ -1,5 +1,5 @@
 def main(){
-    x := 0;
+    x := 0:ℝ; // TODO: this annotation should not be necessary
     y := 0;
     repeat 2{
         cur := uniform(0,1);

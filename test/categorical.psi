@@ -1,6 +1,6 @@
 
 def main(){
-    a := [0,0,0];
+    a := [0,0,0:ℚ]; // TODO: annotation should not be necessary
     k := uniformInt(1,3);
     for i in [0..3) { a[i] = flip((i+1)/3)/k; }
     x := categorical(a);
