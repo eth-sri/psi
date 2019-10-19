@@ -139,6 +139,10 @@ private struct Analyzer{
 				return dVar(pl.ident.name);
 			if(auto id=cast(Identifier)e){
 				if(!id.meaning&&id.name=="π") return dΠ;
+				if(id.substitute){
+					if(auto vd=cast(VarDecl)id.meaning)
+						return doIt(vd.initializer);
+				}
 				if(id.name in arrays) return dArray(arrays[id.name]);
 				if(auto r=lookupMeaning!(readLocal,readFunction)(id)) return r;
 				err.error("undefined variable '"~id.name~"'",id.loc);
