@@ -9,7 +9,7 @@ def main(){
     }
 
     y := if x { 1/x } else { 1/(1-x) };
-    z := 0;
+    z := 0:ℚ; // TODO: this annotation should not be necessary
     if x { z = 1/x; } else { z=1/(1-x); }
 
     w := if x { flip(1/2) } else { flip(1/3) };

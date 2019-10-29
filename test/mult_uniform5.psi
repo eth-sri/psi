@@ -1,6 +1,6 @@
 def main(){
-    r1 := 1;
-    r2 := 1;
+    r1 := 1:ℝ; // TODO: this annotation should not be necessary
+    r2 := 1:ℝ; // TODO: this annotation should not be necessary
     repeat 3{
         k := uniform(0,1);
         r1 *= k;

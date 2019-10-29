@@ -1,13 +1,12 @@
 def main(){ // didItRain
     cloudy := flip(0.5);
-    rain := 0; sprinkler := 0;
 
-    if (cloudy){
-        rain = flip(0.8);
-        sprinkler = flip(0.1);
+    if cloudy{
+        rain := flip(0.8);
+        sprinkler := flip(0.1);
     }else{
-        rain = flip(0.2);
-        sprinkler = flip(0.5);
+        rain := flip(0.2);
+        sprinkler := flip(0.5);
     }
 
     temp1 := flip(0.7);

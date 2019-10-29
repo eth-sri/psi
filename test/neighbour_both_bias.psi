@@ -3,11 +3,10 @@ def main(){
     bias := 4 / 5;
     isGirl1 := flip(1 / 2);
     isGirl2 := flip(1 / 2);
-    isGirlAnnounce := -1;
     if flip(bias){
-        isGirlAnnounce = if flip(1/2) { isGirl1 } else { isGirl2 };
+        isGirlAnnounce := if flip(1/2) { isGirl1 } else { isGirl2 };
     }else{
-        isGirlAnnounce = isGirl1 || isGirl2;
+        isGirlAnnounce := isGirl1 || isGirl2;
     }
     observe(isGirlAnnounce);
     bothAreGirls := isGirl1 && isGirl2;

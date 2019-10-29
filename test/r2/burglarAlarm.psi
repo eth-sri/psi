@@ -4,22 +4,20 @@ def main(){ // isBurglary
     burglary := flip(0.001);
     alarm := earthquake || burglary;
 
-    phoneWorking := 0;
     if earthquake{
-        phoneWorking = flip(0.7);
+        phoneWorking := flip(0.7);
     }else{
-        phoneWorking = flip(0.99);
+        phoneWorking := flip(0.99);
     }
 
-    maryWakes := 0;
     if alarm{
         if earthquake{
-            maryWakes = flip(0.8);
+            maryWakes := flip(0.8);
         }else{
-            maryWakes = flip(0.6);
+            maryWakes := flip(0.6);
         }
     }else{
-        maryWakes = flip(0.2);
+        maryWakes := flip(0.2);
     }
 
     called := maryWakes && phoneWorking;

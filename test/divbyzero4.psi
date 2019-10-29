@@ -1,5 +1,5 @@
 def main(){
-    z := 0;
+    z := 0:ℚ; // TODO: this annotation should not be necessary
     repeat 7{
         if flip(1/2){
             z = 1/z;

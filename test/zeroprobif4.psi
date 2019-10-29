@@ -10,6 +10,6 @@ def main(){
         }
         obs = y == 0;
     }
-    observe(!x && obs);
-    return z; // expected: TODO: δ(0)[-z+1]
+    observe(x==0 && obs!=0);
+    return z; // expected: 0
 }

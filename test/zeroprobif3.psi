@@ -8,6 +8,6 @@ def main(){
             z=1;
         }
     }
-    observe(!x && !y);
+    observe(x=0 && y=0);
     return z; // expected: TODO: δ(0)[-z+1]
 }
