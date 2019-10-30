@@ -3,8 +3,8 @@
 dat HMM{
     a: ℝ[][];
     b: ℝ[][];
-    x: ℝ;
-    def HMM(a: ℝ[][],b: ℝ[][],x: ℝ){
+    x: ℕ;
+    def HMM(a: ℝ[][],b: ℝ[][],x: ℕ){
         this.a=a;
         this.b=b;
         this.x=x;

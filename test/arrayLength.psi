@@ -1,4 +1,4 @@
 
 def main(){
-	return array(uniformInt(1,4)/2,0); // expected: 1/4·δ([ξ₁ ↦ 0] (1))[r]+1/4·δ([ξ₁ ↦ 0] (2))[r]
+	return array(uniformInt(1,4)/2 coerce ℕ,0); // expected: 1/4·δ([ξ₁ ↦ 0] (1))[r]+1/4·δ([ξ₁ ↦ 0] (2))[r]
 }

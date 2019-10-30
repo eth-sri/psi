@@ -11,7 +11,7 @@ def main(){
             if p[j]==i { f[i] = 1; }
         }
     }
-    for i in [0..n){ observe(f[i]); }
+    for i in [0..n){ observe(f[i]!=0); }
     for i in [0..n-1){ observe(p[i]==i+1); }
     return p[n-1]; // expected: δ(0)[pᵢ]
 }

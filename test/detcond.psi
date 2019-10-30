@@ -1,7 +1,7 @@
 def main(){
     x:=1;
     x=x+1;
-    y:=3;
+    y:=3:ℤ; // TODO: this annotation should not be necessary
     if y>x { y-=x; }
     return y; // expected: δ(1)[y]
 }

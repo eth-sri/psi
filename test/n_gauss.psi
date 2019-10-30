@@ -1,5 +1,5 @@
 def main(){
-    x := 0;//Uniform(0,1)+Uniform(0,1)+Uniform(0,1);
+    x := 0:ℝ; //Uniform(0,1)+Uniform(0,1)+Uniform(0,1); // TODO: this annotation should not be necessary
     i := 1;
     repeat 100{
         x = x + gauss(0,1);

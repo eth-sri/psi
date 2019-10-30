@@ -1,5 +1,5 @@
 
-def find(haystack: ℝ[], needle){
+def find(haystack: ℝ[], needle):ℤ{
     for i in [0..3/+haystack.length+/){ // TODO: symbolic loops
         if haystack[i] == needle{
             return i;
@@ -9,7 +9,7 @@ def find(haystack: ℝ[], needle){
 }
 
 def main(){
-    a:=array(3,0);
+    a:=array(3,0:ℤ);
     for i in [0..a.length){
         a[i] = uniformInt(-1,1);
     }

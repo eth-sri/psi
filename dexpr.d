@@ -663,7 +663,7 @@ class Dℚ: DExpr{
 		if(c.den==1){
 			r=text(c.num);
 		}else{
-			if(formatting==Format.matlab||formatting==Format.gnuplot)
+			if(formatting==Format.matlab)
 				r=text(c.num,"./",c.den);
 			else if(formatting==Format.lisp){
 				return text("(/ ",c.num," ",c.den,")");
@@ -1532,7 +1532,8 @@ class DPow: DBinaryOp{
 		auto frc=operands[1].getFractionalFactor();
 		if(frc.c<0){
 			if(formatting==Format.matlab||formatting==Format.gnuplot){
-				return addp(prec,text(dNeqZ(operands[0]).toStringImpl(formatting,Precedence.div,binders),"./",
+				auto op=formatting==Format.matlab?"./":"/";
+				return addp(prec,text(dNeqZ(operands[0]).toStringImpl(formatting,Precedence.div,binders),op,
 				                      (operands[0]+dEqZ(operands[0])).toStringImpl(formatting,Precedence.div,binders)),
 				            Precedence.div);
 			}else{

@@ -7,5 +7,5 @@ def main(){
     if x == 1{
         return 1; // expected: 1/2·δ(0)[r]+1/2·δ(1)[r]
     }
-    assert(0);
+    assert(false);
 }

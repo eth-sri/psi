@@ -2,7 +2,7 @@
 // TODO: compute probability of predicate?
 
 def main(){
-    x := 0;
+    x := 0:ℝ; // TODO: this annotation should not be necessary
     //N := 500;
     //while (i < N){
     //repeat 500{

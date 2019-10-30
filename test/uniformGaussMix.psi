@@ -1,6 +1,6 @@
 def main(){
     x := uniform(0,1);
-    y := 0;
+    y := 0:ℝ; // TODO: this annotation should not be necessary
     if x>1/2{
         y = gauss(0,1);
         x -= 2;

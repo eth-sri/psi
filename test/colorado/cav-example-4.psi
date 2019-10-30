@@ -4,7 +4,7 @@
 
 def main(){
     x := 0;
-    guard := -1;
+    guard := -1:ℝ; // TODO: this annotation should not be necessary
     guard = uniform(0,1);
     //while guard >= 1/2 {
     repeat 21{ if guard >= 1/2 {

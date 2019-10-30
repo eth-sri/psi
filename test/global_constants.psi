@@ -13,5 +13,5 @@ def foo(){
 }
 
 def main(){
-    return (w[y],foo()); // expected: δ(6)[r₁]·δ(9)[r₂]
+    return (w[y],foo()); // expected: δ(6)[w_y]·δ(9)[r]
 }

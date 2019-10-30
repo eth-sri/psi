@@ -5,7 +5,7 @@ def main() {
 	p := 3;
 	people := array(p,0);
 	for i in [0..p) {
-		bday := uniformInt(0,d-1);
+		bday := uniformInt(0,d-1) coerce ℕ; // TODO: coerce should not be necessary
 		for j in [0..i) {
 			if people[j] == bday { return true ; }
 		}

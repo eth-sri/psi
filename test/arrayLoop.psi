@@ -1,10 +1,10 @@
 def main(){
     a := array(11);
-    r := 0;
+    r := 0:ℕ; // TODO: this annotation should not be necessary
     for i in [0..5){ a[i]=i+1; }
-    for i in [0..5){ r+=a[i]; }
+    for i in [0..5){ r+=a[i] coerce ℕ; }
     x := flip(1/2);
     r += x;
-    b := array(r-x);    
+    b := array(r sub x);
     return r; // expected: 1/2·δ(15)[r]+1/2·δ(16)[r]
 }

@@ -1,6 +1,6 @@
 def main(){
     x := 3;
-    z := 0;
+    z := 0:ℚ; // TODO: this annotation should not be necessary
     repeat 2{
         if flip(1/2){
             z = x/0;

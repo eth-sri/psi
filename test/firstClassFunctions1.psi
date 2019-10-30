@@ -4,7 +4,7 @@ def foo(x){
     return x;
 }
 def bar(x){
-    assert(0);
+    assert(false);
     return 2*x;
 }
 

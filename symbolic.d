@@ -165,7 +165,12 @@ private struct Analyzer{
 				return dField(doIt(fe.e),fe.f.name);
 			}
 			if(auto ae=cast(AddExp)e) return doIt(ae.e1)+doIt(ae.e2);
-			if(auto me=cast(SubExp)e) return doIt(me.e1)-doIt(me.e2);
+			if(auto se=cast(SubExp)e) return doIt(se.e1)-doIt(se.e2);
+			if(auto se=cast(NSubExp)e){
+				auto a=doIt(se.e1), b=doIt(se.e2);
+				dist.assertTrue(dGe(a,b),"result of sub is negative");
+				return a-b;
+			}
 			if(auto me=cast(MulExp)e) return doIt(me.e1)*doIt(me.e2);
 			if(cast(DivExp)e||cast(IDivExp)e){
 				auto de=cast(ABinaryExp)e;

@@ -12,11 +12,11 @@ def abs(x:ℝ):ℝ ⇒ sampleFrom("(y;x)=>δ(0)[-y+|x|]",x);
 def min(a:ℝ,b:ℝ):ℝ ⇒ if b<a then b else a;
 def max(a:ℝ,b:ℝ):ℝ ⇒ if a<b then b else a;
 
-def floor(x:ℝ):ℝ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌊x⌋]",x);
-def ceil(x:ℝ):ℝ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌈x⌉]",x);
+def floor(x:ℝ):ℤ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌊x⌋]",x):ℤ;
+def ceil(x:ℝ):ℤ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌈x⌉]",x):ℤ;
 def inℤ(x:ℝ):ℝ ⇒ x==floor(x);
 
-def array[a](length: ℝ, init:a): a[] ⇒ sampleFrom("(r;length,init)=>δ([i↦ init] (length))[r]",length,init):a[];
+def array[a](length: ℕ, init:a): a[] ⇒ sampleFrom("(r;length,init)=>δ([i↦ init] (length))[r]",length,init):a[];
 
 // first-class inference
 dat Distribution[+a]{ } // TODO: dat Distribution[a];

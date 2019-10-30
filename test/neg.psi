@@ -1,6 +1,6 @@
 def main(){
     x := 1;
     r := 0.0;
-    if !x==r { r=1; } else { r=2; }
+    if !(x!=0)==r { r=1; } else { r=2; }
     return r; // expected: δ(1)[r]
 }

@@ -15,11 +15,11 @@ def abs(x:ℝ):ℝ ⇒ sampleFrom("(y;x)=>δ(0)[-y+|x|]",x);
 def min(a:ℝ,b:ℝ):ℝ ⇒ if b<a then b else a;
 def max(a:ℝ,b:ℝ):ℝ ⇒ if a<b then b else a;
 
-def floor(x:ℝ):ℝ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌊x⌋]",x);
-def ceil(x:ℝ):ℝ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌈x⌉]",x);
+def floor(x:ℝ):ℤ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌊x⌋]",x):ℤ;
+def ceil(x:ℝ):ℤ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌈x⌉]",x):ℤ;
 def inℤ(x:ℝ):𝔹 ⇒ x==floor(x);
 
-def array[a](length: ℝ, init:a): a[]{
+def array[a](length: ℕ, init:a): a[]{
 	assert(length>=0&inℤ(length));
 	return sampleFrom("(r;length,init)=>δ([i↦ init] (length))[r]",length,init):a[];
 }

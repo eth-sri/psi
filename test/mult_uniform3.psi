@@ -1,5 +1,5 @@
 def main(){
-    r := 1;
+    r := 1:ℝ; // TODO: this annotation should not be necessary
     repeat 4{
         r *= uniform(0,1);
     }

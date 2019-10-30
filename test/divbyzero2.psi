@@ -1,7 +1,7 @@
 def main(){
     x := 3;
     y := uniformInt(-3,3);
-    z := 0;
+    z := 0:ℚ; // TODO: this annotation should not be necessary
     w := flip(1/2);
     repeat 2{
         if flip(1/2){

@@ -1,11 +1,11 @@
 def main(){
     x := gauss(0,1);
     y := gauss(0,1);
-    if x {
-        observe(!y);
+    if x!=0 {
+        observe(y=0);
     }
-    if y {
-        observe(!x);
+    if y!=0 {
+        observe(x=0);
     }
-    return (x,y); // expected: TODO: figure this out
+    return (x,y); // expected: 0
 }

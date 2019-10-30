@@ -1,7 +1,7 @@
 def main(){ // bothHeads
-    firstCoin := flip(1/2);
-    secondCoin := flip(1/2);
-    bothHeads := firstCoin && secondCoin;
+    firstCoin := flip(1/2):ℝ; // TODO: this annotation should not be necessary
+    secondCoin := flip(1/2):ℝ; // TODO: this annotation should not be necessary
+    bothHeads := firstCoin!=0 && secondCoin!=0;
     observe(bothHeads == 0);
     firstCoin = Expectation(firstCoin);
     secondCoin = Expectation(secondCoin);
