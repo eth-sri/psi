@@ -33,17 +33,24 @@ DExpr getContextFor(alias readLocal)(Declaration meaning,Scope sc)in{assert(mean
 	}
 	return r;
 }
-DExpr buildContextFor(alias readLocal)(Declaration meaning,Scope sc)in{assert(meaning&&sc);}body{ // template, forward references 'doIt'
-	if(auto ctx=getContextFor!readLocal(meaning,sc)) return ctx;
+DExpr buildContextFor(alias readLocal)(FunctionDef fd,Scope sc)in{assert(fd&&sc);}body{ // template, forward references 'doIt'
+	if(auto ctx=getContextFor!readLocal(fd,sc)) return ctx;
 	DExpr[string] record;
-	auto msc=meaning.scope_;
-	if(auto fd=cast(FunctionDef)meaning)
-		msc=fd.realScope;
+	auto msc=fd.realScope;
 	for(auto csc=msc;;csc=(cast(NestedScope)csc).parent){
 		if(!cast(NestedScope)csc) break;
-		foreach(vd;&csc.all!VarDecl)
-			if(auto var=readVariable!readLocal(vd,sc))
-				record[vd.getName]=var;
+		auto captures=fd.captures;
+		if(fd.isConstructor){
+			import ast.semantic_: isInDataScope;
+			auto dsc=isInDataScope(fd.scope_);
+			assert(!!dsc);
+			captures=dsc.decl.captures;
+		}
+		foreach(id;captures) // TODO: this is a bit hacky
+			if(id.meaning.scope_ is csc)
+				if(auto vd=cast(VarDecl)id.meaning)
+					if(auto var=readVariable!readLocal(vd,sc))
+						record[vd.getName]=var;
 		if(!cast(NestedScope)(cast(NestedScope)csc).parent) break;
 		if(auto dsc=cast(DataScope)csc){
 			auto name=dsc.decl.contextName;
