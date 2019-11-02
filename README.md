@@ -19,7 +19,7 @@ The commit of HEAD at build time is displayed when running `./psi --help`.
 
 #### Quick build
 
-1. Run `dependencies-release.sh` to download the LDC D compiler and unzip it.
+1. Run `dependencies-release.sh` to download the LDC D compiler and extract the archive.
 
 2. Run `build-release.sh` to build PSI.
 
@@ -31,10 +31,10 @@ $ ./dependencies-release.sh && ./build-release.sh
 
 PSI is written in the D programming language. D compilers are available at http://dlang.org/download.html.
 
-./build.sh will use DMD inside the PSI directory if it exists, otherwise it will attempt to use DMD from your path.
+`./build.sh` will use DMD inside the PSI directory if it exists, otherwise it will attempt to use DMD from your path.
 
-./build.sh creates a debug build.
-./build-release creates a release build.
+`./build.sh` creates a debug build.
+`./build-release` creates a release build.
 
 ### Other platforms
 

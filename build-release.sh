@@ -1,6 +1,6 @@
 #!/bin/bash
 
-VERSION="1.16.0-beta2"
+VERSION="1.18.0"
 
 if [[ "$OSTYPE" == "linux-gnu" ]]; then
     NAME="ldc2-$VERSION-linux-x86_64"
@@ -15,9 +15,7 @@ else
 fi
 
 # release build
-# TODO: make sure tests run correctly with release build
 $LDMD -O -release -inline -boundscheck=off -J. -Jlibrary *.d ast/*.d util/*.d -ofpsi
-# ldmd2 -O -release -inline -J. -Jlibrary *.d -ofllpsi
 
 if [ ! -f "test/runtests" ]; then
     $LDMD test/runtests.d -oftest/runtests
