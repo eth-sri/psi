@@ -211,7 +211,7 @@ DExpr tryGetDiscreteAntiderivative(DExpr e){
 			auto ba=i.asLinearFunctionIn(var);
 			auto b=ba[0],a=ba[1];
 			if(a && b){
-				return (dNeqZ(a)*(q^^(a*var)-1)/(q^^a-1) + dEqZ(a)*var)*q^^b;
+				return dEq(q,one)*var + dNeq(q,one)*((dNeqZ(a)*(q^^(a*var)-1)/(q^^a-1) + dEqZ(a)*var)*q^^b);
 			}
 		}
 	}

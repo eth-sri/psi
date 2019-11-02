@@ -140,7 +140,7 @@ def NegBinomial(r:ℝ,p:ℝ):Distribution[ℕ]{
 }
 
 def geometric(p:ℝ):ℕ{
-	assert(0<=p & p<=1);
+	assert(0<p & p<=1);
 	return sampleFrom("(x;p)=>∑_i[0≤i]·(1-p)^i·p·δ(0)[i-x]",p):ℕ;
 }
 def Geometric(p:ℝ):Distribution[ℕ]{
