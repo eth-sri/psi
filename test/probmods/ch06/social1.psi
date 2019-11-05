@@ -13,11 +13,11 @@ def vendingMachine(state,action)=>
 
 def main(){
 	actionPrior := infer(()=>[a,b][categorical([0.5,0.5])]);
-	def chooseAction(goalSatisfied: ℝ → ℝ, transition: ℝ×ℝ → ℝ, state)=>
+	def chooseAction(goalSatisfied: ℝ → 𝔹, transition: ℝ×ℝ → ℝ, state)=>
 		infer((){
 			action := sample(actionPrior);
 			observe(goalSatisfied(transition(state, action)));
 			return action;
 		});
-	return sample(chooseAction(haveCookie, vendingMachine, state)); // expected: δ(0)[-r₁+1]
+	return sample(chooseAction(haveCookie, vendingMachine, state)); // expected: δ(1)[r]
 }

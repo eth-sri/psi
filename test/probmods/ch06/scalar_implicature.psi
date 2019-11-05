@@ -10,7 +10,7 @@ def meaning(words)⇒
 	if words == all  { allSprouted  } else
 	if words == some { someSprouted } else
 	if words == none { noneSprouted } else
-                     { assert(0);   };
+                     { assert(false);   };
 
 def main(){
 	statePrior := infer(()⇒ categorical([1/4,1/4,1/4,1/4]));

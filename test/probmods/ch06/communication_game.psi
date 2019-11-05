@@ -6,7 +6,7 @@ red := 0, green := 1, blue := 2;
 def dieToProbs(die)=>
 	if die == A { [0, 0.2, 0.8 ] } else
 	if die == B { [0.1, 0.3, 0.6] } else {
-		assert(0);
+		assert(false);
 	};
 
 def roll(die)=>[red,green,blue][categorical(dieToProbs(die))];

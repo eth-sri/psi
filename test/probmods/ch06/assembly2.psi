@@ -5,9 +5,9 @@ n := 3;
 def main(){
 	widgetMachine := infer(()=>[0.2,0.3,0.4,0.5,0.6,0.7,0.8][categorical([0.05,0.1,0.2,0.3,0.2,0.1,0.05])]);
 	thresholdPrior := infer(()=>[0.3,0.4,0.5,0.6,0.7][categorical([0.1,0.2,0.4,0.2,0.1])]);
-	def makeGoodWidgetSeq(numWidgets,threshold){
+	def makeGoodWidgetSeq(numWidgets:ℕ,threshold){
 		return sample(infer((){
-			widgets := array(numWidgets,0);
+			widgets := array(numWidgets,0:ℝ);
 			assert(numWidgets==3); // TODO: loops
 			for i in [0..n){
 				widgets[i] = sample(widgetMachine);

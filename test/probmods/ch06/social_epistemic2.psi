@@ -16,9 +16,9 @@ def main(){
 		// return if flip(0.7) { ['a'] } else { ['a'] ~ actionPrior() } // TODO: recursion
 		if flip(0.7){ return [a]; }
 		if flip(0.7){ return [a,a]; }
-		observe(0);
+		observe(false);
 	}
-	def chooseAction(goalSatisfied: ℝ → ℝ, transition: ℝ×ℝ[] → ℝ, state)=>
+	def chooseAction(goalSatisfied: ℝ → 𝔹, transition: ℝ×ℝ[] → ℝ, state)=>
 		infer((){
 			action := actionPrior();
 			observe(goalSatisfied(transition(state, action)));
