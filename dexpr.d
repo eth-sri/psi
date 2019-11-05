@@ -104,7 +104,6 @@ abstract class DExpr{
 			simplificationTimer[this].start();
 		}
 		scope(exit) if(nested==1) simplificationTimer[this].stop();+/
-		assert(!cast(DPlus)facts,text(facts));
 		if(q(this,facts) in simplifyCache) return simplifyCache[q(this,facts)];
 		if(facts==zero) return zero;
 		auto r=simplifyImpl(facts);
@@ -1391,7 +1390,6 @@ class DMult: DCommutAssocOp{
 		// TODO: this is a major bottleneck!
 		auto ne=basicSimplify();
 		if(ne != this) return ne.simplify(facts);
-		assert(!cast(DPlus)facts,text(facts));
 		foreach(f;this.factors) if(auto d=cast(DDiscDelta)f){ // TODO: do this in a nicer way
 			auto wo=this.withoutFactor(f);
 			auto var=cast(DVar)d.var;
@@ -1422,7 +1420,6 @@ class DMult: DCommutAssocOp{
 			}else newFacts=dMult(myFacts);
 		}
 		DExprSet simpFactors;
-		assert(!cast(DPlus)newFacts,text(facts," ",myFacts," ",dMult(myFacts)));
 		foreach(f;myFactors) insertAndSimplify(simpFactors,f,newFacts);
 		foreach(f;myFacts) insertAndSimplify(simpFactors,f,one);
 		foreach(f;myIntegralFacts) simpFactors.insert(f);
