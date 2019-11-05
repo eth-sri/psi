@@ -1,0 +1,8 @@
+
+def main(){
+	x := 2;
+	def foo()⇒x;
+	bar := (x)⇒foo()+x;
+	baz := (y)⇒()⇒bar(2)+y;
+	return baz(3)(); // expected: δ(7)[r]
+}

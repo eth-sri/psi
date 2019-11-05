@@ -46,11 +46,20 @@ DExpr buildContextFor(alias readLocal)(FunctionDef fd,Scope sc)in{assert(fd&&sc)
 			assert(!!dsc);
 			captures=dsc.decl.captures;
 		}
-		foreach(id;captures) // TODO: this is a bit hacky
-			if(id.meaning.scope_ is csc)
-				if(auto vd=cast(VarDecl)id.meaning)
-					if(auto var=readVariable!readLocal(vd,sc))
-						record[vd.getName]=var;
+		foreach(id;captures){ // TODO: this is a bit hacky
+			void add(Declaration decl){
+				if(!decl) return;
+				if(decl.scope_ is csc){
+					if(auto vd=cast(VarDecl)decl)
+						if(auto var=readVariable!readLocal(vd,sc))
+							record[vd.getName]=var;
+				}
+				if(auto fd2=cast(FunctionDef)decl)
+					foreach(id2;fd2.captures)
+						add(id2.meaning);
+			}
+			add(id.meaning);
+		}
 		if(!cast(NestedScope)(cast(NestedScope)csc).parent) break;
 		if(auto dsc=cast(DataScope)csc){
 			auto name=dsc.decl.contextName;
