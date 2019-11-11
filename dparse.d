@@ -336,7 +336,10 @@ struct DParser{
 
 	DExpr parseParenthesized(dchar left,dchar right){
 		expect(left);
-		if(cur()==right) return dTuple([]);
+		if(cur()==right){
+			next();
+			return dTuple([]);
+		}
 		auto r=parseDExpr();
 		if(cur()==','){
 			auto values=[r];
