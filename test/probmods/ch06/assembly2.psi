@@ -19,5 +19,5 @@ def main(){
 	threshold := sample(thresholdPrior);
 	goodWidgetSeq := makeGoodWidgetSeq(3, threshold);
 	observe(goodWidgetSeq[0]==0.6 && goodWidgetSeq[1]==0.7 && goodWidgetSeq[2]==0.8);
-	return threshold;
+	return threshold; // expected: 3370318/47299333·δ(2/5)[threshold]+43175444/47299333·δ(1/2)[threshold]+753571/47299333·δ(3/10)[threshold]
 }

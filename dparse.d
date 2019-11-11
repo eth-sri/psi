@@ -219,7 +219,7 @@ struct DParser{
 		return dℚ(r);
 	}
 
-	bool isIdentifierChar(dchar c){
+	static bool isIdentifierChar(dchar c){
 		if(c=='δ') return false; // TODO: this is quite crude
 		if(c.isAlpha()) return true;
 		if(lowDigits.canFind(c)) return true;

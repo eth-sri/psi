@@ -396,7 +396,7 @@ class Distribution{
 	}
 
 	void assertTrue(DExpr cond,lazy string msg){
-		if(opt.noCheck) return;
+		if(opt.noCheck){ observe(cond); return; }
 		error=(error+computeProbability(dEqZ(cond))).simplify(one);
 		distribution=distribution*cond;
 	}

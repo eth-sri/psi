@@ -35,5 +35,5 @@ def main(){
 		cur_teacher := (die)=>teacher(die,cur_learner);
 		cur_learner = (side)=>learner(side,cur_teacher);
 	}
-	return sample(cur_learner(green));
+	return sample(cur_learner(green)); // expected: 5021372535/14946428426·δ(1)[r]+9925055891/14946428426·δ(0)[r]
 }

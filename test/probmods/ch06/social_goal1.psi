@@ -26,5 +26,5 @@ def main(){
 		observe(sample(actionDist)==b);
 		return goal;
 	});
-	return sample(goalPosterior);
+	return sample(goalPosterior); // expected: 1/10·δ(2)[r]+9/10·δ(3)[r]
 }

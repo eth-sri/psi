@@ -1354,6 +1354,8 @@ class DMult: DCommutAssocOp{
 			/+// TODO: do we want auto-distribution?
 			if(cast(DPlus)e1) return dDistributeMult(e1,e2);
 			if(cast(DPlus)e2) return dDistributeMult(e2,e1);+/
+			if(cast(DPlus)e1&&e1.hasAny!DDelta&&!e2.hasAny!DDelta) return dDistributeMult(e1,e2);
+			if(cast(DPlus)e2&&e2.hasAny!DDelta&&!e1.hasAny!DDelta) return dDistributeMult(e2,e1);
 			// TODO: refine condition
 			// TODO: use faster polynomial multiplication if possible?
 			// (for example, only expand polynomial products in a sum of polynomials)
@@ -3064,6 +3066,7 @@ class DDiscDelta: DExpr{ // point mass for discrete data types
 	mixin Visitors;
 
 	static DExpr constructHook(DExpr e,DExpr var){
+		//if(auto v=cast(DVar)var) assert(!e.hasFreeVar(v));
 		static bool isNumeric(DExpr e){ // TODO: merge dDelta and dDiscDelta completely, such that type information is irrelevant
 			return cast(Dℚ)e||cast(DPlus)e||cast(DMult)e||cast(DPow)e||cast(DIvr)e||cast(DFloor)e||cast(DCeil)e||cast(DLog)e;
 		}
@@ -3269,7 +3272,9 @@ class DInt: DOp{
 		}else if(formatting==Format.lisp){
 			return text("(integrate ",DDeBruijnVar.displayName(1,formatting,binders+1)," ",expr.toStringImpl(formatting,Precedence.none,binders+1),")");
 		}else{
-			return addp(prec,symbol(formatting,binders)~"d"~DDeBruijnVar.displayName(1,formatting,binders+1)~expr.toStringImpl(formatting,Precedence.intg,binders+1));
+			auto exprString=expr.toStringImpl(formatting,Precedence.intg,binders+1);
+			import dparse: DParser;
+			return addp(prec,symbol(formatting,binders)~"d"~DDeBruijnVar.displayName(1,formatting,binders+1)~(DParser.isIdentifierChar(exprString.front)?" ":"")~exprString);
 		}
 	}
 

@@ -37,5 +37,5 @@ def main(){
 	chosenAction := sample(chooseAction(goalSatisfied, vendingMachine, state));
 	observe(goal == cookie && chosenAction.length==2 && chosenAction[0]==a && chosenAction[1]==a);
 	//observe(goal == cookie && chosenAction.length==1 && chosenAction[0]==a);
-	return (buttonsToOutcomeProbs([a])[1],buttonsToOutcomeProbs([a,a])[1]); // expected:
+	return (buttonsToOutcomeProbs([a])[1],buttonsToOutcomeProbs([a,a])[1]); // expected: 21/200·[-1+r₁≤0]·[-1+r₂≤0]·[-r₁≤0]·[-r₂≤0]·r₂·⅟(-21/400·log(21)·r₁+-63/4000·log(21)·r₂+-637/1200·log(91)·r₁+-637/4000·log(91)·r₂+-7/12·log(10)·r₁+-7/40·log(10)·r₂+21/400·r₂+7/12·log(100)·r₁+7/12·log(7)·r₁+7/40·log(100)·r₂+7/40·log(7)·r₂+7/40·r₁)
 }
