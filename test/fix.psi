@@ -26,7 +26,7 @@ def fib(f:ℝ → ℝ):ℝ → ℝ{
 }
 
 def base[a,b](x:a):b{
-	assert(0);
+	assert(false);
 }
 
 def geom(g:ℝ→ ℝ)(p)⇒ if flip(p) then 0 else 1+g(p);

@@ -5,7 +5,7 @@
 def main(){
 	data := readCSV("data/txtdata.csv");
 	assert(data.length == 74);
-	sum := 0;
+	sum := 0:ℝ;
 	n := 3;
 	for i in [0..n){
 		sum += data[i];

@@ -24,7 +24,7 @@ def uniformOnUnitSphere(){
 	}));
 }
 def main(){
-	pts := array(4,(0,0,0));
+	pts := array(4,(0,0,0):ℝ^3);
 	for i in [0..4){
 		pts[i]=uniformOnUnitSphere();
 	}

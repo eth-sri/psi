@@ -6,16 +6,16 @@ def main(){
 	def base[a,b](y:b)(x:a):b{
 		return y;
 	}
-	def step(g: ℝ → ℝ)(p){
+	def step(g: ℝ → ℕ)(p){
 		if flip(p){ return 0; }
 		return 1+g(p);
 	}
-	geometric := base[ℝ,ℝ](1);
+	geometric := base[ℝ,ℕ](1);
 	for i in [0..bound){
 		geometric = step(geometric);
 	}
 	def Geometric(p) => infer(() => geometric(p));
-	def condition[a](d: Distribution[a], pred: a → ℝ) =>
+	def condition[a](d: Distribution[a], pred: a → 𝔹) =>
 		infer((){
 			x := sample(d);
 			observe(pred(x));

@@ -3,7 +3,7 @@
 n := 2; // global bound on the dimensions of all vectors and matrices
 
 def multiGaussCholesky(μ: ℝ[], D: ℝ[][]){ // multivariate Gaussian based on cholesky decomposition of Σ.
-	r := array(μ.length,0);
+	r := array(μ.length,0:ℝ);
 	for i in [0..n){
 		if i < r.length{
 			r[i] = gauss(0,1);
@@ -46,8 +46,8 @@ def dot(a: ℝ[], b: ℝ[]){ // dot product for first m entries of vector
 }
 
 def cholesky(A: ℝ[][]){ // cholesky decomposition
-	assert(sampleFrom("(r;A)=>δ([∑_i[0≤i]·[i<A.length]∑_j[0≤j]·[j<A.length]·[A@[i]@[j]≠A@[j]@[i]]=0])[r]",A));
-	L := array(A.length,array(A.length,0));
+	assert(sampleFrom("(r;A)=>δ([∑_i[0≤i]·[i<A.length]∑_j[0≤j]·[j<A.length]·[A@[i]@[j]≠A@[j]@[i]]=0])[r]",A):𝔹);
+	L := array(A.length,array(A.length,0:ℝ));
 	for i in [0..n){
 		if i < A.length {
 			for j in [0..i+1){
@@ -58,7 +58,7 @@ def cholesky(A: ℝ[][]){ // cholesky decomposition
 						L[i][j] = (A[i][j]-t)^(1/2)
 					}else if L[j][j]!=0{
 						L[i][j] = (A[i][j]-t)/L[j][j];
-					};
+					}
 				}
 			}
 		}

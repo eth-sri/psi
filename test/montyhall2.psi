@@ -11,5 +11,5 @@ def main(){
 		(0+1+2)-choice-prize
 	};
 	other := (0+1+2)-choice-opened;
-	return Expectation(doors[choice])<Expectation(doors[other]); // expected: δ(0)[-r₁+1]
+	return Expectation(doors[choice])<Expectation(doors[other]); // expected: δ(1)[r]
 }

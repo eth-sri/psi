@@ -1,7 +1,7 @@
 // skipped
 
 def main(){
-    a := 0;
+    a := 0:ℝ;
     b := uniform(0,1);
     c := uniform(0,1);
     if b>c{
@@ -11,7 +11,7 @@ def main(){
     }
     d := 1;
 
-    m := 0;
+    m := 0:ℝ;
     if b-a > m{ m = b - a; }
     if c-b > m{ m = c - b; }
     if d-c > m{ m = d - c; }

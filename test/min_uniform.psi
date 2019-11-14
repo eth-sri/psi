@@ -1,7 +1,7 @@
 // skipped
 def main(){
 	k := 11;
-	x := 1;
+	x := 1:ℝ;
 	repeat k{
 		x = min(x, uniform(0,1));
 	}

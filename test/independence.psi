@@ -13,10 +13,10 @@ def H[a](d: Distribution[a], eq: a×a→ ℝ)⇒
 def π₁[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[0]);
 def π₂[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[1]);
 
-def I[a,b](d: Distribution[a×b], eq₁: a×a→ ℝ, eq₂: b×b→ℝ)⇒
+def I[a,b](d: Distribution[a×b], eq₁: a×a→𝔹, eq₂: b×b→𝔹)⇒
 	  H(π₁(d),eq₁) + H(π₂(d),eq₂) - H(d,eq_p(eq₁,eq₂));
 
-def independent[a,b](d: Distribution[a×b],eq₁: a×a→ ℝ, eq₂: b×b→ℝ){
+def independent[a,b](d: Distribution[a×b],eq₁: a×a→𝔹, eq₂: b×b→𝔹){
 	return I(d,eq₁,eq₂)==0;
 }
 
@@ -25,6 +25,6 @@ def main(){
 }
 
 
-def eq_p[a,b](eqa:a×a→ℝ,eqb:b×b→ℝ)(x:a×b,y:a×b)⇒
+def eq_p[a,b](eqa:a×a→𝔹,eqb:b×b→𝔹)(x:a×b,y:a×b)⇒
 	eqa(x[0],y[0])&&eqb(x[1],y[1]);
 def eqℝ(x,y)=>x==y;

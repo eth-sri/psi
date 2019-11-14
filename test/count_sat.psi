@@ -2,9 +2,9 @@
 
 n := 3;
 
-def count(f: ℝ[] → ℝ)=>
+def count(f: 𝔹[] → 𝔹)=>
 	2^n * expectation(infer((){
-		a := array(n,0);
+		a := array(n,0:𝔹);
 		for i in [0..n){
 			a[i] = flip(1/2);
 		}
@@ -12,6 +12,6 @@ def count(f: ℝ[] → ℝ)=>
 	}));
 
 def main(){
-	r := count((x: ℝ[])=>x[1] && (x[2] || !x[1]) && (x[1] || x[0] || !x[2]));
+	r := count((x: 𝔹[])=>x[1] && (x[2] || !x[1]) && (x[1] || x[0] || !x[2]));
 	return r;
 }

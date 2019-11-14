@@ -20,7 +20,7 @@ def max(a,b){ return if a<b { b } else { a }; }
 
 def eval(e: Expr):ℝ{
 	ops := [min,max,(a,b)=>(a+b)%256,(a,b)=>(a-b)%256,(a,b)=>a*b%256,(a,b)=>floor(a/b)];
-	for i in [0..5){
+	for i in [0..6){
 		if e.which == i{
 			return ops[i](eval(e.op[0]),eval(e.op[1]));
 		}

@@ -3,9 +3,9 @@
 
 def main(){
 	n := 10;
-	pecked := array(n, 0);
+	pecked := array(n, 0:𝔹);
 	for i in [0..n){
-		pecked[(i+if flip(1/2){ 1 } else { -1 })%n]=1;
+		pecked[(i+if flip(1/2){ 1 } else { -1 })%n]=1:𝔹;
 	}
 	n_unpecked := 0;
 	for i in [0..n){

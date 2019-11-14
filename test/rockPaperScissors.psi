@@ -27,7 +27,7 @@ def solve(/*n, */pattern: ℝ[]){
 	// TODO: make fast with symbolic backend
 	// TODO: make fast with explicit array in input
 	assert(pattern.length==p);
-	f := array(p+1, 0);
+	f := array(p+1, 0:ℤ);
 	j := -1;
 	f[0] = j;
 	for i in [0..p+1){

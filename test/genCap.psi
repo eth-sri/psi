@@ -1,3 +1,6 @@
+
+
+
 // skipped
 
 n := 3; // TODO: loops.
@@ -13,13 +16,13 @@ def H[a](d: Distribution[a], eq: a×a→ ℝ)⇒
 def π₁[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[0]);
 def π₂[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[1]);
 
-def I[a,b](d: Distribution[a×b], eq₁: a×a→ ℝ, eq₂: b×b→ℝ)⇒
+def I[a,b](d: Distribution[a×b], eq₁: a×a→𝔹, eq₂: b×b→𝔹)⇒
 	  H(π₁(d),eq₁) + H(π₂(d),eq₂) - H(d,eq_p(eq₁,eq₂));
 
-def cH[a,b](d:Distribution[a×b], eq₁: a×a→ ℝ, eq₂: b×b→ℝ)⇒ H(d,eq_p(eq₁,eq₂))-H(π₂(d),eq₂);
+def cH[a,b](d:Distribution[a×b], eq₁: a×a→𝔹, eq₂: b×b→𝔹)⇒ H(d,eq_p(eq₁,eq₂))-H(π₂(d),eq₂);
 
 
-def ℑ[a](c₁: Distribution[a], c₂: Distribution[a], n: ℝ, eq: a×a→ ℝ){
+def ℑ[a](c₁: Distribution[a], c₂: Distribution[a], n: ℕ, eq: a×a→𝔹){
 	return log₂(n*expectation(infer((){
 		s₁ := sample(c₁);
 		s₂ := sample(c₂);
@@ -36,7 +39,7 @@ def genCap[a,b](A: a→ Distribution[b], d: Distribution[a], noise: a→ a, n: �
 	}));
 }
 
-def genCap₂[a,b](f: a→ b, d: Distribution[a], noise: a→ a, eq: b×b→ℝ){
+def genCap₂[a,b](f: a→b, d: Distribution[a], noise: a→a, eq: b×b→𝔹){
 	return I(infer((){ // context-independent information: mutual information of outputs when applying different noise to the same input
 		x := sample(d);
 		x₁ := noise(x);
@@ -46,7 +49,7 @@ def genCap₂[a,b](f: a→ b, d: Distribution[a], noise: a→ a, eq: b×b→ℝ)
 }
 
 
-def genCap₃[a,b,t](A: a→ b, x: a, T: Distribution[t], action: t→ a → a, noise: a→ a, eqa: a×a→ℝ, eqt: t×t→ℝ, eqb: b×b→ℝ){ // may need to select T in a clever way.
+def genCap₃[a,b,t](A: a→ b, x: a, T: Distribution[t], action: t→ a → a, noise: a→ a, eqa: a×a→𝔹, eqt: t×t→𝔹, eqb: b×b→𝔹){ // may need to select T in a clever way.
 	return I(infer((){
 		x₁ := noise(x); // generate training data
 		x₂ := noise(x); // generate validation data
@@ -62,7 +65,7 @@ def genCap₃[a,b,t](A: a→ b, x: a, T: Distribution[t], action: t→ a → a, 
 
 // application to sorting
 
-def idPerm(k: ℝ){
+def idPerm(k: ℕ){
 	assert(k==n);
 	r := array(n,0);
 	for i in [0..n){ r[i]=i; }
@@ -83,12 +86,12 @@ def allPermutations(k: ℝ){
 	for x in [1..factorial(n)){
 		a:=0, b:=1, f:=2, g:=1;
 		for i in [3..n]{
-			if x%f==0{ // TODO: if !(x%f){
+			if x%f=0{
 				g=f, f*=i;
 				i+=1, b+=1;
 			}
 		}
-		if b%2{ a = (b*(x div g) div (b+1))%b; }
+		if b%2!=0{ a = (b*(x div g) div (b+1))%b; }
 		// (c[a],c[b])=(c[b],c[a]); // TODO: allow!
 		t := c[a];
 		c[a] = c[b];
@@ -98,8 +101,8 @@ def allPermutations(k: ℝ){
 	return r;
 }
 
-def quantify(cmp: ℝ[][],p: ℝ[]){
-	r := 0;
+def quantify(cmp: 𝔹[][],p: ℕ[]){
+	r := 0:ℤ;
 	for i in [0..n){
 		for j in [i+1..n){
 			r += cmp[p[i]][p[j]]-cmp[p[j]][p[i]];
@@ -108,7 +111,7 @@ def quantify(cmp: ℝ[][],p: ℝ[]){
 	return r;
 }
 
-def optimalSort(cmp: ℝ[][]){
+def optimalSort(cmp: 𝔹[][]){
 	c := idPerm(n);
 	k := quantify(cmp,c);
 	r := c;
@@ -121,13 +124,13 @@ def optimalSort(cmp: ℝ[][]){
 				i+=1, b+=1;
 			}
 		}
-		if b%2{ a = (b*(x div g) div (b+1))%b; }
+		if b%2!=0{ a = (b*(x div g) div (b+1))%b; }
 		// (c[a],c[b])=(c[b],c[a]); // TODO: allow!
 		//sign := if c[a] < c[b] { 1 } else { -1 };
 		t := c[a];
 		c[a] = c[b];
 		c[b] = t;
-		k := quantify(cmp,c);
+		k = quantify(cmp,c);
 		if k>bestk{
 			r=c;
 			bestk=k;
@@ -136,7 +139,7 @@ def optimalSort(cmp: ℝ[][]){
 	return r;
 }
 
-def bubbleSort(cmp: ℝ[][]){
+def bubbleSort(cmp: 𝔹[][]){
 	r := idPerm(n);
 	for i in [0..n){
 		for j in [0..n-1){
@@ -150,7 +153,7 @@ def bubbleSort(cmp: ℝ[][]){
 	return r;
 }
 
-def selectionSort(cmp: ℝ[][]){
+def selectionSort(cmp: 𝔹[][]){
 	r := idPerm(n);
 	for i in [0..n){
 		m := i;
@@ -180,7 +183,7 @@ def randPerm(k: ℝ){
 	return r;
 }
 
-def noise(p: ℝ)(cmp: ℝ[][]){
+def noise(p: ℝ)(cmp: 𝔹[][]){
 	r := cmp;
 	for i in [0..n){
 		for j in [i+1..n){
@@ -191,16 +194,10 @@ def noise(p: ℝ)(cmp: ℝ[][]){
 		}
 	}
 	return r;
-	if flip(p){
-		t := r[0][1];
-		r[0][1] = r[1][0];
-		r[1][0]=t;
-	}
-	return r;
 }
 
 def eqℝ(x,y)=>x==y;
-def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
+def eq_a[a](eq: a×a→𝔹)(x: a[],y: a[]){
 	for i in [0..n){
 		if !eq(x[i],y[i]){
 			return false;
@@ -208,14 +205,14 @@ def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
 	}
 	return true;
 }
-def eq_p[a,b](eqa:a×a→ℝ,eqb:b×b→ℝ)(x:a×b,y:a×b)⇒
+def eq_p[a,b](eqa:a×a→𝔹,eqb:b×b→𝔹)(x:a×b,y:a×b)⇒
 	eqa(x[0],y[0])&&eqb(x[1],y[1]);
 
-def eq_t[a,b,c](eqa: a×a→ℝ, eqb: b×b→ℝ, eqc: c×c→ℝ)(x:a×b×c,y:a×b×c)⇒
+def eq_t[a,b,c](eqa: a×a→𝔹, eqb: b×b→𝔹, eqc: c×c→𝔹)(x:a×b×c,y:a×b×c)⇒
 	eqa(x[0],y[0])&&eqb(x[1],y[1])&&eqc(x[2],y[2]);
 
-def reorderCmp(p:ℝ[])(cmp: ℝ[][]){
-	r := array(n,array(n,0));
+def reorderCmp(p:ℕ[])(cmp: 𝔹[][]){
+	r := array(n,array(n,0:𝔹));
 	for i in [0..n){
 		for j in [0..n){
 			r[p[i]][p[j]]=cmp[i][j];
@@ -224,13 +221,13 @@ def reorderCmp(p:ℝ[])(cmp: ℝ[][]){
 	return r;
 }
 
-def shuffleCmp(cmp: ℝ[][])=>reorderCmp(randPerm(n))(cmp);
+def shuffleCmp(cmp: 𝔹[][])=>reorderCmp(randPerm(n))(cmp);
 
 def main(k){
 	//arr := [3,2,0,1];
 	//arr := randPerm(n);
 	arr := [1,2,0];
-	cmp := array(n,array(n,0));
+	cmp := array(n,array(n,0:𝔹));
 	for i in [0..n){
 		for j in [0..n){
 			cmp[i][j]=arr[i]<arr[j];
@@ -244,7 +241,7 @@ def main(k){
 	error := noise(0.1);
 	eq := eq_a(eqℝ);
 	//T := infer(()=>randPerm(n));
-	def genCapSort(sort: ℝ[][]→ ℝ[]){
+	def genCapSort(sort: 𝔹[][]→ ℕ[]){
 		return genCap₂(sort, input, error, eq);
 		//return genCap₃(sort, cmp, T, reorderCmp, error, eq_a(eq),eq, eq);
 	}

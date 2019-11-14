@@ -4,20 +4,20 @@ n := 3;
 
 def log₂(x)=>log(x)/log(2);
 
-def S[a](d: Distribution[a], x: a, eq: a×a→ ℝ)⇒
+def S[a](d: Distribution[a], x: a, eq: a×a→𝔹)⇒
     log₂(1/expectation(infer(()⇒ eq(sample(d),x))));
 
-def H[a](d: Distribution[a], eq: a×a→ ℝ)⇒
+def H[a](d: Distribution[a], eq: a×a→𝔹)⇒
     expectation(infer(()⇒ S(d,sample(d),eq)));
 
 def π₁[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[0]);
 def π₂[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[1]);
 
-def I[a,b](d: Distribution[a×b], eq₁: a×a→ ℝ, eq₂: b×b→ℝ)⇒
+def I[a,b](d: Distribution[a×b], eq₁: a×a→𝔹, eq₂: b×b→𝔹)⇒
 	  H(π₁(d),eq₁) + H(π₂(d),eq₂) - H(d,eq_p(eq₁,eq₂));
 
 def eqℝ(x,y)=>x==y;
-def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
+def eq_a[a](eq: a×a→𝔹)(x: a[],y: a[]){
 	for i in [0..n){
 		if !eq(x[i],y[i]){
 			return false;
@@ -25,10 +25,10 @@ def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
 	}
 	return true;
 }
-def eq_p[a,b](eqa:a×a→ℝ,eqb:b×b→ℝ)(x:a×b,y:a×b)⇒
+def eq_p[a,b](eqa:a×a→𝔹,eqb:b×b→𝔹)(x:a×b,y:a×b)⇒
 	eqa(x[0],y[0])&&eqb(x[1],y[1]);
 
-def genCap₂[a,b](f: a→ b, d: Distribution[a], noise: a→ a, eq: b×b→ℝ){
+def genCap₂[a,b](f: a→ b, d: Distribution[a], noise: a→ a, eq: b×b→𝔹){
 	return I(infer((){ // context-independent information: mutual information of outputs when applying different noise to the same input
 		x := sample(d);
 		x₁ := noise(x);

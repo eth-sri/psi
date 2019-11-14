@@ -1,4 +1,4 @@
-def main(){
+def main_(){
 	k := 3;
 	x := gauss(0,1);
 	repeat k-1{

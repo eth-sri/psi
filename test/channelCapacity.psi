@@ -2,7 +2,7 @@
 // TODO: make fast
 import genCap;
 
-def informationFlow[a,b](input: Distribution[a], channel: a→ b,eqa: a×a→ℝ,eqb: b×b→ℝ)⇒
+def informationFlow[a,b](input: Distribution[a], channel: a→ b,eqa: a×a→𝔹,eqb: b×b→𝔹)⇒
 I(infer((){
 	i := sample(input);
 	o := channel(i);

@@ -2,7 +2,7 @@
 
 def sin(k){
 	x := (k+π)%(2*π)-π;
-	sign := 1;
+	sign := 1:ℤ;
 	if x>π{
 		x=2*π-x;
 		sign = -1;

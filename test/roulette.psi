@@ -2,19 +2,19 @@
 // TODO: make fast with boundschecking enabled
 
 dat Gun{
-	cylinder: ℝ[];
+	cylinder: 𝔹[];
 	def Gun(){
-		cylinder = array(6,0);
-		cylinder[0] = 1; // add one bullet
+		cylinder = array(6,0:𝔹);
+		cylinder[0] = 1:𝔹; // add one bullet
 	}
-	def shift(k){
+	def shift(k:ℕ){
 		c := cylinder;
 		for i in [0..6){
 			cylinder[i] = c[(i+k)%6];
 		}		
 	}
 	def shuffle(){
-		shift(uniformInt(0,5));
+		shift(uniformInt(0,5) coerce ℕ);
 	}
 	def shoot(){
 		r := cylinder[0];
@@ -25,7 +25,7 @@ dat Gun{
 
 def experiment1(){
 	gun := Gun();
-	alive := 1;
+	alive := 1:𝔹;
 	gun.shuffle();
 	alive &= !gun.shoot();
 	gun.shuffle();
@@ -35,7 +35,7 @@ def experiment1(){
 
 def experiment2(){
 	gun := Gun();
-	alive := 1;
+	alive := 1:𝔹;
 	gun.shuffle();
 	alive &= !gun.shoot();
 	alive &= !gun.shoot();
@@ -45,5 +45,5 @@ def experiment2(){
 def main(){
 	p₁ := expectation(infer(experiment1));
 	p₂ := expectation(infer(experiment2));
-	return p₁ > p₂; // expected: δ(0)[-r₁+1]
+	return p₁ > p₂; // expected: δ(1)[r]
 }

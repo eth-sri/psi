@@ -3,7 +3,7 @@
 
 n := 3;
 
-def p(a: ℝ[]){
+def p(a: 𝔹[]){
 	x := 0; // uniformInt(0,2); // does not matter
 	/*m := [([0,0,0], x),
 		  
@@ -53,24 +53,24 @@ def p(a: ℝ[]){
 		 ];*/
 	
 	for i in [0..m.length){
-		ok := 1;
+		ok := true;
 		for j in [0..n){
 			if m[i][0][j]!=a[j]{
-				ok = 0;
+				ok = false;
 			}
 		}
 		if ok{
 			return m[i][1];
 		}
 	}
-	assert(0);
+	assert(false);
 }
-def q(b: ℝ[]){
+def q(b: 𝔹[]){
 	return p(b);
 }
 
 def main(){
-	(a,b) := (array(n,0), array(n,0));
+	(a,b) := (array(n,false), array(n,false));
 	for i in [0..n){
 		a[i] = flip(1/2);
 		b[i] = flip(1/2);

@@ -3,11 +3,11 @@
 def max_probability(d: Distribution[ℝ]){
 	return expectation(infer((){
 		q := uniform(0,2);
-		observe(!expectation(infer((){
+		observe(expectation(infer((){
 			x := sample(d);
-			p := expectation(then((y)=>x==y)(d));
+			p := expectation(then_((y)=>x==y)(d));
 			return p>=q;
-		})));
+		}))=0);
 		return q;
 	}))*2-2;
 }
@@ -24,4 +24,4 @@ def main(){
 }
 
 
-def then[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));
+def then_[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));

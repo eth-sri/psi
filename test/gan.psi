@@ -40,7 +40,7 @@ def bayesianHardDiscriminator(dataSource: 𝟙→ℝ, generator: 𝟙→ℝ)(x:�
 	bayesianDiscriminator(dataSource, generator)(x)>1/2;
 
 def model1(a,b){
-	if a<0||b<0||a+b>1 { return 0; }
+	if a<0||b<0||a+b>1 { return 0:ℝ; }
 	def dataSource()⇒ categorical([1/5,1/3,7/15]); // real data
 	def generator()⇒ categorical([a,b,1-a-b]); // generator, we are optimizing this
 	discriminator := makeDiscriminator(dataSource,generator);
@@ -48,8 +48,8 @@ def model1(a,b){
 }
 
 def model2(μ){
-	def dataSource()⇒ gauss(0,1); // real data
-	def generator()⇒ gauss(μ,1); // generator, we are optimizing this
+	def dataSource()⇒gauss(0,1); // real data
+	def generator()⇒gauss(μ,1); // generator, we are optimizing this
 	// discriminator := makeDiscriminator(dataSource,generator)
 	def discriminator(x: ℝ){
 		//return abs(x-μ)>abs(x-0);
@@ -59,7 +59,7 @@ def model2(μ){
 }
 
 def model3(p){
-	if p<0||p>1 { return 0; }
+	if p<0||p>1 { return 0:ℝ; }
 	def dataSource()⇒ flip(1/3);
 	def generator()⇒ flip(p);
 	discriminator := makeDiscriminator(dataSource,generator);

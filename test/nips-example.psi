@@ -23,7 +23,7 @@ def H[a](d: Distribution[a], eq: a×a→ℝ) ⇒ expectation(infer((){ x := samp
 
 
 def eqℝ(x,y)=>x==y;
-def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
+def eq_a[a](eq: a×a→𝔹)(x: a[],y: a[]){
 	for i in [0..4){
 		if !eq(x[i],y[i]){
 			return false;
@@ -31,10 +31,10 @@ def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
 	}
 	return true;
 }
-def eq_p[a,b](eqa:a×a→ℝ,eqb:b×b→ℝ)(x:a×b,y:a×b)⇒
+def eq_p[a,b](eqa:a×a→𝔹,eqb:b×b→𝔹)(x:a×b,y:a×b)⇒
 	eqa(x[0],y[0])&&eqb(x[1],y[1]);
 
-def eq_t[a,b,c](eqa: a×a→ℝ, eqb: b×b→ℝ, eqc: c×c→ℝ)(x:a×b×c,y:a×b×c)⇒
+def eq_t[a,b,c](eqa: a×a→𝔹, eqb: b×b→𝔹, eqc: c×c→𝔹)(x:a×b×c,y:a×b×c)⇒
 	eqa(x[0],y[0])&&eqb(x[1],y[1])&&eqc(x[2],y[2]);
 
 

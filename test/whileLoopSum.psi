@@ -4,7 +4,7 @@
 
 def main(){
 	i := 0;
-	x := 0;
+	x := 0:ℝ;
 	while x < 1{
 		x += uniform(0,1);
 		i += 1;

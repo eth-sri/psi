@@ -3,7 +3,7 @@
 
 // TODO: make fast with --dp even when temporary is generated in argument list of function call
 
-def gcd(a,b){
+def gcd(a:ℤ,b:ℤ){
 	(x,y) := (a,b);
 	for i in [0..7){
 	if y != 0 {
@@ -14,7 +14,7 @@ def gcd(a,b){
 }
 
 def main(){
-	r := 0;
+	r := 0:ℤ;
 	for i in [0..5){
 		x := uniformInt(1,20);
 		r = gcd(r,x);

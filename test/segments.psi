@@ -5,5 +5,5 @@ def main(){
 	x₁ := uniform(0,1);
 	x₂ := uniform(0,1);
 	if x₁>x₂{ tmp:=x₁; x₁=x₂; x₂=tmp; }
-	return x₁>1/4 && x₂-x₁>1/4 && 1-x₂>1/4
+	return x₁>1/4 && x₂-x₁>1/4 && 1-x₂>1/4 // expected: 1/16·δ(1)[r]+15/16·δ(0)[r]
 }

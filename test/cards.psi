@@ -11,7 +11,7 @@ def main(){
 		if sum<=100{
 			cards+=1;
 			last = sum;
-			sum+=uniformInt(1,9);
+			sum+=uniformInt(1,9) coerce ℕ;
 		}
 	}
 	return last;

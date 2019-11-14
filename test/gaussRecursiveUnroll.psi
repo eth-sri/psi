@@ -1,7 +1,7 @@
 // skipped
 
 def base[a,b](x:a):b{
-	assert(0);
+	assert(false);
 }
 
 def f_step(f: 𝟙→ℝ)(){

@@ -7,13 +7,13 @@ dat Person{
     def Person(knowledge: Distribution[ℝ[]]){
         this.knowledge = knowledge;
     }
-    def learn(i,v){
+    def learn(i:ℕ,v){
         knowledge=infer((){ a:=sample(knowledge);
             observe(a[i]==v);
             return a;
         });
     }
-    def doesKnow(index){
+    def doesKnow(index:ℕ){
         p := expectation(infer((){ x:=sample(knowledge);
             k := -1;
             for i in [0..n){

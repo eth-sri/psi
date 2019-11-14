@@ -6,27 +6,27 @@
 // TODO: also make explicit simulation fast.
 // (I.e., repeatedly roll all dice that don't show 6 until all dice show 6.)
 
-/+
+
 def main(){
 	n := 3; // TODO: make fast for n=10000.
 	x := 0;
 	for i in [0..n){
-		x = max(x, geometric(1/6)+1);
+		x = max(x, geometric(1/6)+1) coerce ℕ;
 	}
 	return Expectation(x); // expected: δ(10566/1001)[r]
 }
-+/
+
 /+
 def main(k,p){
 	return geometric(p)<=k; // TODO: solve this in closed form
 }+/
-
+/+
 def main(k){
 	n := 10000;
 	p := 1/6;
 	return (1-(1-p)^k)^n-(1-(1-p)^(k-1))^n;
 }
-
++/
 /+
 maximum of n geometric(p)+1 random variables has CDF:
 

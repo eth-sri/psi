@@ -3,7 +3,7 @@
 
 // TODO
 
-def all[a](f: a → ℝ, x: a[]):ℝ⇒if x.length then f(x[0]) && all(f, x[1..x.length]) else true;
+def all[a](f: a → 𝔹, x: a[]):𝔹⇒if x.length≠0 then f(x[0]) && all(f, x[1..x.length]) else true;
 
 def main(){
 	cards := array(4,0);

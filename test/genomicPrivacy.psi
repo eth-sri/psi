@@ -24,13 +24,13 @@ def child(a: Patient, b: Patient): Patient{
 	}
 	return Patient(allele);
 }
-def belief()⇒ infer((){
+def belief()⇒infer((){
 	(alice,bob) := (patient(),patient());
 	carol := child(alice,bob);
 	patients := [alice,bob,carol];
 	return patients;
 });
-def prior()⇒ sample(belief());
+def prior()⇒sample(belief());
 def query(patient: Patient[]){
 	numRed := 0;
 	for i in [0..3){
@@ -43,7 +43,7 @@ def query(patient: Patient[]){
 	}
 	return numRed;
 }
-def secret(i,patients: Patient[]){
+def secret(i:ℕ,patients: Patient[]){
 	patient := patients[i];
 	return patient.allele[0] == RED &&
 		patient.allele[1] == RED;
@@ -62,14 +62,14 @@ def outputProb(o){
 	return output == o;
 }
 
-def secretProb(i,o){
+def secretProb(i:ℕ,o){
 	patients := prior();
 	output := query(patients);
 	observe(output==o);
 	return secret(i,patients);
 }
 
-def main(i,o){
+def main(i:ℕ,o){
 	return secretProb(i,o);
 }
 

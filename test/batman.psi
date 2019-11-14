@@ -2,18 +2,18 @@
 // challenge from: https://towardsdatascience.com/a-zero-math-introduction-to-markov-chain-monte-carlo-methods-dcba889e0c50
 // solution at: http://mathworld.wolfram.com/BatmanCurve.html
 
-def sqrt(x)⇒ x^(1/2);
-def sign(x)⇒ (x>=0)-(x<=0);
-def H(x)⇒ x>=0;
-def f(x):ℝ⇒ (h(x)-l(x))*H(x+1)+(r(x)-h(x))*H(x-1)+(l(x)-w(x))*H(x+3)+(w(x)-r(x))*H(x-3)+w(x);
-def g(x)⇒ 1/2*(abs(1/2*x)+sqrt(1-(abs(abs(x)-2)-1)^2)-1/112*(3*sqrt(33)-7)*x^2+3*sqrt(1-(1/7*x)^2)-3)*(sign(x+4)-sign(x-4))-3*sqrt(1-(1/7*x)^2);
+def sqrt(x)⇒x^(1/2);
+def sign(x)⇒(x>=0)-(x<=0);
+def H(x)⇒x>=0;
+def f(x):ℝ⇒(h(x)-l(x))*H(x+1)+(r(x)-h(x))*H(x-1)+(l(x)-w(x))*H(x+3)+(w(x)-r(x))*H(x-3)+w(x);
+def g(x)⇒1/2*(abs(1/2*x)+sqrt(1-(abs(abs(x)-2)-1)^2)-1/112*(3*sqrt(33)-7)*x^2+3*sqrt(1-(1/7*x)^2)-3)*(sign(x+4)-sign(x-4))-3*sqrt(1-(1/7*x)^2);
 
-def w(x)⇒ 3*sqrt(1-(1/7*x)^2);
-def l(x)⇒ 1/2*(x+3)-3/7*sqrt(10)*sqrt(4-(x+1)^2)+6/7*sqrt(10);
-def h(x)⇒ 1/2*(3*(abs(x+1/2)+abs(x-1/2)+6)-11*(abs(x-3/4)+abs(x+3/4)));
-def r(x)⇒ 1/2*(3-x)-3/7*sqrt(10)*sqrt(4-(x-1)^2)+6/7*sqrt(10);
+def w(x)⇒3*sqrt(1-(1/7*x)^2);
+def l(x)⇒1/2*(x+3)-3/7*sqrt(10)*sqrt(4-(x+1)^2)+6/7*sqrt(10);
+def h(x)⇒1/2*(3*(abs(x+1/2)+abs(x-1/2)+6)-11*(abs(x-3/4)+abs(x+3/4)));
+def r(x)⇒1/2*(3-x)-3/7*sqrt(10)*sqrt(4-(x-1)^2)+6/7*sqrt(10);
 
-def main(x){
+def main(){
 	x := uniform(-7,7);
 	y := uniform(-4,4);
 	return 14*16*(g(x)<=y&y<=f(x)); // TODO: compute area of batman

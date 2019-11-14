@@ -3,7 +3,7 @@
 
 num_doors := 3;
 
-host_knows := 1; // host knows where the prize is
+host_knows := 1:𝔹; // host knows where the prize is
 
 def pickDoor()=>uniformInt(1, num_doors);
 
