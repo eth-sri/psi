@@ -1530,15 +1530,16 @@ class DPow: DBinaryOp{
 		}
 		auto frc=operands[1].getFractionalFactor();
 		if(frc.c<0){
+			auto exp=(-operands[1]).simplify(one);
+			auto den=exp==zero?one:exp==one?operands[0]:operands[0]^^exp;
 			if(formatting==Format.matlab||formatting==Format.gnuplot){
 				auto op=formatting==Format.matlab?"./":"/";
-				return addp(prec,text(dNeqZ(operands[0]).toStringImpl(formatting,Precedence.div,binders),op,
-				                      (operands[0]+dEqZ(operands[0])).toStringImpl(formatting,Precedence.div,binders)),
+				return addp(prec,text(dNeqZ(den).toStringImpl(formatting,Precedence.div,binders),op,
+				                      (den+dEqZ(den)).toStringImpl(formatting,Precedence.div,binders)),
 				            Precedence.div);
 			}else{
 				auto pre=formatting==Format.default_?"⅟":"1/";
-				auto exp=(-operands[1]).simplify(one);
-				return addp(prec,pre~(exp==one?operands[0]:operands[0]^^exp).toStringImpl(formatting,Precedence.div,binders),Precedence.div);
+				return addp(prec,pre~den.toStringImpl(formatting,Precedence.div,binders),Precedence.div);
 			}
 		}
 		// also nice, but often hard to read: ½⅓¼⅕⅙
@@ -2925,6 +2926,9 @@ DVar getCanonicalVar(T)(T vars){
 	DVar r=null;
 	bool isMoreCanonicalThan(DVar a,DVar b){
 		if(b is null) return true;
+		auto dba=cast(DDeBruijnVar)a,dbb=cast(DDeBruijnVar)b;
+		if(dba&&dbb) return dba.i<dbb.i;
+		if(dba||dbb) return !!dba>!!dbb;
 		return a.toString()<b.toString();
 	}
 	foreach(v;vars)
@@ -3481,6 +3485,8 @@ class DLog: DOp{
 		auto es=e.toStringImpl(formatting,Precedence.none,binders);
 		if(formatting==Format.python) return text("nan_to_num(log(",es,"))");
 		if(formatting==Format.mathematica) return text("Log[",es,"]");
+		if(formatting==Format.matlab) return text("log(",es,".+(",es,"==0)).*(",es,">0)");
+		if(formatting==Format.gnuplot) return text("(",es,">0?log(",es,"):0)");
 		return text("log(",es,")");
 	}
 	mixin Visitors;
