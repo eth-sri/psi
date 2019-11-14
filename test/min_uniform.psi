@@ -1,0 +1,49 @@
+// skipped
+def main(){
+	k := 11;
+	x := 1;
+	repeat k{
+		x = min(x, uniform(0,1));
+	}
+	return x;
+}
+// TODO: allow the following reasoning to be performed automatically:
+// p(k)[x] = μ(λf. λ(x,k). Λr. [k≤0]·δ(x,k)[r]+[1≤k]·∫dx`∫dy [0≤y≤1]·([y<x]·δ(y)[x`]+[x≤y]·δ(x)[x`])·δ(f(x`,k`-1))[r])(1,11)[x]
+// TODO: the previous expression is decomposed into multiple summands under simplification. This should ideally not happen.
+// p(k)[x] = μ(λf. λ(x,k). Λr. [k≤0]·δ(x,k)[r]+[1≤k]·∫dy [0≤y≤1]·([y<x]·δ(f(y,k`-1))[r]+[x≤y]·δ(f(x,k`-1))[r]))(1,11)[x,_]
+// p(k)[x] = μ(λf. λ(x,k). Λr. [k≤0]·δ(x,k)[r]+[1≤k]·∫dy [0≤y≤1]·([y<x]·δ(f(y,k`-1))[r]+[x≤y]·δ(f(x,k`-1))[r]))(1,11)[x,_]
+// ...
+// p(k)[x] = (λ(x,k). Λr. [k≤0]·δ(x,k)[r]+[1≤k]·∫dy [0≤y≤1]·([y<x]·δ(f(y,k`-1))[r]+[x≤y]·δ(f(x,k`-1))[r]))¹¹(1,11)[x,_]
+// ...
+// p(k)[x] = ι¹¹(λx. Λr. ∫dy [0≤y≤1]·([y<x]·δ(y)[r]+[x≤y]·δ(x)[r]))(1)[x]
+// ...
+// p(k)[x] = ∫dx₁⋯ ∫dx₁₂δ(1)[x₁]∫dy₁⋯ dy₁₁∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·([yᵢ<xᵢ]·δ(yᵢ)[xᵢ₊₁]+[xᵢ≤yᵢ]·δ(xᵢ)[xᵢ₊₁])·δ(x₁₂)[x]
+// ... // TODO: this seems quite hard
+// p(k)[x] = ∫dx₁⋯ ∫dx₁₂∫dy₁⋯ dy₁₁ δ(1)[x₁] ∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·δ(min{y₁,...,yᵢ})[xᵢ₊₁]·δ(x₁₂)[x]
+// ...
+// p(k)[x] = ∫dx₂⋯ ∫dx₁₂∫dy₁⋯ dy₁₁ ∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·δ(min{y₁,...,yᵢ})[xᵢ₊₁]·δ(x₁₂)[x]
+//
+// p(k)[x] = ∫dx₂⋯ ∫dx₁₂∫dy₁⋯ dy₁₁ ∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·δ(min{y₁,...,yᵢ})[xᵢ₊₁]·δ(x₁₂)[x]
+// p(k)[x] = ∫dx₂⋯ ∫dx₁₂∫dy₁⋯ dy₁₁ ∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·∏ᵢ_[1≤i≤11] δ(min{y₁,...,yᵢ})[xᵢ₊₁]·δ(x₁₂)[x]
+// p(k)[x] = ∫dx₂⋯ ∫dx₁₂∫dy₁⋯ dy₁₁ ∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·∏ᵢ_[2≤i≤12] δ(min{y₁,...,yᵢ})[xᵢ]·δ(x₁₂)[x]
+// ...
+// p(k)[x] = ∫dx₁₂∫dy₁⋯ dy₁₁ ∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·∏ᵢ_[12≤i≤12] δ(min{y₁,...,yᵢ₋₁})[xᵢ]·δ(x₁₂)[x]
+// p(k)[x] = ∫dx₁₂∫dy₁⋯ dy₁₁ ∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·δ(min{y₁,...,y₁₁})[x₁₂]·δ(x₁₂)[x]
+// p(k)[x] = ∫dy₁⋯ dy₁₁ ∏ᵢ_[1≤i≤11] [0≤yᵢ≤1]·δ(min{y₁,...,y₁₁})[x]
+// ...
+// p(k)[x] = [0≤x]·[x≤1]·k!·∫dx₂⋯ ∫dxₖ [x≤x₂≤⋯ ≤xₖ≤1]
+// p(k)[x] = [0≤x]·[x≤1]·k!/(k-1)!·∫dx₂⋯ ∫dxₖ [x≤x₂]·[x₁≤1]⋯ [x≤xₖ][xₖ≤1]
+// p(k)[x] = [0≤x]·[x≤1]·k·∫dx₂⋯ ∫dxₖ [x≤x₂]·[x₂≤1]⋯ [x≤xₖ][xₖ≤1]
+// p(k)[x] = [0≤x]·[x≤1]·k·(1-x)ᵏ⁻¹
+// ∫dx x·p(k)[x] = ∫dx[0≤x]·[x≤1]·k·x·(1-x)ᵏ⁻¹
+//               = k·∫dx[0≤x]·[x≤1]·(1-x)·xᵏ⁻¹
+//               = k·(1/k-1/(k+1))
+//               = 1-k/(k+1)
+//               = 1/(k+1).
+
+// (d/dx)⁻¹ (1-x)·xᵏ⁻¹ = 1/k·x^k-1/(k+1)·x^(k+1).
+// idea: termination slicing
+
+
+// idea: representation of looping f(σ)[σ`] under condition c(σ), with c(⊥)=false:
+// δ(∞)[σ`]+∫dσ₀⋯ ∫dσ_{<∞} δ(σ)[σ₀] ∏ᵢ_[0≤i∧∀j<i. c(σⱼ)]([c(σᵢ)]·f(σᵢ)[σᵢ₊₁]+[¬c(σᵢ)]·(δ(σᵢ)[σ`]-δ(∞)[σ`])·∏ⱼ_[i<j]·δ(⊥)[σⱼ])

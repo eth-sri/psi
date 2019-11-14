@@ -1,0 +1,262 @@
+// skipped
+
+n := 3; // TODO: loops.
+
+def log₂(x)=>log(x)/log(2);
+
+def S[a](d: Distribution[a], x: a, eq: a×a→ ℝ)⇒
+	log₂(1/expectation(infer(()⇒ eq(sample(d),x))));
+
+def H[a](d: Distribution[a], eq: a×a→ ℝ)⇒
+	expectation(infer(()⇒ S(d,sample(d),eq)));
+
+def π₁[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[0]);
+def π₂[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[1]);
+
+def I[a,b](d: Distribution[a×b], eq₁: a×a→ ℝ, eq₂: b×b→ℝ)⇒
+	  H(π₁(d),eq₁) + H(π₂(d),eq₂) - H(d,eq_p(eq₁,eq₂));
+
+def cH[a,b](d:Distribution[a×b], eq₁: a×a→ ℝ, eq₂: b×b→ℝ)⇒ H(d,eq_p(eq₁,eq₂))-H(π₂(d),eq₂);
+
+
+def ℑ[a](c₁: Distribution[a], c₂: Distribution[a], n: ℝ, eq: a×a→ ℝ){
+	return log₂(n*expectation(infer((){
+		s₁ := sample(c₁);
+		s₂ := sample(c₂);
+		return eq(s₁,s₂);
+	})));
+}
+
+def genCap[a,b](A: a→ Distribution[b], d: Distribution[a], noise: a→ a, n: ℝ, eq: b×b→ℝ){
+	return expectation(infer((){ // "context-dependent" information
+		x := sample(d);
+		x₁ := noise(x);
+		x₂ := noise(x);
+		return ℑ(A(x₁),A(x₂),n,eq);
+	}));
+}
+
+def genCap₂[a,b](f: a→ b, d: Distribution[a], noise: a→ a, eq: b×b→ℝ){
+	return I(infer((){ // context-independent information: mutual information of outputs when applying different noise to the same input
+		x := sample(d);
+		x₁ := noise(x);
+		x₂ := noise(x);
+		return (f(x₁),f(x₂));
+	}),eq,eq);
+}
+
+
+def genCap₃[a,b,t](A: a→ b, x: a, T: Distribution[t], action: t→ a → a, noise: a→ a, eqa: a×a→ℝ, eqt: t×t→ℝ, eqb: b×b→ℝ){ // may need to select T in a clever way.
+	return I(infer((){
+		x₁ := noise(x); // generate training data
+		x₂ := noise(x); // generate validation data
+		τₛ := sample(T); // sample transformation
+		τₛx₂ := action(τₛ)(noise(x)); // apply transformation to validation set
+		c₁ := A(x₁);
+		cτ₂ := A(τₛx₂);
+		return (τₛ,(x₁,c₁,cτ₂));
+	}),eqt,eq_t(eqa,eqb,eqb));
+	// want: I(τ,(x₁,c₁,cτ₂)) large.
+}
+
+
+// application to sorting
+
+def idPerm(k: ℝ){
+	assert(k==n);
+	r := array(n,0);
+	for i in [0..n){ r[i]=i; }
+	return r;
+}
+
+def factorial(k: ℝ){
+	assert(k==n);
+	r := 1;
+	for i in [2..n]{ r *= i }
+	return r;
+}
+
+def allPermutations(k: ℝ){
+	assert(k==n);
+	c := idPerm(n);
+	r := [c];
+	for x in [1..factorial(n)){
+		a:=0, b:=1, f:=2, g:=1;
+		for i in [3..n]{
+			if x%f==0{ // TODO: if !(x%f){
+				g=f, f*=i;
+				i+=1, b+=1;
+			}
+		}
+		if b%2{ a = (b*(x div g) div (b+1))%b; }
+		// (c[a],c[b])=(c[b],c[a]); // TODO: allow!
+		t := c[a];
+		c[a] = c[b];
+		c[b] = t;
+		r ~= [c];
+	}
+	return r;
+}
+
+def quantify(cmp: ℝ[][],p: ℝ[]){
+	r := 0;
+	for i in [0..n){
+		for j in [i+1..n){
+			r += cmp[p[i]][p[j]]-cmp[p[j]][p[i]];
+		}
+	}
+	return r;
+}
+
+def optimalSort(cmp: ℝ[][]){
+	c := idPerm(n);
+	k := quantify(cmp,c);
+	r := c;
+	bestk := k;
+	for x in [1..factorial(n)){
+		a:=0, b:=1, f:=2, g:=1;
+		for i in [3..n]{
+			if x%f==0{ // TODO: if !(x%f){
+				g=f, f*=i;
+				i+=1, b+=1;
+			}
+		}
+		if b%2{ a = (b*(x div g) div (b+1))%b; }
+		// (c[a],c[b])=(c[b],c[a]); // TODO: allow!
+		//sign := if c[a] < c[b] { 1 } else { -1 };
+		t := c[a];
+		c[a] = c[b];
+		c[b] = t;
+		k := quantify(cmp,c);
+		if k>bestk{
+			r=c;
+			bestk=k;
+		}
+	}
+	return r;
+}
+
+def bubbleSort(cmp: ℝ[][]){
+	r := idPerm(n);
+	for i in [0..n){
+		for j in [0..n-1){
+			if cmp[r[j+1]][r[j]]{
+				t := r[j+1];
+				r[j+1] = r[j];
+				r[j] = t;
+			}
+		}
+	}
+	return r;
+}
+
+def selectionSort(cmp: ℝ[][]){
+	r := idPerm(n);
+	for i in [0..n){
+		m := i;
+		for j in [i+1..n){
+			if cmp[r[j]][r[m]]{
+				m=j;
+			}
+			t := r[m];
+			r[m] = r[i];
+			r[i] = t;
+		}
+	}
+	return r;
+}
+
+
+def randPerm(k: ℝ){
+	assert(n == k);
+	r := array(n,0);
+	for i in [0..n){ r[i] = i; }
+	for i in [0..n){
+		j := uniformInt(i,n-1);
+		t := r[j];
+		r[j] = r[i];
+		r[i] = t;
+	}
+	return r;
+}
+
+def noise(p: ℝ)(cmp: ℝ[][]){
+	r := cmp;
+	for i in [0..n){
+		for j in [i+1..n){
+			if flip(p){
+				r[i][j]=!r[i][j];
+				r[j][i]=!r[j][i];
+			}
+		}
+	}
+	return r;
+	if flip(p){
+		t := r[0][1];
+		r[0][1] = r[1][0];
+		r[1][0]=t;
+	}
+	return r;
+}
+
+def eqℝ(x,y)=>x==y;
+def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
+	for i in [0..n){
+		if !eq(x[i],y[i]){
+			return false;
+		}
+	}
+	return true;
+}
+def eq_p[a,b](eqa:a×a→ℝ,eqb:b×b→ℝ)(x:a×b,y:a×b)⇒
+	eqa(x[0],y[0])&&eqb(x[1],y[1]);
+
+def eq_t[a,b,c](eqa: a×a→ℝ, eqb: b×b→ℝ, eqc: c×c→ℝ)(x:a×b×c,y:a×b×c)⇒
+	eqa(x[0],y[0])&&eqb(x[1],y[1])&&eqc(x[2],y[2]);
+
+def reorderCmp(p:ℝ[])(cmp: ℝ[][]){
+	r := array(n,array(n,0));
+	for i in [0..n){
+		for j in [0..n){
+			r[p[i]][p[j]]=cmp[i][j];
+		}
+	}
+	return r;
+}
+
+def shuffleCmp(cmp: ℝ[][])=>reorderCmp(randPerm(n))(cmp);
+
+def main(k){
+	//arr := [3,2,0,1];
+	//arr := randPerm(n);
+	arr := [1,2,0];
+	cmp := array(n,array(n,0));
+	for i in [0..n){
+		for j in [0..n){
+			cmp[i][j]=arr[i]<arr[j];
+		}
+	}
+	//return noise(0.1)(cmp);
+	//r := bubbleSort(cmp);
+	//return (r[0],r[1],r[2],r[3]);
+	input := infer(()=>shuffleCmp(cmp));
+	//input := (SampleFrom("(input)=>δ_input[λξ₁. δ_ξ₁[{.val ↦ [ξ₂ ↦ ((([ξ₃ ↦ 0] (3))·[-ξ₂+1≠0]+([ξ₃ ↦ [-ξ₃+2=0]·[ξ₃≠0]] (3))·[-ξ₂+1=0])·[-ξ₂+2≠0]+([ξ₃ ↦ 0] (3))·[-ξ₂+2=0])·[ξ₂≠0]+([ξ₃ ↦ ([-ξ₃+1=0]·[-ξ₃+2≠0]+[-ξ₃+2=0])·[ξ₃≠0]] (3))·[ξ₂=0]] (3),.tag ↦ 1}]·⅟6+δ_ξ₁[{.val ↦ [ξ₂ ↦ ((([ξ₃ ↦ 0] (3))·[-ξ₂+1≠0]+([ξ₃ ↦ [-ξ₃+2≠0]·[ξ₃=0]] (3))·[-ξ₂+1=0])·[ξ₂≠0]+([ξ₃ ↦ 0] (3))·[ξ₂=0])·[-ξ₂+2≠0]+([ξ₃ ↦ ([-ξ₃+1=0]·[ξ₃≠0]+[ξ₃=0])·[-ξ₃+2≠0]] (3))·[-ξ₂+2=0]] (3),.tag ↦ 1}]·⅟6+δ_ξ₁[{.val ↦ [ξ₂ ↦ ((([ξ₃ ↦ 0] (3))·[-ξ₂+2≠0]+([ξ₃ ↦ [-ξ₃+1=0]·[ξ₃≠0]] (3))·[-ξ₂+2=0])·[-ξ₂+1≠0]+([ξ₃ ↦ 0] (3))·[-ξ₂+1=0])·[ξ₂≠0]+([ξ₃ ↦ ([-ξ₃+1=0]+[-ξ₃+1≠0]·[-ξ₃+2=0])·[ξ₃≠0]] (3))·[ξ₂=0]] (3),.tag ↦ 1}]·⅟6+δ_ξ₁[{.val ↦ [ξ₂ ↦ ((([ξ₃ ↦ 0] (3))·[-ξ₂+2≠0]+([ξ₃ ↦ [-ξ₃+1≠0]·[ξ₃=0]] (3))·[-ξ₂+2=0])·[ξ₂≠0]+([ξ₃ ↦ 0] (3))·[ξ₂=0])·[-ξ₂+1≠0]+([ξ₃ ↦ ([-ξ₃+2=0]·[ξ₃≠0]+[ξ₃=0])·[-ξ₃+1≠0]] (3))·[-ξ₂+1=0]] (3),.tag ↦ 1}]·⅟6+δ_ξ₁[{.val ↦ [ξ₂ ↦ ((([ξ₃ ↦ 0] (3))·[ξ₂≠0]+([ξ₃ ↦ [-ξ₃+1=0]·[-ξ₃+2≠0]] (3))·[ξ₂=0])·[-ξ₂+1≠0]+([ξ₃ ↦ 0] (3))·[-ξ₂+1=0])·[-ξ₂+2≠0]+([ξ₃ ↦ ([-ξ₃+1=0]+[-ξ₃+1≠0]·[ξ₃=0])·[-ξ₃+2≠0]] (3))·[-ξ₂+2=0]] (3),.tag ↦ 1}]·⅟6+δ_ξ₁[{.val ↦ [ξ₂ ↦ ((([ξ₃ ↦ 0] (3))·[ξ₂≠0]+([ξ₃ ↦ [-ξ₃+1≠0]·[-ξ₃+2=0]] (3))·[ξ₂=0])·[-ξ₂+2≠0]+([ξ₃ ↦ 0] (3))·[-ξ₂+2=0])·[-ξ₂+1≠0]+([ξ₃ ↦ ([-ξ₃+2=0]+[-ξ₃+2≠0]·[ξ₃=0])·[-ξ₃+1≠0]] (3))·[-ξ₂+1=0]] (3),.tag ↦ 1}]·⅟6]"): Distribution[ℝ[][]]);
+	error := noise(0.1);
+	eq := eq_a(eqℝ);
+	//T := infer(()=>randPerm(n));
+	def genCapSort(sort: ℝ[][]→ ℝ[]){
+		return genCap₂(sort, input, error, eq);
+		//return genCap₃(sort, cmp, T, reorderCmp, error, eq_a(eq),eq, eq);
+	}
+	//return genCapSort(bubbleSort);
+	return (genCapSort(optimalSort),genCapSort(bubbleSort),genCapSort(selectionSort));
+	/*k := eq_a(eqℝ)(optimalSort(cmp),bubbleSort(cmp));
+	observe(!k);
+	return (arr[0],arr[1],arr[2]);*/
+	//r := optimalSort(cmp);
+	//return (r[0],r[1],r[2]);
+	//return (genCap(bubbleSort, input, noise(0.01), eq_a(eqℝ))/H(input)); // TODO: make this fast
+	/*d := infer(()=>(uniformInt(0,1),uniformInt(0,2)));
+	eqℝℝ := eq_p(eqℝ,eqℝ);
+	return I(d,eqℝ,eqℝ);*/
+}

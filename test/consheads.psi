@@ -1,0 +1,20 @@
+// skipped
+// https://www.quora.com/A-coin-lands-60-heads-and-tails-40-of-the-time-Whats-probability-that-there-will-be-at-least-5-consecutive-heads-within-18-coin-flips
+// TODO: make fast without --dp
+
+def main(){
+	(n,p) := (18,0.6);
+	cur := 0;
+	for i in [0..n){
+		if flip(p){
+			cur += 1;
+		}else{
+			cur = 0;
+		}
+		if cur >= 5 {
+			return 1;
+		}
+	}
+	return 0;
+}
+		   

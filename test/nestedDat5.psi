@@ -1,0 +1,14 @@
+
+dat Foo{
+	dat Bar{
+		def Bar(){}
+	}
+	b: Bar;
+	def Foo(){
+		b = Bar();
+	}
+}
+
+def main(){
+	return Foo(); // expected: δ({.b ↦ {.`outer ↦ {}}})[r]
+}

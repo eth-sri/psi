@@ -1,0 +1,21 @@
+// skipped
+// TODO: make fast with --dp when sampling before the recursive calls.
+
+def bob(depth):ℝ{
+	if depth == 0 { return flip(0.6); }
+	alice_loc := alice(depth);
+	bob_loc := flip(0.6);
+	observe(bob_loc == alice_loc);
+	return bob_loc;
+}
+def alice(depth):ℝ{
+	bob_loc := bob(depth-1);
+	alice_loc := flip(0.6);
+	observe(alice_loc == bob_loc);
+	return alice_loc;
+}
+depth := 8;
+
+def main(){
+	return bob(depth);
+}

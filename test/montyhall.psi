@@ -1,0 +1,42 @@
+// skipped
+// TODO: make this fast for arbitrary number of doors
+
+num_doors := 3;
+
+host_knows := 1; // host knows where the prize is
+
+def pickDoor()=>uniformInt(1, num_doors);
+
+def hostPickDoor(prize, opened)=>sample(infer((){
+	door := pickDoor();
+	observe(door != opened); // open another door
+	if host_knows {
+		observe(door != prize); // do not reveal prize
+	}
+	return door;
+}));
+
+def switchDoor(opened, host)=>sample(infer((){
+	other := pickDoor();
+	observe(other != opened && other != host);
+	return other;
+}));
+
+def main(){
+	def setup(){
+		prize := pickDoor();
+		opened := pickDoor();
+		host := hostPickDoor(prize, opened);
+		assert(host != prize && host != opened);
+		return (prize, opened, host);
+	}
+	prNoSwitch := expectation(infer((){
+		(prize, opened, host) := setup();
+		return opened == prize;
+	}));
+	prSwitch := expectation(infer((){
+		(prize, opened, host) := setup();
+		return switchDoor(opened, host) == prize;
+	}));
+	return (prNoSwitch, prSwitch); // expected: δ(1/3)[prNoSwitch]·δ(2/3)[prSwitch]
+}

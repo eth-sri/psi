@@ -1,0 +1,16 @@
+// skipped
+
+n := 5;
+def main(){
+	a := array(n,-1);
+	k := array(n,-1);
+	for i in [0..n){
+		a[i] = uniformInt(0,n-1);
+		observe(a[i]!=i);
+		k[a[i]] = 1;
+	}
+	for i in [0..n){
+		observe(k[i]==1);
+	}
+	return a;
+}

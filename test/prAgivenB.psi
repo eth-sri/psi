@@ -1,0 +1,30 @@
+// skipped
+/*
+def PrAgivenB[a](d: Distribution[a], A: a→ℝ, B: a→ ℝ){
+	return expectation(infer((){
+		x := sample(d);
+		return A(x)&&B(x);
+	}))/
+		expectation(infer((){
+			x := sample(d);
+			return B(x)!=0;
+		}));
+}
+*/
+
+def PrAgivenB[a](d: Distribution[a], A: a→ℝ, B: a→ ℝ){
+	return expectation(infer((){
+		x := sample(d);
+		observe(B(x));
+		return A(x)!=0;
+	}));
+}
+
+def main(X,Y){
+	joint := infer((){
+		x := uniform(0,1);
+		y := x^2+uniform(0,1);
+		return (x,y);
+	});
+	return PrAgivenB(joint,(x,y)=>x<X/+0.5+/,(x,y)=>y>Y);
+}

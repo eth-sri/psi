@@ -1,0 +1,28 @@
+// skipped
+// TODO: evaluate normalization constant
+
+bound := 30;
+def main(){
+	def base[a,b](y:b)(x:a):b{
+		return y;
+	}
+	def step(g: ℝ → ℝ)(p){
+		if flip(p){ return 0; }
+		return 1+g(p);
+	}
+	geometric := base[ℝ,ℝ](1);
+	for i in [0..bound){
+		geometric = step(geometric);
+	}
+	def Geometric(p) => infer(() => geometric(p));
+	def condition[a](d: Distribution[a], pred: a → ℝ) =>
+		infer((){
+			x := sample(d);
+			observe(pred(x));
+			return x;
+		});
+	p := uniform(0,1);
+	d := condition[ℝ](Geometric(p), (x:ℝ) => x>=10);
+	observe(expectation(d)<=12);
+	return p;
+}

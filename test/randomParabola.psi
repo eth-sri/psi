@@ -1,0 +1,7 @@
+// https://www.quora.com/What-is-the-probability-that-the-equation-x-2-+-ax-+-b-0-has-real-solutions-given-1-a-1-and-1-b-1
+
+def main(){
+	a := uniform(-1,1);
+	b := uniform(-1,1);
+	return a^2-4*b>=0; // expected: 11/24·δ(0)[r]+13/24·δ(1)[r]
+}

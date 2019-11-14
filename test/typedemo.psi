@@ -1,0 +1,14 @@
+
+dat Cell[a]{
+	x : a;
+	def Cell(x: a){
+		this.x=x;
+	}
+	def foo(){
+		return x;
+	}
+}
+
+def main(){
+	return Cell(2); // expected: δ({.x ↦ 2})[r]
+}

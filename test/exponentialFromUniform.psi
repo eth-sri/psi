@@ -1,0 +1,6 @@
+
+def main(){
+	x := uniform(0,1);
+	return -log(x); // expected: [-1+⅟e^r≤0]·⅟e^r
+	// TODO: simplify Iverson bracket
+}

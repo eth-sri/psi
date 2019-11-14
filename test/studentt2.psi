@@ -1,0 +1,12 @@
+// skipped
+
+def sqrt(x) ⇒ x^(1/2);
+
+def main(){
+	n := 2;
+	(μ,σ) := (0,1);
+	(x₁,x₂) := (gauss(μ,σ),gauss(μ,σ));
+	X := (x₁+x₂)/2;
+	S := (x₁-X)^2+(x₂-X)^2;
+	return (X-μ)/(S/sqrt(n)); // TODO: this is the same as studentT(2)
+}

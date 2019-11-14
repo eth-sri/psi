@@ -1,0 +1,19 @@
+
+dat Cell{
+	x: ℝ;
+	def Cell(x){
+		this.x=x;
+	}
+	def inc(){
+		x+=1;
+	}
+	def get(){
+		return x;
+	}
+}
+
+def main(){
+	(a,b) := (Cell(0),Cell(0));
+	(if flip(1/2) { a } else { b }).inc();
+	return (a,b); // expected: TODO: 1/2·δ_a[{.x ↦ 0}]·δ_b[{.x ↦ 1}]+1/2·δ_a[{.x ↦ 1}]·δ_b[{.x ↦ 0}]
+}

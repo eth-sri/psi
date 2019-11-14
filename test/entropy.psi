@@ -1,0 +1,58 @@
+// skipped
+// TODO: make all queries fast
+def log₂(x)=>log(x)/log(2);
+
+//def entropy[a](eq: a×a → ℝ, d: Distribution[a]){ // TODO: polymporphic entropy function, typeclasses
+def entropy(d: Distribution[ℝ]){
+	return expectation(infer((){
+		x := sample(d);
+		//p := expectation(andThen((y) ⇒ x==y)(d));
+		p := expectation(infer((){ y:=sample(d); return x==y;}));
+		return log₂(1/p);
+	}));
+}
+
+def andThen[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));
+
+def cross_entropy(p: Distribution[ℝ],q: Distribution[ℝ]){
+	return expectation(infer((){
+		x := sample(p);
+		p := expectation(andThen((y) ⇒ x==y)(q));
+		return log₂(1/p);
+	}));	
+}
+
+def kl_divergence(p: Distribution[ℝ],q: Distribution[ℝ]){
+	return cross_entropy(p,q)-entropy(p);
+}
+
+/*def cond_entropy(d: Distribution[ℝ×ℝ]){ // H(X[0]|X[1])
+	return entropy(d)-entropy(andThen((x:ℝ×ℝ)=>x[1])(d)); // TODO: polymorphic version of entropy
+}*/
+
+def count_outcomes(d: Distribution[ℝ]){
+	return expectation(infer((){
+		x := sample(d);
+		//p := expectation(andThen((y) ⇒ x==y)(d));
+		p := expectation(infer((){ y:=sample(d); return x==y;}));
+		return 1/p;
+	}));
+}
+def max_entropy(d: Distribution[ℝ])=>log(count_outcomes(d));
+
+def isPrime(x:ℝ){
+	return count_outcomes(infer((){ (a,b) := (uniformInt(0,x),uniformInt(0,x)); observe(a*b==x); return a; }))==2;
+}
+
+def main(){
+	return entropy(infer(()=>flip(1/2)+flip(1/2)+flip(1/2)));
+	//p := uniform(0,1);
+	//return Expectation(entropy(infer(()=>flip(p))));
+	//return entropy(infer(()=>uniformInt(0,3)*uniformInt(0,2)));
+	//return count_outcomes(infer(()=>uniformInt(0,3)*uniformInt(0,2)));
+	//return count_outcomes(infer((){ (x,y) := (uniformInt(0,10),uniformInt(0,10)); observe(x*y==3); return x; }));
+	//return count_outcomes(infer(()=>flip(1/2)+flip(1/2)+flip(1/2))); // expected: δ(0)[-r₁+4]
+	//return isPrime(2);
+}
+
+

@@ -1,0 +1,9 @@
+// skipped
+// https://www.quora.com/Why-do-protons-have-a-mass-exactly-1837-times-that-of-an-electron/answer/Jack-Fraser-11
+
+def main(){
+	μ := 1836.15267389;
+	σ := 0.00000017;
+	ratio := gauss(μ, σ^2);
+	return Expectation(ratio>=1837);
+}

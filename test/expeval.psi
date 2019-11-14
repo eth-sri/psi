@@ -1,0 +1,44 @@
+// skipped
+// TODO: sum types
+// TODO: make this fast
+// TODO: support in symbolic backend
+
+
+t_min := 0, t_max := 1, t_plus := 2, t_minus := 3, t_times := 4, t_div := 5, t_var := 6;
+
+dat Expr{
+	which: ℝ;
+	op: Expr[];
+	def Expr(which:ℝ, op: Expr[]){
+		this.which=which;
+		this.op=op;
+	}
+}
+
+def min(a,b){ return if b<a { b } else { a }; }
+def max(a,b){ return if a<b { b } else { a }; }
+
+def eval(e: Expr):ℝ{
+	ops := [min,max,(a,b)=>(a+b)%256,(a,b)=>(a-b)%256,(a,b)=>a*b%256,(a,b)=>floor(a/b)];
+	for i in [0..5){
+		if e.which == i{
+			return ops[i](eval(e.op[0]),eval(e.op[1]));
+		}
+	}
+	return uniformInt(0,255);
+}
+
+def genExp(depth:ℝ):Expr{
+	if depth<=0{ return Expr(t_var,[]:Expr[]); }
+	which := uniformInt(0,6);
+	if which == t_var{
+		return Expr(which,[]:Expr[]);
+	}
+	return Expr(which,[genExp(depth-1),genExp(depth-1)]);
+}
+
+def main(c){
+	e := genExp(2);
+	return eval(e);
+	//return max(uniformInt(0,255),uniformInt(0,255));
+}

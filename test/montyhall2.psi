@@ -1,0 +1,15 @@
+// skipped
+
+def main(){
+	doors := [0,0,0];
+	prize := uniformInt(0,2);
+	doors[prize] = 1;
+	choice := uniformInt(0,2);
+	opened := if choice==prize {
+		(prize+uniformInt(1,2))%3
+	} else {
+		(0+1+2)-choice-prize
+	};
+	other := (0+1+2)-choice-opened;
+	return Expectation(doors[choice])<Expectation(doors[other]); // expected: δ(0)[-r₁+1]
+}

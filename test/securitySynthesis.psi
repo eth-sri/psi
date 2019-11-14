@@ -1,0 +1,17 @@
+// skipped
+
+def main(){
+	a:=uniform(0,1);
+	b:=uniform(0,1);
+	observe(a<=b);
+	c:=uniform(0,1);
+	d:=uniform(0,1);
+	observe(c<=d);
+	e:=uniform(0,1);
+	f:=uniform(0,1);
+	observe(e<=f);
+	g:=uniform(0,1);
+	h:=uniform(0,1);
+	observe(g<=h);
+	return (a,b);
+}

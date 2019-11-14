@@ -1,0 +1,17 @@
+// skipped
+
+n := 3;
+
+def count(f: ℝ[] → ℝ)=>
+	2^n * expectation(infer((){
+		a := array(n,0);
+		for i in [0..n){
+			a[i] = flip(1/2);
+		}
+		return f(a);
+	}));
+
+def main(){
+	r := count((x: ℝ[])=>x[1] && (x[2] || !x[1]) && (x[1] || x[0] || !x[2]));
+	return r;
+}

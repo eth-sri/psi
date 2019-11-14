@@ -1,0 +1,4 @@
+
+def main(β,X){
+	return exponential(β)>=X; // expected: TODO: simplify this.
+}

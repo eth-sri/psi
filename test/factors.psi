@@ -1,0 +1,23 @@
+// skipped
+// https://www.quora.com/When-rolling-a-d20-five-times-whats-the-chance-of-all-numbers-sharing-a-common-factor
+
+// TODO: make fast with --dp even when temporary is generated in argument list of function call
+
+def gcd(a,b){
+	(x,y) := (a,b);
+	for i in [0..7){
+	if y != 0 {
+		(k,l):=(y,x%y); // TODO: tuple assignment in dp backend.
+		(x,y)=(k,l);
+	}}
+	return x;
+}
+
+def main(){
+	r := 0;
+	for i in [0..5){
+		x := uniformInt(1,20);
+		r = gcd(r,x);
+	}
+	return r != 1;
+}

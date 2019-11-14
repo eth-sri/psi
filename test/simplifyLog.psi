@@ -1,0 +1,4 @@
+def main(){
+	x:=2^1234;
+	return (log(x)/log(2),log(12)/log(2)); // expected: δ(1234)[r₁]·δ(2+log(3)·⅟log(2))[r₂]
+}

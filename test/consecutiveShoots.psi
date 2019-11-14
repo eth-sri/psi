@@ -1,0 +1,67 @@
+// skipped
+// TODO: loops
+
+def main(){
+	count := 0;
+	for i in [0..10){
+		if flip(0.75){
+			count += 1;
+		}else{
+			count = 0;
+		}
+		if count == 3{
+			return 1;
+		}
+	}
+	return 0;
+}
+/*
+def throw() ⇒ flip(0.75);
+
+def iota(n){
+	assert(n==10);
+	r := [];
+	for i in [0..10){
+		r ~= [i];
+	}
+	return r;
+}
+
+def fold[a,b](f: b×a→ b)(init: b)(x: a[]){
+	assert(x.length==10||x.length==3||x.length==8);
+	r := init;
+	if x.length==10{
+		for i in [0..10){
+			r = f(r,x[i]);
+		}
+	}else if x.length==8{
+		for i in [0..8){
+			r = f(r,x[i]);
+		}
+	}else if x.length==3{
+		for i in [0..3){
+			r = f(r,x[i]);
+		}
+	}
+	return r;
+}
+
+def map[a,b](f: a→ b)⇒ fold[a,b[]]((r:b[],x:a)⇒ r~[f(x)])([]:b[]);
+
+def all[a](f: a→ℝ)(x:a[])⇒ fold((a:ℝ,b:ℝ)⇒ a && b)(1)(map(f)(x));
+def any[a](f: a→ℝ)(x:a[])⇒ fold((a:ℝ,b:ℝ)⇒ a || b)(0)(map(f)(x));
+
+def slices(l: ℝ)[a](x:a[]){
+	assert(l==3 && x.length==10);
+	r := ([]:a[][]);
+	for i in [0..10-2){
+		r~=[x[i..i+3]];
+	}
+	return r;
+}
+
+def main(){
+	throws := map((x)⇒throw())(iota(10));
+	return any((x:ℝ[])=>all((y)=>y)(x))(slices(3)(throws));
+}
+*/

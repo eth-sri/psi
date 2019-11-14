@@ -1,0 +1,25 @@
+// skipped
+// http://nbviewer.jupyter.org/github/CamDavidsonPilon/Probabilistic-Programming-and-Bayesian-Methods-for-Hackers/blob/master/Chapter1_Introduction/Ch1_Introduction_PyMC3.ipynb
+// TODO: make this work for the entire dataset somehow.
+
+def main(){
+	data := readCSV("data/txtdata.csv");
+	assert(data.length == 74);
+	sum := 0;
+	n := 3;
+	for i in [0..n){
+		sum += data[i];
+	}
+	α := data.length/sum;
+	//λ₁ := exponential(α);
+	//λ₂ := exponential(α);
+	λ₁ := uniform(1,30);
+	λ₂ := uniform(1,30);
+	τ := uniformInt(0,n);
+	for i in [0..n){
+		observe(data[i] == poisson(if i < τ then λ₁ else λ₂));
+	}
+	return (τ);
+	//return (λ₁,λ₂);
+	//return (λ₁,τ);
+}

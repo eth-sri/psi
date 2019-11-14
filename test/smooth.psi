@@ -1,0 +1,12 @@
+// skipped
+// parameters: --expectation
+// from: "Bridging Boolean and Quantitative Synthesis Using Smoothed Proof Search"
+
+def main(c){
+	assert(0<=c&&c<=10);
+	x := uniform(0,10);
+	y := 0.0;
+	if (x > c) { y = x + 1; } else { y = 10; }
+	return y; // expected: ((-1/10·c+-1/20+-1/20·c²)·[c≠0]+-1/20·[c=0]+121/20+c)·[-10+c≤0]·[-c≤0]
+	// TODO: improve simplification (if c=0, then -1/10·c+-1/20+-1/20·c²=-1/20)
+}

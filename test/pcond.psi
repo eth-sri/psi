@@ -1,0 +1,8 @@
+// from "Problems of the Lightweight Implementation of Probabilistic Programming" by Oleg Kiselyov
+
+def main(){
+	x := [1,2][flip(1/2)];
+	if x == 1 { return x; }
+	observe(flip(1/2)==1);
+	return [20,21][flip(1/2)]; // expected: 1/6·δ(20)[x]+1/6·δ(21)[x]+2/3·δ(1)[x]
+}

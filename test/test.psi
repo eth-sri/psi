@@ -1,0 +1,3529 @@
+// skipped
+def main(){
+	p := uniform(0,1);
+	return errorPr(infer((){assert(flip(p));}))==1-p; // expected: δ(1)[r]
+}
+
+/+
+def allSprouted(state) => state == 3;
+def someSprouted(state) => state > 0;
+def noneSprouted(state) => state == 0;
+
+all := 0, some := 1, none := 3;
+
+def meaning(words)⇒
+	if words == none { noneSprouted } else
+                     { assert(false);   };
+
+def main(){
+	def literal_listener(words)⇒ infer((){
+		wordsMeaning := meaning(words);
+		x:=wordsMeaning(0);
+	});
+	cur_listener := literal_listener;
+	return cur_listener;
+}
++/
+
+
+/+
+def main(p){
+	return geometric(p); // TODO
+}
++/
+/+
+def main(){
+	y:=2;
+	dat Foo{
+		x:ℕ;
+		def Foo(){
+			//this.x=y;
+			x=2;
+		}
+		def bar(){
+			return y;
+		}
+	}
+	return Foo().bar();
+}
++/
+/+
+def main(){
+	f := ()=>2;
+	i := 3;
+	if true{
+		x := 3;
+		f = ()=>x+i;
+	}
+	return f;
+}
++/
+/+
+def main(){
+	x:=infer;
+	x=[a]⇒infer[a];
+	x=if flip(1/2){
+		infer;
+	}else{
+		[a]⇒infer[a];
+	}
+}
++/
+/+
+dat X{
+	def X(){}
+	def foo(k){
+		return ();
+	}
+}
+
+def main(){
+	x:=X();
+	return x.foo(0);
+}
++/
+/+
+def main(){
+	if flip(1/2){
+		x:=2;
+	}else{
+		x:=3;
+	}
+	return x;
+}
++/
+/+
+def main(){
+	(x,y,z):=(0,0,0);
+	((x,y),z)=((1,2),3);
+	return (x,y,z);
+}
++/
+/+
+def main(){
+	x:=true:𝔹;
+	if x{
+		f:=()=>2;
+		return f();
+	}
+	assert(false);
+}
++/
+
+/+
+def main(){
+	x:=gauss(0,1);
+	l:=(x^2)^(1/2);
+	//return (x/l);
+	return (x/l);
+}
++/
+/+
+def main(){
+	x:=(gauss(0,1),gauss(0,1));
+	l:=(x[0]^2+x[1]^2)^(1/2);
+	return (x[0]/l,x[1]/l);
+}
++/
+/+
+def factorial(n){
+	if n<=0{ return 1; }
+	return sampleFrom("(r;n)⇒δ(∫dx[0≤x] x^n·e^-x)[r]",n);
+}
++/
+/+
+def factorial(n){
+	r:=1;
+	for i in (0..n]{
+		r*=i;
+	}
+	return r;
+}
+def nCk(n,k){
+	return (0<=k)*(k<=n)*factorial(n)/(factorial(k)*factorial(n-k));
+}
+def main(){
+	(n,k,p):=(20,6,1/3);
+	x:=binomial(n,p);
+	return (Expectation(nCk(x,k)),p^k*nCk(n,k));
+}
++/
+	
+/+
+def main(){
+	a:=[uniform(0,2),uniformInt(1,3)/3];
+	x:=a[flip(1/2)];
+	p:=infer((){
+		y:=uniform(0,1);
+		observe(y<=x);
+		return y;
+	});
+	return sample(p);
+}
++/
+
+/+
+def main(){
+	winter := flip(0.5);
+	clouds := if winter then flip(0.8) else flip(0.3);
+	base := if winter then 3 else 0;
+	altitude := [base + 3, base + 5, 10][uniformInt(0,2)];
+	rainfall := if clouds then altitude else 0;
+
+	d:=Marginal(rainfall,clouds);
+	return expectation(infer((){ (r,c):=sample(d); observe(c==clouds); return r; }));
+}
++/
+/+
+def main(){
+	x := log(abs(gauss(0,1)));
+	return x;
+}
++/
+/+
+def main(){
+	x := gauss(0,1)^2;
+	return x;
+}
++/
+/+
+def main(){
+	p := 1/100;
+	x := geometric(p);
+	return Expectation(x<=1/p);
+}
++/
+/+
+def main(n){
+    x := array(n,0);
+    x[uniformInt(0,n-1)]=uniform(0,1);
+    x[uniformInt(0,n-1)]=2*x[uniformInt(0,n-1)];
+    return x[uniformInt(0,n-1)];
+}
++/
+/+
+def main(Z){
+	x := gauss(0,1);
+	y := gauss(x,1);
+	z := gauss(x,1);
+	return (y,z);
+}
++/
+/+
+def fib(n:ℝ):ℝ{
+	if n>1{ return fib(n)+fib(n-2); }
+	return n;
+}
+
+def main(){ }
++/
+/+
+def main(){
+	return uniform(0,1)^2;
+}
++/
+/+n:=50;
+def main(){
+	s := 0;
+	for i in [0..n){
+		s+=exponential(1);
+	}
+	return s;
+}
+
+/+// skipped
+def main(){
+	p:=1/1000;
+	k:=256;
+	repeat k{
+		if flip(1/2) && flip(p)==0{ return 0; }
+	}
+	return 1;
+}
++/
++/
+/+
+def main(λ,k){
+	x := poisson(λ);
+	observe(x+poisson(λ)==k);
+	return x==0;
+}
++/
+/+
+def main(){
+	a := array(n,2);
+	(a[0],a[1]) := (a[1], a[0]);
+}
++/
+/+
+def foo():𝟙{}
+
+def main():𝟙{
+	//x := foo: 𝟙→𝟙;
+	def foo(d: Distribution[ℝ])⇒sample(d);
+	x := foo : Distribution[ℝ] → ℝ;
+	
+	return;
+}
++/
+/+
+def main(n: !ℝ){
+	x := ![1,2,3];
+}
++/
+/+
+def main(){
+	i := 2;
+	if 1{
+		i := 3;
+	}
+	for _ in [0..10){
+		for _ in [0..10){
+			return _;
+		}
+	}
+}
++/
+
+/+
+// justifying manipulations in DP-finder
+
+def lebesgue(){ // not really supported.
+	return sampleFrom("(x)=>x/x");
+}
+def progA(y,ν){
+	X := lebesgue(); // uniform prior on X
+	Y := gauss(X,ν); // Y is sampled depending on X
+	cobserve(Y,y);   // Y is observed to be y (the estimate)
+	return X;        // posterior on X
+}
+def progB(y,ν){
+	return gauss(y,ν);
+}
+
+def main(y,ν){
+	return progA(y,ν); // expected: [ν=0]·δ(0)[-y+r]+[ν≠0]·e^((-1/2·r²+-1/2·y²+r·y)·⅟ν)·⅟√̅2·⅟√̅ν·⅟√̅π
+	//return progB(y,ν); // expected: [ν=0]·δ(0)[-y+r]+[ν≠0]·e^((-1/2·r²+-1/2·y²+r·y)·⅟ν)·⅟√̅2·⅟√̅ν·⅟√̅π
+}
++/
+
+/+
+def main(){
+	x := poisson(1/2);
+	y := poisson(1/2);
+	return x==y;
+}
++/
+/+
+def main(){ // TODO: make work (other integration order works already)
+	x := geometric(1/2);
+	y := geometric(1/2);
+	return 2*x==y; // expected: 2/7·δ(1)[r]+5/7·δ(0)[r]
+}
++/
+/+ // TODO: make work (with and without observe)
+def main(){
+	x := geometric(1/2);
+	//observe(x<=10);
+	return x%2!=0;
+}
++/
+/+
+def test(n){
+	x := uniformInt(0,n-1);
+	return x^3+x^2+x+1!=0;
+}
+def main(){
+	return test(10);
+}
++/
+/+
+def main(){
+	return uniform(0,1)^2+uniform(0,1);
+}
++/
+/+
+def main(z){
+	//z := uniform(0,1);
+	x := infer((){
+		y := uniform(0,1);
+		observe(y <= z);
+		return y;
+	});
+	return expectation(x);
+}
++/
+/+
+def main(){
+	y := uniform(0,1);
+	f := (x)=>x;
+	if flip(1/2){
+		f = (x)=>x+5;
+	}
+	return f(y^2);
+}
++/
+
+/+
+def main(){
+	μ := [0,0];
+	Σ := [[1,3/5],[3/5,2]];
+	return multiGauss(μ,Σ);
+}
++/
+
+/+
+dat Foo[a]{
+	x: Foo[Foo[a]][];
+	def Foo(){
+		x = []: Foo[Foo[a]][];
+	}
+}
+
+def main(){
+	f := Foo[ℝ]();
+	f.x[0].x[0]=2;
+}
++/
+/+
+def main(){
+	p := uniform(0,1);
+	for i in [0..5){
+		observe(flip(p));
+	}
+	//return flip(p);
+	return p;
+}
++/
+/+def main(){
+	x := 1;
+	y := 1;
+	z := x-y;
+	z = 1.0;
+	return z;
+}
++/
+/+
+def main(){
+	randArr := array(5,0);
+	for i in [0..5){
+		pos := uniformInt(0,4);
+		randArr[pos] = i;
+	}
+	return randArr[0];
+}
++/
+/+
+def main(c){
+	assert(0<=c&&c<=10);
+	x := uniform(0,10);
+	y := 0.0;
+	if (x > c) { y = x + 1; } else { y = 10; }
+	return y;
+}
++/
+/+def main(x){
+	return ~x;
+}
++/
+/+
+def main(){
+	return laplace(20);
+}
++/
+/+
+def main(y){
+	x := 2121*y;
+	x = x^(1/2);
+	return x;
+}
++/
+/+
+def main(){
+	n := 9;
+	x := binomial(n, 1/2);
+	y := n-x;
+	//Expectation(x*y) = Expectation((x-n/2)*(y-n/2)) + n/2·Expectation(x+y)-n^2/4.
+	//return Expectation(x*y);
+	//return n^2/4-Expectation((x-n/2)*(x-n/2));
+	//return (n^2-n)/4
+	// 0 ≤ Variance(X+Y)
+	//   = Expectation((X+Y)^2) - Expectation(X+Y)^2
+	//   = 2·Expectation(X^2)+2·Expectation(X·Y) - 4·Expectation(X)^2
+	// ⇒ Expectation(X·Y)≥2·Expectation(X)^2-Expectation(X^2).
+	// ⇒ Expectation(X·Y)≥2·Expectation(X)^2-Expectation(X^2).
+}
++/
+/+
+def main(){
+	x := geometric(1/2);
+	return Expectation(x^2);
+}
++/
+/+
+def main(){
+	x := 2^(1/2);
+	return x<=1;
+}
++/
+/+def main(){
+	x := uniform(0,1);
+	y := uniform(0,1);
+	observe(x*y<0.2);
+	return x+y;
+}
++/
+/+
+def main(){
+	return ℝ × ℝ;
+}
++/
+/+
+def main(x){
+	repeat 1{
+		return 2;
+	}
+}
++/
+/+
+def main(){
+	q₁ := 2663191003150725233/5997013881313296384;
+	return q₁;
+}
++/
+
+/+
+def main(r){
+	x := geometric(1/2);
+	y := geometric(1/2);
+	return Expectation(x+y<=r);
+}
++/
+
+/+
+def main(p){
+	x := geometric(1/2);
+	return Expectation(x^2)-Expectation(x)^2;
+	//return Expectation(x);
+}
++/
+/+
+def main(){
+	x := geometric(1/2);
+	assert(x!=10);
+	return ();
+}
++/	
+
+/+
+def main(){
+	x := gauss(0,1);
+	return Expectation(x^12);
+}
++/
+/+
+def main(){
+	x := gauss(0,1);
+	return Expectation(x^6);
+}
++/
+/+
+def main(){
+	x := uniform(0,1);
+	return Expectation(x);
+}
++/
+/+
+def main(){
+	for i in [0..n){
+		
+	}
+}
++/
+
+/+def lipschitz(L: ℝ)(f: ℝ→ℝ)
+    ⇒ ∀(x:ℝ,y:ℝ). abs(f(x)-f(y))<=L*abs(x-y);+/
+
+//def Lipschitz(L: ℝ) := {f: ℝ → ℝ | lipschitz(L)(f) };
+/+
+def main(){
+	x := 1;
+	x = 2;
+	y := 2;
+	if x = y {
+		return 2;
+	}
+	return 3;
+}
++/
+/+
+def main(){
+	def roll()⇒ uniformInt(1,6);
+	//return (roll()+roll()+roll()==12)*6^3;
+	x := roll()+roll();
+	return x<6;
+}
++/
+/+
+n := 2;
+
+def matmul[n,m](m: ℝ^(n×m), x: ℝ^m){
+	r := array(n,0);
+	for i in [0..n){
+		for j in [0..n){
+			r[i] += m[i][j]*x[j];
+		}
+	}
+	return r;
+}
+
+def main(){
+	//m := [1 for i in iota(1,2)];
+	m := [[1, 1], [1, 0]];
+	x := [1, 0];
+	//return matmul(m,matmul(m,matmul(m,matmul(m,x))))[0];
+	return (x:ℝ[])=>matmul(m,matmul(m,matmul(m,matmul(m,x))));
+}
++/
+/+
+def main(){
+	x := uniform(-1, 1);
+	y := uniform(-1, 1);
+	return x-y;
+}
++/
+/+
+def main(q){
+	return geometric(q);
+}
++/
+/+
+def main(){
+	return Expectation(geometric(1/2)^2); // TODO
+}
++/
+/+
+def main(){
+	return Expectation(geometric(1/2)); // TODO
+}
++/
+/+
+def main(){
+	x := geometric(1/2);
+	y := geometric(1/2);
+	return x+1==y; // TODO
+}
++/
+/+
+def main(){
+	x := geometric(1/2);
+	y := geometric(1/2);
+	return x==y;
+}
++/
+/+
+def main(){
+	x := geometric(1/2);
+	return x > 100; // TODO
+}
++/
+/+
+def main(){
+	return uniformInt(0,100000)<=1;
+}
++/
+/+
+def main(){
+    a := [1,1,1];
+    x := categorical(a);
+    return x;
+}
++/
+/+
+def main(){
+	n := 10;
+	//return 2^floor(log(n)/log(2)+1); // TODO: evaluate
+	x := 0;
+	for i in [0..10){
+		x = x ⊕ uniformInt(0,n-1);
+	}
+	return x;
+}
++/
+/+
+def main(){
+	x := uniformInt(0,2);
+	return x;
+}
++/
+/+
+def variance(d: Distribution[ℝ]){
+	return Expectation(sample(d)^2)-Expectation(sample(d))^2;
+}
+
+def main()⇒variance(infer((){
+	//x := uniform(0,1);
+	//y := uniform(0,1);
+	//y := x;
+	//a := 1+x;
+	//b := (1-y)^2;
+	a := gauss(0,1);
+	b := gauss(0,1);
+	return log(a)-log(b);
+}));
++/
+
+//def mux[a](x: ℝ, y: a, z: a)⇒ if x then (y,z) else (z,y);
+
+/+
+def main(){
+	return binomial(3,uniformInt(1,4));
+}
++/
+
+/+
+def main(){
+	x := geometric(1/2);
+	y := geometric(1/2);
+	return x==y;
+}
++/
+/+
+def main(){
+	v := array(5,0);
+	k := 7;
+	for i in [0..k){
+		v[uniformInt(0,4)]=1;
+	}
+	def all(a:ℝ[]):ℝ⇒ if a.length==0 then true else a[0]&&all(a[1..a.length]);
+	return (all(v),(5^k-5*4^k+10*3^k-10*2^k+5)/5^k);
+}
++/
+
+/+
+n := 2;
+
+def mmv(A: ℝ[][], b: ℝ[]){ // matrix-vector product
+	return sampleFrom("(r;A,b)=>δ([i↦ ∑_j[0≤j]·[j<b.length] A@[i]@[j]·b@[j]] (A.length))[r]",A,b):ℝ[]; // performance hack
+}
+
+def avv(a: ℝ[], b: ℝ[]){ // vector addition
+	return sampleFrom("(r;a,b)=>δ([i↦ a@[i]+b@[i]] (a.length))[r]",a,b):ℝ[]; // performance hack
+}
+
+def dot(a: ℝ[], b: ℝ[]){ // dot product for first m entries of vector
+	return sampleFrom("(r;a,b)=>δ(0)[-r+∑_i[0≤i]·[i<a.length] a@[i]·b@[i]]",a,b); // performance hack
+}
+
+def cholesky(A: ℝ[][]){ // cholesky decomposition
+	assert(sampleFrom("(r;A)=>δ([∑_i[0≤i]·[i<A.length]∑_j[0≤j]·[j<A.length]·[A@[i]@[j]≠A@[j]@[i]]=0])[r]",A));
+	L := array(A.length,array(A.length,0));
+	for i in [0..n){
+		if i < A.length {
+			for j in [0..i+1){
+				if j < A.length{
+					t := dot(L[i][0..j],L[j][0..j]);
+					if i == j {
+						assert(A[i][j]>=t);
+						L[i][j] = (A[i][j]-t)^(1/2)
+					}else if L[j][j]!=0{
+						L[i][j] = (A[i][j]-t)/L[j][j];
+					};
+				}
+			}
+		}
+	}
+	return L;
+}
+
+def multiGauss(μ: ℝ[], Σ: ℝ[][]){
+	r := array(n,0);
+	for i in [0..n){
+		r[i] = gauss(0,1);
+	}
+	return avv(mmv(cholesky(Σ),r),μ);
+}
+/+
+def main(){
+	γ := 2/5;
+	Σ := [[1,γ],[γ,1]];
+	r := multiGauss([0,0],Σ);
+	(x,y) := (r[0],r[1]);
+	return (x,y);
+}
++/
+
+
+def main(){
+	/+γ := 2/5;
+	Σ := [[1,γ],[γ,1]];
+	r := multiGauss([0,0],Σ);
+	(x,y) := (r[0],r[1]);
+	/*μ₁ := 10;
+	μ₂ := 2;
+	x := gauss(μ₁,1);
+	y := gauss(μ₂,1);*/
+	return (x,y);+/
+	(x,y) := sampleFrom("(x,y)=>5/2·e^(-25/42·x²+-25/42·y²+10/21·x·y)·⅟π·⅟√2̅1̅");
+	return (x/y);
+}
++/
+
+/+
+def main(y){
+	x := uniform(-1,1);
+	cobserve((0<=x)*(x<=1)*x+(1<x),0);
+	return x;
+}
++/
+/+
+def main(){
+	x := gauss(0,1);
+	y := expectation(infer(()=>gauss(0,1)<=x));
+	return y;
+}
++/
+/+
+def main(){
+	x := uniform(-1,1);
+	return log(x);
+}
++/
+/+
+def main(){ // TODO: make fast
+	epsilon := 0.1;
+	delta := 1;
+	T := 0;
+
+	c := 1;
+	input:=[1.0,2.0,3.0,4.0];
+	output:=array(4,0);
+
+	epsilon1 := epsilon/2;
+	rho := laplace(0, delta/epsilon1);
+	epsilon2 := epsilon - epsilon1;
+
+	count := 0;
+	for i in [0..input.length) {
+		vi := laplace(0, c*delta/epsilon2);
+		if input[i]+vi>=T+rho{
+			output[i]=input[i]+vi;
+		}else{
+			output[i]=-10000;
+		}
+	}
+	return (output[0],output[1],output[2],output[3]);
+}
++/
+/+
+def main(){
+	x := gauss(0,1);
+	y := gauss(0,1);
+	return max(x,y);
+}
++/
+/+
+def main(){
+	x := uniform(-1,1);
+	y := uniform(-1,1);
+	z := uniform(-1,1);
+	cobserve((y^2+z^2)^(1/2),(1-x^2)^(1/2));
+	return (x,y,z);
+}
++/
+/+
+def main(){
+	x := uniform(-1,1);
+	y := uniform(-1,1);
+	z := uniform(-1,1);
+	cobserve(x^2+y^2+z^2,1);
+	return (x,y,z);
+}
++/
+/+
+def main(δ){
+	ε := 1/δ;
+	x := uniform(0,1);
+	y := uniform(0,1);
+	//observe(abs(x/y-1)<=1);
+	observe(abs(x-y)<=ε);
+	return x;
+}
++/
+/+
+def main(δ){
+	ε := 1/δ;
+	x := uniform(0,1);
+	y := uniform(0,1);
+	observe(abs(x-y)<=ε);
+	//cobserve(x/y,1);
+	return x;
+}
++/
+/+def main(δ){
+	ε := 1/δ;
+	x := uniform(0,1);
+	y := uniform(0,1);
+	observe(abs(x/y-1)<=ε);
+	//cobserve(x/y,1);
+	return x;
+}
++/
+
+/+
+def main(){
+	return beta(2,2);
+}
++/
+/+
+def main(){
+    p := uniform(0,1);
+    x₁ := flip(p);
+    x₂ := flip(p);
+    observe(x₁ && !x₂);
+    return p
+}
++/
+
+/+
+def main(){
+    x := uniform(0,1);
+    y := (2+x)/(3+x);
+    return y;
+}
++/
+
+/+
+def main(){
+    x := if flip(1/2)
+         then uniform(0,1)
+         else 1/2;
+    return x*(1-x);
+}
++/
+/+
+def main(){
+	x := 1;
+	i := 0;
+	while(x){
+		x := flip(1/2);
+		i += 1;
+	}
+	return i;
+}
++/
+/+
+def main(){
+	/*x := uniform(0,1);
+	y := uniform(0,1);
+	observe(x+y<=9/10);
+	return x*y<=1/10;*/
+	x := gauss(0,1);
+	y := gauss(0,1);
+	observe(y >= -1/2);
+	x = min(x, y);
+	return x;
+}
++/
+/+
+def main(){
+	a := [[0,1],[1,2]];
+	a[flip(1/2)][0] = 3;
+	return a[0][0];
+}
++/
+/+
+def main(){
+	x := if flip(1/2)||1
+	     then uniform(0,1)
+	     else 1/2;
+	return x*(1-x);
+}
++/
+/+
+def main(δ){
+	ε := 1/δ;
+	x := uniform(0,1);
+	y := uniform(0,1);
+	//observe(abs(x-y)<=ε);
+	observe(abs(x/y-1)<=ε);
+	return x;
+}
++/
+
+/+def main(){
+    x := uniform(0,1);
+    y := uniform(0,1);
+    cobserve(x-y,0);
+    return x;
+}
++/
+/+def main(){
+    x := uniform(0,1);
+    y := uniform(0,1);
+    cobserve(x/y,1);
+    return x;
+}
++/
+
+/+
+
+def main(){
+	x := gauss(0,1);
+	//x = min(x, exponential(1));
+	//x = min(x, exponential(1));
+	//x = min(x, exponential(1));
+	x = max(x, uniform(0,1));
+	x = max(x, uniform(0,1));
+	if x < 2{
+		x += 3;
+	}
+	return x;
+}
++/
+/+
+def formula(x: ℝ[])=>x[1] && (x[2] || !x[1]) && (x[1] || x[0] || !x[2]);
+
+def main(){
+	n := 3;
+	x := array(n,0);
+	for i in [0..n){
+		x[i] = flip(1/2);
+	}
+	observe(formula(x));
+	//return 2^n*formula(x);
+	return ((x[0],x[1],x[2]),);
+}
++/
+/+
+def main(){
+	k := 2;
+	n := 4;
+	centers := array(k,0);
+	for i in [0..k){
+		centers[i] = gauss(0,20^2);
+	}
+	//data := array(n,0);
+	(realCenters, observedData) := ([8.4e+00,2.7e+01],[2.8e+01,9.8e+00,8.5e+00,2.6e+01]);
+	for i in [0..n){
+		c := uniformInt(0,k-1);
+		//data[i] = gauss(centers[c],1);
+		cobserve(gauss(centers[c],1),observedData[i]);
+	}
+	
+	/*for i in [0..n){
+		cobserve(data[i],observedData[i]);
+	}
+	return (centers[0],centers[1]);*/
+	return (centers[0],centers[1]);
+	//return (min(centers[0],centers[1]), max(centers[0],centers[1]));
+}
++/
+/+
+def main(){
+	p := uniform(0,1);
+	def experiment(x){
+		observe(flip(p)==x);
+	}
+	experiment(1);
+	experiment(0);
+	experiment(0);
+	/*experiment(1);
+	experiment(1);
+	experiment(1);
+	experiment(1);*/
+	return p;
+}
++/
+
+/+ // nice example for floating-point inaccuracy
+def main(a){
+	x := uniform(0,10);
+	cobserve(x + gauss(0,1), a-0.5);
+	cobserve(x + gauss(0,1), a-0.5);
+	return x;
+}
++/
+/+
+def main () {
+	x := uniform (0 ,10) ; // unknown location
+	// noisy measurements :
+	cobserve (x + gauss(0,1), 5.232) ;
+	cobserve (x + gauss(0,1), 6.112) ;
+	return x;
+	// what do we know about the location now ?
+}
++/
+
+/+
+def main(){
+	x := if flip(1/2)
+	     then uniform(-1/2,1)
+	     else 0;
+	y := x^2;
+	return y;
+}
++/
+/+
+def main(){
+	return gauss(0,1);
+}
++/
+/+
+def main(){
+	p := 1/2;
+	timon_lied := flip(1e-20); // very honest
+	if timon_lied{
+		p = uniform(0,1);
+	}
+	for i in [0..100){
+		observe(flip(p)==1); // all heads
+	}
+	return p; // probability of next head
+}
++/
+
+/+
+def main(k){
+	x := uniform(0,1);
+	y := 1-x;
+	z := 2*x+y;
+	cobserve(z,1);
+	return x;
+}
++/
+
+/+
+def main(){
+	(a,b) := (gauss(0,1),gauss(0,1));
+	x := a*5+b*10;
+	y := a*3+b*3;
+	return (x-y)^2;
+}
++/
+/+
+def main(){
+	r := multiGauss([0,0],[[1,0],[0,1]]);
+	return (r[0],r[1]);
+}
++/
+/+
+def main(){
+	y₁ := uniform(-1000,1000);
+	y₂ := uniform(-1000,1000);
+	observe((1 <= -1/5*y₁ + 1/10*y₂) && (-1/5*y₁ + 1/10*y₂ <= 3) && (4 <= 3/20*y₁ -1/20*y₂) && (3/20*y₁ -1/20*y₂ <= 8));
+	return (y₁,y₂);
+}
++/
+
+/+
+def main () {
+	ret:=1;
+	
+	mult1:=0;
+	if ?o1{
+		mult1=exp(?a1);
+	}else{
+		mult1=1-exp(?a1);
+	}
+	ret*=mult1;
+	
+	mult2:=0;
+	if ?o2{
+		mult2=exp(?a2);
+	}else{
+		mult2=1-exp(?a2);
+	}
+	ret*=mult2;
+
+	return ret;
+}
++/
+/+
+def main(a:ℝ[]){
+	x := 1;
+	for i in [0..10){
+		x*=(1+a[i]);
+	}
+	return x;
+}
++/
+
+/+
+def main(){
+	x := sampleFrom("(x)=>delta(1,2)[x]"): ℝ x ℝ;
+	return x[1];
+}
++/
+/+
+def main(){
+	return 1/gamma(3,3);
+}
++/
+/+
+def main(x,β){
+	y := gauss(x,β);
+	if y > 0 { } else { y = 0; }
+	return y;
+}
++/
+
+/+
+def main(){
+	x := gauss(0,1);
+	return Expectation(x^2)-Expectation(x)^2;
+}
++/
+/+
+def main(){
+	//return -log(uniform(0,1))/2;
+	return exponential(0.1);
+}
++/
+/+
+def main(){
+	//return log(uniform(0,1));
+	return -exponential(1);
+}
++/
+/+
+def main(x){
+	a := x>0;
+	b := x>0;
+	return a/b;
+}
++/
+/+
+def main(){
+	r := multiGauss([0,0],[[1,1],[1,1]]);
+	return (r[0],r[1]);
+}
++/
+/+
+def main(){
+	r := dirichlet([1,1]);
+	return (r[0],r[1]);
+}
++/
+/+
+def main(beta,delta){ // TODO: make this fast
+	diff := exponential(beta)-exponential(beta);
+	return -delta/2<=diff && diff<=delta/2;
+}
++/
+
+/+
+def foo(x){
+	return expectation(infer((){
+		a := gauss(0,1);
+		b := gauss(0,1);
+		return
+		if a <= x & x <= b
+	      then 1
+	      else -1;
+	}));
+}
+
+def main(x){
+	return foo(x);
+}
++/
+
+/+
+def main(x,y){
+	return if flip(1/2) then x==y else y;
+}+/
+
+
+/+def main(x,y){
+	ν := exponential(1);
+	assert(ν!=0);
+	θ := gauss(0,100);
+	θ₁ := gauss(θ,ν);
+	θ₂ := gauss(θ,ν);
+	cobserve(θ₁,x);
+	cobserve(θ₂,y);
+	/+cobserve(θ₁,4);
+    cobserve(θ₂,5);+/
+	return (θ,ν);
+}
++/
+
+/+import genCap;
+
+def informationFlow[a,b](input: Distribution[a], channel: a→ b,eqa: a×a→ℝ,eqb: b×b→ℝ)⇒
+I(infer((){
+	i := sample(input);
+	o := channel(i);
+	return (i,o);
+}),eqa,eqb);
+
+def bsc(q)⇒(b)⇒b⊕flip(q);
+
+def main(p,q){
+	input := infer(()⇒ flip(p));
+	channel := bsc(q);
+	return informationFlow(input, channel, eqℝ,eqℝ);
+}
++/
+
+/+ // TODO
+def approxGauss(μ,ν){
+	return sampleFrom("(x;μ,ν)=>",μ,ν);
+}
+
+def main(){
+	
+}
++/
+/+
+dat Filter{
+	x: ℝ, v: ℝ, a: ℝ;
+	def Filter(x: ℝ, v: ℝ, a: ℝ)
+	{ (this.x,this.v,this.a) = (x,v,a); }
+	def update(t: ℝ)
+	{ (x,v,a) = (x+t*v,v+t*a,a+t*gauss(0,1)); }
+	def measureX(x: ℝ, t: ℝ)
+	{ cobserve(this.x+t*gauss(0,1),x); }
+}
+def main(){
+	data := [1,3,6,10,15,20,25,30,35,40];
+	filter := Filter(gauss(0,0.1),2,1);
+	results := []:Distribution[ℝ][];
+	for i in [0..data.length){
+		filter.update(1);
+		filter.measureX(data[i],1);
+		results ~= [Marginal(filter.x)];
+	}
+	return sample(results[4]);
+}
++/
+/+
+def main(){
+	(aa,ab) := (flip(0.9),flip(0.9));
+
+	(ba,bb) := (flip(0.9),flip(0.9));
+	
+	(ca,cb) := (if flip(1/2) then aa else ab,if flip(1/2) then ba else bb);
+	if flip(1/2){
+		tmp := ca;
+		ca = cb;
+		cb = tmp;
+	}
+	observe(aa==0&&ab==1);
+	observe(ca==0&&cb==1);
+	/*if flip(1/2){
+		observe(ba==0||bb==0);
+	}else{
+		observe(ba==1||bb==1);
+	}*/
+	return (ba,bb);
+}+/
+
+/+
+def main(){
+	x := uniform(0,1);
+	//assert(x!=1/2);
+	cobserve(x,1/2);
+}
++/
+/+
+// 1-(b/x)^a
+
+// y=1-(b/x)^a
+// 1-y=(b/x)^a
+// (1-y)^(1/a) = b/x
+// x=b/(1-y)^(1/a)
++/
+/+
+def main(){
+	n := 2;
+	x := array(n,0);
+	for i in [0..n){
+		
+	}
+}
++/
+/+
+def main(){
+	//return (x);
+	//return pareto(10,10);
+	//return rayleigh(10);
+	//return uniform(0,1)<=x;
+	//return uniform(200,201);
+	x := 3;
+	y := 4;
+	def f(){
+		return x+y;
+	}
+	k := f();
+	//return x+y;
+	return flip(1/2);
+	//return [1,2,3][2];
+	//return f;
+}
++/
+/+
+def main(){
+	return gauss(0,1)^2;
+	//return exp(1.2);
+	//p := uniform(0,1);
+	//return p+flip(1/2) <= x;
+}
++/
+/+def main(k){
+    x := laplace(0, 100);
+    return floor(x)<=k;
+}+/
+/+
+def main(x){
+	//x := (x)=>2*x;
+	//return x(flip(1/2))<=k;
+	if x < 100 { return if flip(1/2) then 1 else x; }
+	return flip(1/3);
+}
++/
+/+
+def min(a,b)=> if a < b then a else b;
+
+def main(x){
+	observe(0);
+	a := [1,2,3];
+	r := 10000;
+	for i in [0..3){
+		r = min(r, a[i]+laplace(0,1));
+	}
+	return r<=x;
+}
++/
+/+
+def main(x){
+	//return exponential(1);
+	//return (2*flip(1/2)-1)*log(uniform(0,1));
+	//return exponential(1);
+	//return laplace(0,10)<=x;
+	//return gauss(0,1)<=x;
+	//return (1,x);
+}
++/
+/+def main(){
+	return uniform(0,1);
+}+/
+
+/*def main(x){
+	y := 0;
+	//y = categorical([1/3,1/6,1/2]);
+	return uniformInt(0,1);
+	//return y;
+}*/
+
+/+
+def main(x){
+	y := -1;
+	if x < 0 {
+		y=1;
+	}else{
+		y=2;
+	}
+	x := flip(1/2);
+}
++/
+/+def main(a: ℝ[]){
+	r := 0;
+	for i in [0..2){
+		if flip(1/2){
+			r+=a[i];
+		}
+		if r>1{ return 1; }
+	}
+	return r;
+}+/
+
+/+def main(){
+	//return laplace(0,1);
+}+/
+
+/+def main(x,y){
+	if x+flip(1/2){
+		return x;
+	}else{
+		return y;
+	}
+}+/
+
+/+
+def main(x){
+	//return uniform(0,1);
+	return x;
+}
++/
+/+
+def main(){
+    y := uniform(0,1);
+	x := sample(infer((){
+        x := uniform(0,1)+y;
+		observe(x<1/2);
+		return x;
+    }));
+    //x := sampleFrom("(x;y) => ([-1/2+-y≠0]·[-1/2+-y≤0]·⅟(-y+1/2)+[1/2+y≤0])·[-1+-y+x≤0]·[-1/2+x≤0]·[-1/2+y≤0]·[-x+1/2≠0]·[-x+y≤0]·[-y+1/2≠0]",y);
+    return x<1/3;
+}
++/
+
+/+def main(y){
+    x := uniform(0,1)+y;
+    observe(x<1/2);
+    return x;
+}+/
+
+/+
+def main(){
+	x := uniform(0,1);
+	y := x^2+uniform(0,1);
+	return (x,y);
+}
++/
+/+
+def PrAgivenB[a](d: Distribution[a], A: a→ℝ, B: a→ ℝ){
+	return expectation(infer((){
+		x := sample(d);
+		observe(B(x));
+		return A(x)!=0;
+	}));
+}
+
+def main(X,Y){
+	joint := infer();
+	return PrAgivenB(joint,(x,y)=>x<X/+0.5+/,(x,y)=>y>Y);
+}
++/
+
+/+ TODO: simplify this well (the second and third shuffles should not do anything)
+def shuffle(a: ℝ[]){
+	b := a;
+	for i in [0..3){
+		j := uniformInt(i,b.length-1);
+		t := b[j];
+		b[j] = b[i];
+		b[i] = t;
+	}
+	return b;
+}
+
+def main(x:ℝ[]){
+	// a := [1,2,3];
+	a := x;
+	a=shuffle(a);
+	a=shuffle(a);
+	a=shuffle(a);
+	return a;
+}
++/
+/+
+def k(x){
+	if -gauss(0,1)<=x && x<=gauss(0,1) { return -10; } // TODO: -gauss -> gauss changes result
+	else { return 10; }
+}
+
+def main(x){
+	return Expectation(k(x));
+}
++/
+
+/+ // TODO
+def k(x){
+	eps := abs(gauss(0,1));
+	if -eps<=x && x<=eps { return -10; }
+	else { return 10; }
+}
+
+def main(x){
+	return Expectation(k(x+gauss(0,1)));
+}
++/
+/+
+def main(){
+	x := uniform(0,1);
+	y := x;
+	if x < 1/2{
+		return y;
+	}else{
+		return uniform(0,1);
+	}
+	//return x+y;
+}
++/
+/+
+def foo(x) ⇒ 2*x;
+
+def main(){
+	x := 3;
+	if x != 2 {
+		x = 4;
+	}
+	f := (z) ⇒ 2*z;
+	g := (z){
+		return 2*z;
+	};
+
+	if (z){ return 2*z; }(2){ return 2*x; }
+	
+	return f(x);
+}
++/
+/+
+def main(){
+	return gauss(0,1);
+}
++/
+/+import genCap;
+
+def main(p₁,p₂){
+	//return H(Flip(p),eqℝ);
+	return I(infer((){
+		x := flip(1/2);
+		y := x⊕ flip(if x then p₁ else p₂);
+		return (x,y);
+	}),eqℝ,eqℝ)*log(2);
+}
++/
+/+
+def main(){
+	x:=uniform(0,1);
+	y:=uniform(0,1);
+	z:=x/y;
+	//observe(z<=1);
+	return z;
+}
++/
+/+def main(){
+	x:=uniformInt(1,2);
+	y:=uniformInt(0,x-1)+1;
+	return y;
+}
++/
+/+
+def sqrt(x)=>x^(1/2);
+
+def gaussPDF(μ,ν)(x){
+	return 1/(sqrt(2*π)*ν)*exp(-(x-μ)^2/(2*ν));
+}
+
+def main(){
+	μ := 0;
+	ν := 1;
+	pdf := gaussPDF(μ,ν);
+	x := gauss(μ,ν);
+	return pdf(x)<=1;
+}
++/
+/+
+def min(a,b)=>if a>b then b else a;
+def main(){
+	n := 8;
+	m := n;
+	bound := 3;
+	state := 0;
+	for i in [0..m){
+		state = min(bound+1, state+flip(1/n));
+	}
+	return state;
+}
++/
+/+
+def main(){
+	x := uniform(0,1);
+	y := uniform(0,1);
+	z := uniform(0,1);
+	w := uniform(0,1);
+	cobserve(x+y+z+w,1);
+	return x;
+}
+// p[x] = ∏ᵢ(∑ⱼδⱼ[xᵢ]).
+// p[x₀=k|∑ᵢxᵢ=1] = p[x₀=k∧ ∑ᵢxᵢ=m]/p[∑ᵢxᵢ=m]
++/
+/+
+dat F{
+	a:ℝ,b:ℝ;
+	def F(a,b){ (this.a,this.b)=(a,b); }
+	def eval(x){ return a*x+b; }
+}
+
+def main(g0: F,g1: F,g2: F){
+	x:=0;
+	if g0.b!=g1.b{
+		x=-(g0.a-g1.a)/(g0.b-g1.b);
+	}
+	y := g0.a*x+g0.b;
+	return y<g2.a*x+g2.b;
+}
++/
+/+def main(){
+	// x := 0 && ():ℝ { assert(0); }();
+	def fail():ℝ{ assert(0); }
+	x := 0 && fail();
+}
++/
+/+
+def main(){
+    w := flip(1/2) || flip(1/2);	
+}
++/
+/+def main(){
+	return flip(1/2)&&flip(1/2);
+}+/
+
+/+
+def main(){
+	(a,b,c,d,e,f,g) := (flip(1/2),flip(1/2),flip(1/2),flip(1/2),flip(1/2),flip(1/2),flip(1/2));
+	//return a || (b || (c || (d || (e || (f || g)))));
+	return a || b || c || d || e || f || g;
+}
++/
+/+
+def fib(n:ℝ):ℝ ⇒ if n<=1 then n
+                         else fib(n-1)+fib(n-2);
+
+def main(){
+	return fib(10);
+}
++/
+/+
+def fib(n: ℝ): ℝ{
+	if n>1 { return fib(n-1) + fib(n-2); }
+	if n<=0 { return 0; }
+	return n;
+}
+
+def main(){
+	return fib(10);
+}
+
+def loop():ℝ⇒ loop();
++/
+/+
+def fib(n: ℝ){
+	if n<=0 { return 0; }
+	if n<=1 { return n; }
+	return fib(n-1) + fib(n-2);
+}
+
+def main(){
+	return fib(10);
+}
++/
+/+
+def then[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));
+
+def variance(x:Distribution[ℝ]){
+    // return expectation(then((x)=>x^2)(x))-expectation(x)^2;
+	// return Expectation(sample(x)^2)-Expectation(sample(x))^2;
+}
+
+def main(){
+	d := Gauss(3,36);
+	//return (expectation(d),variance(d));
+	return Expectation(sample(d)^2);
+}
++/
+
+/+
+def id[b](x:b)⇒x;
+
+def main(){
+	f := id: Π[a:*]. a→ a;
+	g := id: Pi[a:*]. a→ a;
+	h := id: Π[a:*](x:a). a;
+	i := id: Pi[a:*](x:a). a;
+	j := (([a:*,b:*]=>id[a×b]): Π[c:*,d:*](x:c,y:d). c×d): Π[a:(*×*)](x:a[0],y:a[1]). a[0]×a[1];
+	k := ([a:*,b:*]=>id[a×b]): Pi[c:*,d:*](x:c,y:d). c×d;
+	l := f[Π[a:*]. a];
+	def crash[a:*]: a{ assert(0); }
+	// return f(g(h(i(j(k(l(crash),0),1))))); // expected: δ(1)[r₂]·δ(λξ₁. Λξ₂. δ(⊥)[ξ₂],0)[r₁]
+	return l(crash); // expected: δ(λξ₁. Λξ₂. δ(⊥)[ξ₂])[r]
+}
++/
+
+/+
+def Cell(){
+	def Cell(){}
+}
+
+def main(){
+	c := Cell();
+	x := 1;
+	y := 2;
+	return (x,y);
+}
++/
+
+/+
+dat HMM{
+    def HMM(){}
+    def predict(){ return flip(0); }
+}
+
+def main(){
+	h := HMM();
+    h.predict();
+}
++/
+
+/+dat Cell{
+    x : ℝ;
+    def Cell(x : ℝ){
+        this.x = x;
+    }
+    def inc(i){
+        x = x + i;
+    }
+}
+
+def inc(c: Cell, i){
+	d := c;
+	d.x = d.x + i;
+	return d;
+}
+
+def main(){
+    a := [Cell(0)];
+    a[0].inc(1);
+    return a[0];
+}
++/
+/+
+def mains(x){
+	a := 1, b := 4;
+	x := sampleFrom("(x;a,b)=>(∑_i[a≤i]·[i≤b]·δ(0)[i-x])·⅟(∑_i[a≤i]·[i≤b])",a,b):ℝ;
+	return (x,x); // TODO: better return value naming
+}+/
+/+
+def main(){
+	x := array(3);
+	x[0] = 3;
+	x[2] = 10;
+	y := x;
+	return y[uniformInt(0,3)];
+	//l := 2;
+	//return y[l];
+}
++/
+/+
+dat D{
+	x:ℝ;
+	def D(){ x=3; }
+}
+
+def main(x){
+	(x,y,z) := (1,2,3);
+	return (x,D().x,y,z,3);
+}
++/
+/+
+def main(x:ℝ×ℝ){
+	return pareto(3,1)-1;
+}
++/
+/+
+def main(){
+	return laplace(0,1)^2;
+}
++/
+/+
+def main(){
+	return (4)%abs(-(3/4));
+}
++/
+
+/+
+def main(){
+	a := array(10);
+	return (1,a);
+}
++/
+/+
+def main(){
+    p := uniform(0,1);
+    x1 := flip(p);
+    observe(x1==1);
+    x2 := flip(p);
+    observe(x2==0);
+    x3 := flip(p);
+    observe(x3==1);
+    return p;
+}
++/
+/+
+def main(){
+    a := gauss(0,1);
+    b := gauss(0,1);
+    return if a > b { a } else { b };
+}
++/
+/+
+def main(){
+	x := uniform(0,1);
+	return x^(1/2);
+}
++/
+/+
+def main(){
+	(x,y) := (1,2);
+	(x,y) = (y,x);
+	return (x,y);
+}
++/
+/+
+dat S{
+	children: S[];
+	def S(){ this.children = []:S[]; }
+}
+
+def main(){
+	a := S();
+	b := S();
+	a.children~=[b];
+	b.children~=[a];
+	return b;
+}
++/
+/+
+def mains(){
+	//return uniformInt(0,9);
+	x := uniform(0,1);
+	y := uniform(0,1);
+	z := uniform(0,1);
+	w := uniform(0,1);
+	return x*y+z*w;
+}
++/
+/+
+def add(x:ℝ){
+	def foo(y:ℝ)=>x+y;
+	return foo;
+}
+def main(x){
+	return add(2)(3);
+}
++/
+/+
+dat Foo{
+	dat Bar{
+		def Bar(){}
+		def foo(){
+			return b;
+		}
+	}
+	b: Bar;
+	def Foo(){
+		b = Bar();
+	}
+	def bar(){
+		b=Bar();
+	}
+}
+
+def main(){
+	return Foo().b.foo();
+}
++/
+/+
+def main(){
+	x := uniformInt(0,10);
+	if x>=9{ return -1; }
+	return x;
+}
++/
+/+
+def main(a){
+	x := uniform(0,1);
+	y := a*x+1;
+	return y; // expected: ((-[a≤0]·a+[-a≤0]·a)·([(-1+-⅟a)·a+1≤0]·[-⅟a≤0]·⅟((1+⅟a)·a+-1)+[(1+⅟a)·a+-1≤0]·[⅟a≤0]·⅟((-1+-⅟a)·a+1))·[a≠0]+[a=0])·((-[a≤0]·⅟a+[-a≤0]·⅟a)·[(-1+y)·⅟a+-1≤0]·[(-y+1)·⅟a≤0]·[a≠0]+[a=0]·δ(0)[-y+1])·(([((1+⅟a)·a+-1)·⅟a≠0]·[(-1+-⅟a)·a+1≤0]·[-⅟a≤0]+[((1+⅟a)·a+-1)·⅟a≠0]·[(1+⅟a)·a+-1≤0]·[⅟a≤0])·[a≠0]+[a=0])
+}
++/
+/+
+def main(i){
+	data := [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
+	return exp(data[i]);
+}
++/
+/+
+def main(x){
+	return exp((x==0)+(x==1));
+}
++/
+/+
+def main(){
+	x := 0;
+	n := 5;
+	for i in [0..n){
+		x = laplace(x,1);
+		if x>1/2{
+			x-=1/2;
+		}
+	}
+	return x;
+}
++/
+/+def main(a,b){
+	//return gauss(0,1)/gauss(0,1);
+	return a/b;
+}
++/
+/+import test2;
+
+def main(){
+	return foo();
+}+/
+
+/+def main(){
+	//return flip(1/4);
+	//return uniformInt(1,3);
+	//return categorical([1/2,1/3,1/6]);
+	//return binomial(2,1/2);
+	//return infer(()=>1);
+	//observe(flip(1/2));
+	//return expectation(Marginal(uniform(0,1)));
+	//x := uniformInt(-1,abs(2));
+	//return abs(x);
+	//x := flip;
+	//return infer(()=>x(1/2));
+	//return sample(infer(()=>1));
+	//return π;
+	k := if flip(1/2) { infer } else { [b](f:𝟙→b) ⇒ Dirac(f()) };
+	//return (()=>sample(k(()=>flip(1/2))))();
+	return k(()=>flip(1/2));
+}
++/
+
+
+/+
+eps := 0.01;
+
+def variance(d: Distribution[ℝ]){
+	return Expectation(sample(d)^2)-Expectation(sample(d))^2;
+}
+
+def main(a,b){
+	assert(a>0&&b>0);
+	//x := expectation(Beta(a,b)); // a/(a+b).
+	//y := variance(Beta(a,b)); 
+	//return y;
+	x:=beta(a,b);
+	observe(flip(x^(1/2)));
+	observe(!flip(x^(1/2)));
+	return x;
+}
++/
+
+/+
+def id[a](b:*)(x:a,y:b) ⇒ x;
+
+def main(){
+	f := id;
+	f = 2;
+}
++/
+/+
+def main(){
+	assert(flip(1/2));
+	return 1;
+}
++/
+/*def main(){
+	x := uniform(0,1);
+	y := Marginal(x);
+	return (x,sample(y));
+}*/
+/+
+def main(){
+	y := infer((){
+		return uniform(0,1);
+	});
+	x := sample(y);
+	return (x,sample(y));
+}
++/
+/*def main(){
+	return sample(Flip(1/2));
+}*/
+
+/+
+def main(){
+	return flip(1/2);
+}
++/
+/+
+def main(){
+	x := flip(1/10000);
+	observe(x);
+	return Expectation(1);
+}
++/
+
+/+def foo(){
+	return 0;
+}
+
+def main(){
+	//y := uniformInt(0,x);
+	//return Expectation(y);
+	//y := ?x;
+	return foo();
+}
++/
+/+
+def main(){
+	for i in [0..3){
+		if flip(1/2){ return 0; }
+	}
+	return 1;
+}
++/
+/+
+def main(){
+	//x := gauss(0,1);
+	//observe(x>=1);
+	//y := gauss(0,1);
+	//observe(x+2*y<=10);
+	//return x+y;
+	//return gauss(x,1);
+	return x;
+}
++/
+
+/+
+def main(){
+	//return [flip(1/2), flip(1/3)];
+	r := 0;
+	for i in [0..100){
+		r += flip(1/2);
+	}
+	return r;
+}
++/
+/+
+def main(){
+	//p := flip(1/2);
+	//q := flip(1/2);
+	return sin(2)^2+cos(2)^2;
+}
++/
+/+
+def main(){
+	x := uniform(-10,10);
+	//return (x^2,x^3);
+	return x^3;
+}
++/
+/+def mains(){
+	return log(uniform(0,1)+exp(uniform(0,1)));
+}+/
+
+
+/+
+def main(){
+	//return gauss(0,1)^2;
+	return uniform(0,1)^(1/2);
+}
++/
+/+
+def main(){
+	(x,y) := (0,1);
+	(x,y) = (y,x);
+	return (x,y);
+}
++/
+/+
+n:=8;
+def sum(a: ℝ[]){
+	r := 0;
+	for i in [0..a.length){
+		r+=a[i];
+	}
+	return r;
+}
+def main(){
+	a:=array(n,0);
+	for i in [0..n){
+		a[i] = flip(1/2);
+	}
+	return sum(a);
+}
++/
+
+/+
+def main(){
+	x := gauss(0,1);
+	return x;
+}
++/
+/+
+def main(N){
+    if N-1 == 0{ return 1; }
+    return (-N^3-N+2*N^2)/(N-1)==(1-N)*N
+}
++/
+/+def main(N){
+    x := uniform(0,N-1);
+    y := uniform(x,N);
+    return y;
+}
++/
+/+
+def main(){
+	//return exp(uniform(0,1));
+	return uniform(0,1)*uniform(0,1);
+}
++/
+/+
+def main(){
+	x := uniform(0,1);
+	//return exp(x^2);
+	return 2^x;
+}
++/
+/+def main(){
+	return beta(0,0);
+}+/
+
+/+
+def crash():ℝ{
+	assert(0);
+}
+def fail():ℝ{
+	observe(0);
+}
+
+def mains(){
+	return fail()+crash();
+}
++/
+/+
+def main(){
+	p := uniform(0,1);
+	observe(binomial(10, p)==6);
+	return p;
+}
++/
+/+
+def binomial(n,p){
+	r := 0;
+	for i in [0..n){
+		r+=flip(p);
+	}
+	return r;
+}
+def main(){
+	r := binomial(10,1/3);
+	return r; // expected: 1/59049·δ(0)[-r+10]+1024/59049·δ(0)[r]+1120/19683·δ(0)[-r+6]+1280/6561·δ(0)[-r+2]+20/59049·δ(0)[-r+9]+20/6561·δ(0)[-r+8]+320/19683·δ(0)[-r+7]+4480/19683·δ(0)[-r+4]+5120/19683·δ(0)[-r+3]+5120/59049·δ(0)[-r+1]+896/6561·δ(0)[-r+5]
+}
++/
+/+
+def const[a](x:a)[b](y:b)=>x;
+
+def main(){
+	return const[R](3)[R x R x R](1,2,3);
+}+/
+/+
+def id[a](x:a) => x;
+
+def main(){
+    return (id(2), id(id)(1,2));
+}
++/
+
+/+def main(){
+	//x := sampleFrom("(x)=>2*x");
+	//return Marginal(x);
+	//x := uniformInt(0,1);
+	//return (x,x);
+	e := 0;
+	e |= +2;
+}+/
+
+
+/+
+def rec(){
+	if flip(1/2){
+		return 2;
+	}else{
+		return rec();
+	}
+}
+
+def main(){
+	
+}
++/
+/+
+def observerModel () {
+	p := uniform (0 ,1) ;
+	coinSpinner := binomial(20, p) ;
+	observe(coinSpinner == 15) ;
+	return p ;// posterior beliefs
+	// return Bernoulli(p) ;// bet on next spin
+	// return Binomial(10,p) ;// next 10 spins
+}
+def main () {
+	return observerModel();
+}
++/
+/+
+dat Cell[a,b]{
+	/*X[a](x:a): Cell[a];
+	Y: Cell[ℝ];
+	Z;*/
+}
+
+def main(){
+	//return errorPr(infer((){assert(flip(2/3));}));
+	x := Bernoulli(1/2);
+	def foo()=>x;
+	return foo();
+}
++/
+/+
+def then[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));
+def expectationOf[a](d: Distribution[a],f: a→ ℝ)=>expectation(then(f)(d));
+
+def main(){
+	return expectationOf(Flip(1/2), (x)=>2*x);
+	//return errorPr(infer((){ assert(flip(1/3)); }));
+	//return expectation(infer(()=>flip(1/2)));
+	//return expectation;
+	//return sample(Flip(1/2));
+	//x := then((x)=>x)(infer(()=>flip(1/3)));
+	//return sample(x);
+	//return x;
+	//return then((x)=>x);
+	//x = 3;
+}
++/
+/+def main(){
+	return Expectation(poisson(0.00001));
+}+/
+
+/+def main(){
+	p := beta(0,0);
+	observe(flip(p));
+	return p;
+}
++/
+/+
+def model(){
+	x := flip(0.5);
+	y := if x {
+		gauss(0,1);
+	} else {
+		uniform(0,1);
+	};
+	return (y,x)
+}
+
+def main(){
+	(y,x) := model();
+	//cobserve(y,0.3);
+	return (y,x);
+}
++/
+
+/+
+def foo(x){
+	y := x;
+	if y<0 { y = 0; }
+	if y>1 { y = 1; }
+	return (1,(flip(1/2),flip(1/3)),flip(y));
+}
+def main()=>foo(1/4);
++/
+/+
+def main(x){
+	return 2*x;
+}
++/
+/+
+def main(){
+	p := flip(0.4);
+	return p;
+}
++/
+
+/+def main(){
+	/+x := array(1000,4);
+	x[0] = uniform(0,1);
+return x[0];+/
+	/+x := set();
+	for i in [0..50){
+		x.add(i);
+	}
+return x.contains(uniform(0,100));+/
+	/*{a: x, b: y}
+	a := [0,1,0,1,1,0];
+	return a[uniform(0,a.length-1)];*/	
+}+/
+
+/+
+def main(){
+	return infer;
+}
++/
+/+def main(a:ℝ×ℝ){
+	return uniform(a);
+}
++/
+/+
+def main(){
+	return uniform(0,1)^2;
+}
++/
+
+
+/+
+def foo(x){
+	if x<=0 { return 0; }
+	return bar(x-1);
+}
+def bar(x)=>foo(x);
+
+def main(){
+	return foo(2);
+}
++/
+
+/+def id[a:*]=>(x:a)=>x;
+
+def main(){
+	/*x := id(1);
+	y := id(1,2);
+	z := id(1,2,3);
+	
+	for i in [0..10){
+		x+=1;
+	}
+	//return (x,y,z);
+	return id[∏[a:*].a→a](id)[ℝ](3);*/
+	x := uniform(0,1);
+	y := uniform(0,1);
+	return x+y+uniform(0,1);
+}
++/
+
+
+
+/+def main(x){
+	//x := (a):ℝ{ return x(a); } // TODO!
+	x:ℝ := 3; // TODO!
+}
++/
+
+/+
+def id[a](x:a)=>x;
+
+def main(){
+	return id(id)([1,2,3])[0];
+}
++/
+
+
+/+
+def test(){
+	arr := array(29,0);
+	for i in [0..3){ arr[i]=1; }
+	i := uniformInt(0,arr.length-1);
+	hop := uniformInt(1,arr.length-1);
+	for k in [0..arr.length){
+		if arr[i]{
+			return i;
+		}
+		i = (i+hop)%arr.length;
+	}
+	return -1;
+}
+
+def main(){
+	return test();
+}
++/
+/+
+def main(){
+	x := flip(1/2);
+	return (y)=>x;
+}
++/
+
+/+
+def base(p):ℝ{
+	assert(0);
+}
+def geom(g: ℝ → ℝ)(p: ℝ){
+	if flip(p){
+		return 1+g(p);
+	}
+	return 0;
+}
+
+def main(){
+	g := base;
+	for i in [0..20){
+		g = geom(g);
+	}
+	return g(0.5);
+}
++/
+/+
+def main(){
+	f := (x)=>x;
+	g := (x)=>2*x;
+	h := if flip(1/2) { f } else { g };
+	return h(uniform(0,1));
+}
++/
+
+/+def main(){
+	x := uniform(0,1);	
+	y := uniform(0,1);
+	z := uniform(0,1);
+	return x+y+z;
+}+/
+/+
+def main(){
+	p := uniform(0,1);
+	observe(bernoulli(p)==1);
+	observe(bernoulli(p)==0);
+	observe(bernoulli(p)==0);
+	observe(bernoulli(p)==0);
+	observe(bernoulli(p)==0);
+	observe(bernoulli(p)==0);
+	observe(bernoulli(p)==0);
+	observe(bernoulli(p)==0);
+	observe(bernoulli(p)==0);	
+	return p;
+}
++/
+/+
+def main(f: ℝ → ℝ, g: ℝ → ℝ,x){
+	return f(g(x));
+}
++/
+
+
+/+
+
+a := 0, b := 1; // TODO: chars and strings.
+bagel := 0, cookie := 1, nothing := 2, state := 3;
+
+def haveCookie(obj) ⇒ obj==cookie;
+
+def dirichlet(α: ℝ[]){ // TODO: add dirichlet distribution
+	assert(α.length==2&&α[0]==2&&α[1]==1);
+	return SampleFrom("(r)=>∫da ∫db δ_r[[i ↦ [i=0]·a+[i=1]·b] (2)]·a·[0≤a]·[a≤1]·δ(0)[a+b-1]"):ℝ[];
+}
+
+def main(){
+	def actionPrior(){
+		// return if flip(0.7) { ['a'] } else { ['a'] ~ actionPrior() } // TODO: recursion
+		if flip(0.7){ return [a]; }
+		if flip(0.7){ return [a,a]; }
+		observe(0);
+	}
+	def chooseAction(goalSatisfied: ℝ → ℝ, transition: ℝ×ℝ[] → ℝ, state)=>
+		infer((){
+			action := actionPrior();
+			observe(goalSatisfied(transition(state, action)));
+			return action;
+		});
+	f := (){
+		outcomeProbs := [dirichlet([2,1]),dirichlet([2,1])];
+		def buttonsToOutcomeProbs(buttons: ℝ[]){ // TODO: mem/random functions
+			assert(buttons.length==1||buttons.length==2&&buttons[0]==a);
+			if(buttons.length==2){ assert(buttons[1]==a); }
+			return outcomeProbs[buttons.length-1];
+		}
+		def vendingMachine(state,action: ℝ[])=>
+			[bagel,cookie][categorical(buttonsToOutcomeProbs(action))];
+		goal := [bagel,cookie][categorical([0.5,0.5])];
+		def goalSatisfied(outcome) => outcome == goal;
+		chosenAction := sample(chooseAction(goalSatisfied, vendingMachine, state));
+		observe(goal == cookie && chosenAction.length==2 && chosenAction[0]==a && chosenAction[1]==a);
+		return (buttonsToOutcomeProbs([a])[1],buttonsToOutcomeProbs([a,a])[1]);
+	};
+	//goalPosterior := infer(f);
+	//return sample(goalPosterior); // expected: TODO: solve integrals (need to integrate rational functions)
+	return f();
+}
++/
+
+
+/+
+def main(){
+	f := (x)=>flip(x);
+	return expectation(infer(()=>f(1/2)));
+}
++/
+/+
+def main(){
+    x := gauss(0,1);
+    assert(x<0); // fails with probability 1/2
+}+/
+/+
+/+
+def PrAgivenB[a](d: Distribution[a], A: a→ℝ, B: a→ ℝ){
+	return expectation(infer((){
+		x := sample(d);
+		return A(x)&&B(x);
+	}))/
+		expectation(infer((){
+			x := sample(d);
+			return B(x)!=0;
+		}));
+}
++/
+def PrAgivenB[a](d: Distribution[a], A: a→ℝ, B: a→ ℝ){
+	return expectation(infer((){
+		x := sample(d);
+		observe(B(x));
+		return A(x)!=0;
+	}));
+}
+
+def main(X){
+	joint := infer((){
+		x := uniform(0,1);
+		y := x^2+uniform(0,1);
+		return (x,y);
+	});
+	// Pr(x<0.5|y>0.5):
+	return PrAgivenB(joint,(x,y)=>x<X,(x,y)=>y>0.5);
+}
++/
+/+
+n := 3;
+
+def idPerm(k: ℝ){
+	assert(k==n);
+	r := array(n,0);
+	for i in [0..n){ r[i]=i; }
+	return r;
+}
+
+def bubbleSort(cmp: ℝ[][]){
+	r := idPerm(n);
+	for i in [0..n){
+		for j in [0..n-1){
+			if cmp[r[j+1]][r[j]]{
+				t := r[j+1];
+				r[j+1] = r[j];
+				r[j] = t;
+			}
+		}
+	}
+	return r;
+}
+def randPerm(k: ℝ){
+	assert(n == k);
+	r := array(n,0);
+	for i in [0..n){ r[i] = i; }
+	for i in [0..n){
+		j := uniformInt(i,n-1);
+		t := r[j];
+		r[j] = r[i];
+		r[i] = t;
+	}
+	return r;
+}
+def reorderCmp(p:ℝ[])(cmp: ℝ[][]){
+	r := array(n,array(n,0));
+	for i in [0..n){
+		for j in [0..n){
+			r[p[i]][p[j]]=cmp[i][j];
+		}
+	}
+	return r;
+}
+def shuffleCmp(cmp: ℝ[][])=>reorderCmp(randPerm(n))(cmp);
+
+def noise(p: ℝ)(cmp: ℝ[][]){
+	r := cmp;
+	for i in [0..n){
+		for j in [i+1..n){
+			if flip(p){
+				r[i][j]=!r[i][j];
+				r[j][i]=!r[j][i];
+			}
+		}
+	}
+	return r;
+	if flip(p){
+		t := r[0][1];
+		r[0][1] = r[1][0];
+		r[1][0]=t;
+	}
+	return r;
+}
+
+def main(){
+	arr := [1,2,0];
+	cmp := array(n,array(n,0));
+	for i in [0..n){
+		for j in [0..n){
+			cmp[i][j]=arr[i]<arr[j];
+		}
+	}
+	cmp = shuffleCmp(cmp);
+	cmp₁ := noise(0.01)(cmp);
+	r₁ := bubbleSort(cmp₁);
+	cmp₂ := noise(0.01)(cmp);
+	r₂ := bubbleSort(cmp₂);
+	return ((r₁[0],r₁f[1],r₁[2]),(r₂[0],r₂[1],r₂[2]));
+}
++/
+
+/+
+def main(){
+	d := Bernoulli(1/2);
+	return sample(d);
+}
++/
+
+/+
+
+def main(){
+	dat Cell{
+		x: ℝ;
+		def Cell(x: ℝ){ this.x=x; }
+	}
+	c := Cell(if flip(1/2) { uniform(0,1) } else { 1/2 });
+	return (c.x,c.x!=1/2);
+}
++/
+
+/+
+def main(){
+	def f() { return bernoulli(1/2);}
+	x := infer(f);
+	return x;
+}
++/
+/+
+def test(d: Distribution[ℝ]){
+	return sample(d);
+}
++/
+
+/+
+def main(){
+	return uniformInt(1,10);
+}
++/
+/+
+def call(f: ℝ→ ℝ){
+	x := f(0);
+	x = f(x);
+	x = f(x);
+	x = f(x);
+	x = f(x);
+	x = f(x);
+	x = f(x);
+	x = f(x);
+	x = f(x);
+	x = f(x);
+	return x;
+}+/
+/+
+def main(){
+	return call((x){ assert(flip(1/2)); return x+1; });
+}
++/
+
+/+def main(x){
+	k := SampleFrom("(k;x)=>δ_k[∫dy [x²+y²≤1]]",x);
+	return k;
+}
++/
+
+
+/+
+def test(d: ℝ,f:(𝟙→ℝ)→ℝ,g: ℝ→ℝ,h: ℝ→ℝ,eq: ℝ×ℝ→ℝ){
+	return h(f((){
+		x := g(d);
+		p := h(f((){ y:=g(d); return eq(x,y);}));
+		return log(1/p)/log(2);
+	}));
+}
++/
+/+
+def log₂(x)=>log(x)/log(2);
+
+
+//def entropy[a](eq: a×a → ℝ, d: Distribution[a]){ // TODO: polymporphic entropy function, typeclasses
+def entropy(d: Distribution[ℝ]){
+	return expectation(infer((){
+		x := sample(d);
+		//p := expectation(then((y) ⇒ x==y)(d));
+		p := expectation(infer((){ y:=sample(d); return x==y;}));
+		return log₂(1/p);
+	}));
+}
++/
+/+
+def main(){
+	return entropy(infer(()=>flip(1/2)+flip(1/2)+flip(1/2)));
+}
++/
+/+
+def foo(d:Distribution[ℝ]){
+	return sample(d);
+}
++/
+
+/+def main(){
+	return expectation(then((x)=>x+1)(infer((){ assert(flip(1/2));return flip(1/2);})));
+}+/
+
+/+
+def f(lambda:ℝ→ℝ){
+	return 0||lambda(0);
+}
++/
+/+
+def mains(){
+	return f((x)=>x);
+}
++/
+/+
+def all(arr:ℝ){
+	lambda:=(x)=>x!=0;
+	return f(lambda,arr);
+}
++/
+/+
+def main(){
+    a := [flip(1/2)];
+    return all(a);
+}
++/
+
+
+/+
+def apply2(f:ℝ→ℝ,x){
+	return f(f(x+flip(1/2)));
+}
+
+def main(){
+	return apply2((x)=>2*x,3);
+}
++/
+
+/+def id(x){
+	assert(flip(1/2));
+	return x;
+}
+
+def main(){
+	f := id;
+	//x := ((x)=>x)(3);
+	return f(3);
+	//return f(3);
+	//return (x);
+	//return f;
+}
++/
+/+
+def foo(f:ℝ→ ℝ){
+	g:=(x)=>x;
+	for i in [0..1){
+		g=(x)=>f(g(x));
+	}
+	return g;
+}
++/
+/+
+def main(){
+	return foo((x)=>2*x)(1);
+}
++/
+
+/+
+def main(){
+	x := (f:ℝ→ℝ)=>f(3);
+	f := (x)=>x+1;
+	return x(f);
+}
++/
+
+/+
+def log₂(x)=>log(x)/log(2);
+
+def S[a](d: Distribution[a], x: a, eq: a×a→ ℝ)⇒
+	log₂(1/expectation(infer(()⇒ eq(sample(d),x))));
+
+def H[a](d: Distribution[ℝ], eq: ℝ×ℝ→ ℝ, /*S: *→ Distribution[ℝ]×ℝ×(ℝ×ℝ→ℝ)→ℝ*/)⇒
+    expectation(infer(()⇒ S[ℝ](d,sample(d),eq)));
++/
+
+
+/+
+def log₂(x)=>log(x)/log(2);
+
+def S[a](d: Distribution[a], x: a, eq: a×a→ ℝ)⇒
+	log₂(1/expectation(infer(()⇒ eq(sample(d),x))));
+
+def H[a](d: Distribution[a], eq: a×a→ ℝ)⇒
+	expectation(infer(()⇒ S(d,sample(d),eq)));
++/
+/+
+def test(d: ℝ,f:(𝟙→ℝ)→ℝ,g: ℝ→ℝ,h: ℝ→ℝ,eq: ℝ×ℝ→ℝ){
+	return h(f((){
+		x := g(d);
+		p := h(f((){ y:=g(d); return eq(x,y);}));
+		return log(1/p)/log(2);
+	}));
+}
++/
+
+/+
+dat Foo{
+	x: ℝ;
+	def Foo(x: ℝ){
+		this.x=x;
+	}
+	def bar(){
+		return ()=>()=>x;
+	}
+}
+
+def main(){
+	return Foo(2).bar()()();
+}
++/
+
+/+
+def test(d: Distribution[ℝ],x){
+	p := expectation(infer[ℝ]((){
+		x := sample(d);
+		y := expectation(infer(()=>sample(d)==x));
+		//assert(y!=0);
+		return 1/y;
+	}));
+	return p;
+}
++/
+/+
+def main(){
+	//return sample(sample(sample(infer(()=>Dirac(infer(()=>Dirac(infer(()=>Dirac(infer)))))))));
+	f:=[a](x:Distribution[Distribution[Distribution[a]]])=>sample(sample(sample(x)));
+	return f(Dirac(Dirac(Dirac(3))));
+}
++/
+/+
+def main(){
+	(x,y) := (1,2);
+	(x,y) = (y,x);
+	return (x,y);
+}
++/
+
+/+
+n := 1;
+
+def quantify(cmp: ℝ[][],p: ℝ[]){
+	r := 0;
+	for i in [0..n){
+		for j in [j+1..n){
+			r += cmp[p[i]][p[j]]-cmp[p[j]][p[i]];
+		}
+	}
+	return r;
+}
+
+def main(){
+	return quantify([[0]],[0]);
+}
++/
+
+/+
+
+def main(){
+	x := [0,1];
+	(x[0],x[1]) = (x[1],x[0]);
+	return (x[0],x[1]);
+}
++/
+/+
+def bar[a](d: a)⇒ 0;
+def foo[a,b](d:a×b)⇒ bar(d);
++/
+
+
+/+
+def main(){
+	x := gauss(0,1);
+	y := 2*x;
+	z := x+gauss(0,1);
+	return Expectation(z*z);
+}
+
+/*
+123
+246
+369
+*/
++/
+
+
+
+/+def foo(){
+	x := 3;
+	def bar(){
+		x += 1;
+	}
+	return bar();
+}+/
+
+/+
+def id(x:ℝ){
+	//y:=x;
+	//x:=3;
+	if(1){
+		//x:=4;
+		return ()=>x;
+	}
+	assert(0);
+}
+
+def main(){
+	return id(3)();
+}
++/
+
+/+
+x := ℝ;
+
+def foo[a]{
+	def bar[a]{
+		x:=a;
+		return [a:x]{
+			a := *;
+			return ((x:a){ return x }:a→ a)
+		}
+	}
+	return bar;
+}
+
+def main(){
+	x := foo[*];
+	x = 3;
+}
++/
+/+
+def main(x){
+    return x^2+x+1;
+}
++/
+/+
+def main(x,y){
+    return (x+1,y+2);
+}
++/
+/+
+def mains(x){
+	return flip(x);
+}
++/
+/+
+def main(){
+	f := ()=>flip(1/2);
+	return infer(f);
+}
++/
+/+
+def foo(f:ℝ→ℝ){
+	return f(2);
+}
+
+def main(){
+	return foo((x)=>x);
+}
++/
+
+/+
+def main(){
+	x := Categorical([1/2,1/2]);
+	return (expectation(x));
+}
++/
+
+/+
+def main(){
+	x := ()=>2;
+	f:= ()=>x();
+	return f();
+}
++/
+/+
+dat Foo{
+	x: ℝ;
+	this: ℝ;
+	def Foo(x:ℝ){
+		this.x=x;
+	}
+	def foo(){
+		return x;
+	}
+}
+
+
+def mains(){
+	/*x := 3;
+	def foo(y,z){
+		return y+x+z;
+	}
+	f := foo;
+return f(2,3);*/
+	f := Foo(3);
+	x := f.foo;
+	return x();
+}
++/
+/+
+def foo(x){
+	x = 3;
+	return x;
+}
+
+def mains(){
+	return foo(3);
+}
++/
+
+/+
+def main(){
+	z := 3;
+	x := (y)=>y+z;
+	return x;
+}
++/
+/+
+def main(){
+	x := array(floor(exponential(1)),0);
+	return x[30];
+}
++/
+/+
+dat Cell[a]{
+	x: a;
+	def Cell(x: a){
+		this.x=x;
+	}
+}
+
+def foo[a](x:a[])[b](y:b){
+	return (x,y);
+}
+
+def main(){
+	return foo([2])(4);
+}
++/
+/+
+def foo(x){
+	return 3*x;
+}
+
+def main(x){
+	y := foo(x+3);
+	return y;
+}
++/
+
+/+
+def log₂(x)=>log(x)/log(2);
+def entropy(d: Distribution[ℝ]){
+	return expectation(infer((){
+		x := sample(d);
+		//p := expectation(then((y) ⇒ x==y)(d));
+		p := expectation(infer((){ y:=sample(d); return x==y;}));
+		//return log₂(1/p);
+		//return log₂(1/p);
+		return log(1/p);
+	}));
+}
+
+def main(){
+	return entropy(infer(()=>flip(1/2)+flip(1/2)+flip(1/2)));
+}
++/
+
+/+
+def main(){
+	a := array(100,0);
+	for i in [0..a.length){
+		a[i] = 1;
+	}
+	return a;
+}
++/
+/+
+def main(){
+	x := infer(()=>flip(1/2));
+	return x;
+}
++/
+
+
+
+/+
+def main(){
+	return if flip(1/2) { ℝ } else { ℝ[] };
+	//return ([a](x:a)=>x)[ℝ];
+}
++/
+
+
+/+
+def k(x:ℝ){
+	return if x { ℝ } else { ℝ[] };
+}
+
+def t(x:ℝ){
+	return if x { 2 } else { [1,2,3] };
+}
+
+def main(){
+	f := (x: k(flip(1/2)))=>x;
+	return f(3);
+}
++/
+
+/+
+dat Foo{
+	x: Distribution[ℝ];
+	def Foo(x: Distribution[ℝ]){
+		this.x=x;
+	}
+}
+
+def main(){
+	return [Foo(Flip(1/2)),Foo(Flip(1/3))];
+}
++/
+
+/+
+def main(){
+	return ([]~[]).length+2;
+}
++/
+/+
+def main(){
+	//return 1/2;
+	x := gauss(0,1128);
+	return x;
+}
++/
+/+
+def main(x){
+	return (123/2)*x;
+}
++/
+
+/+def main(){
+	return categorical(if flip(1/2){ [] } else {[1]});
+}+/
+
+/+def main(){
+	return log(3287328787328723762376763287873287); // std.bigint bug!
+}+/
+/+
+def main(){
+	x:=[1,2,3];
+	return ([]~x~[5,6])[4];
+}
++/
+
+/+
+def main(){
+	x := 0;
+	x += uniformInt(0,1);
+	x += uniformInt(0,1);
+	x += uniformInt(0,1);
+	return x;
+}
++/
+
+/+def main(){
+	x := 10;
+	while x>0 && flip(1/2) { x-=flip(1/2)+1; }
+	return x;
+}
++/
+
+
+/+
+def main(){
+	x := 2;
+	return x;
+}
++/
+
+/+
+def pick[a](x: a[]){
+	return x[uniformInt(0,x.length-1)];
+}
+
+
+def main(){
+	return (pick([0,6]),pick([(1,2),(3,4)]));
+}
++/
+
+
+/+
+def main(){
+	return 1+?x+2;
+}
++/
+/+
+def main(){
+	k := infer(()=>flip(1/2));
+	return k;
+}
++/
+/+
+def main(){
+	//(x,y):=SampleFrom("(x,y)=>x*δ(0)[-x+1]·δ(0)[y]·⅟2+δ(0)[x]·δ(0)[y-1]·⅟2");
+	//return (y,x);
+	assert(flip(1/2));
+	return uniformInt(1,3);
+}
++/
+
+/+
+def main(){
+	x := 0;
+	for i in [0..uniformInt(1,2)){
+		//repeat uniformInt(1,2){
+		x += i;
+		x+=1;
+	}
+	return x;
+}
++/
+
+/+
+def main(){
+	def id[x:ℝ]=>x;
+	return id[2];
+}
++/
+/+dat Tree{
+	v: ℝ;
+	t: Tree[];
+	def Tree(t: Tree[]){
+		this.t=t;
+		this.v=1;
+	}
+	def sum():ℝ{
+		s := v;
+		for i in [0..t.length){
+			s += t[i].sum();
+		}
+		return s;
+	}
+}
+
+def main(){
+	x := Tree([]:Tree[]);
+	return x.sum();
+}
++/
+/+
+def f(x){
+	if x<=0{ return 0; }
+	return 1+f(x-1);
+}
+def main(){
+	return f(100);
+}
++/
+
+/+def program(input){
+	assert(input != 2);
+}
+
+def main(){
+	return argMax((input){
+		d := infer(()=>program(input));
+		return errorPr(d);
+	});
+	return (input);
+}
++/
+
+
+
+/+
+def main(input){
+	NN1 := readNN("NN1.net");
+	NN2 := readNN("NN2.net");
+	return argMax((input){
+		x := NN1(input);
+		y := NN2(input);
+		return dist(x,y);
+	});
+}
++/
+
+/+
+def main(){
+	return expectation(infer(()=>flip(1/3)));
+}
++/
+
+/+
+def main(){
+	return infer(()=>flip(1/3)+flip(1/3));
+	//r := flip(1/2);
+	//return infer((){assert(r);});
+}
++/
+/+
+def main(){
+	f := if flip(1/2) { flip } else { (x)=>2; };
+	return f(1/2);
+}
++/
+/+
+def main(){
+	dat Foo{
+		y: ℝ;
+		def Foo(){
+			this.y=2;
+		}
+	}
+	return Foo();
+}
++/
+
+/+
+def main(){
+	x := 2;
+	def foo(){ return x; }
+	return foo();
+}
++/
+
+/+
+def main(){
+	return π;
+	a := flip(1/2);
+	x := (y)=>y+a;
+	return (if flip(1/2) { x } else { (k)=>(k-2) })(0);
+}
++/
+/+
+def main(a,b,c,d,e,f){
+	//return uniformInt(1,2);
+	k := 0;
+	for i in [0..10){
+		k += i;
+	}
+	return (k,a,b,c,d,e,f);
+}
++/
+/+dat Packet{
+	x: ℝ;
+	def Packet(x){ this.x=x; }
+}
+dat Queue{
+    data: (Packet × ℝ)[];
+    def Queue(){
+        data = ([]:(Packet × ℝ)[]);
+    }
+    def pushFront(x: Packet × ℝ){
+        data=[x]~data;
+    }
+    def pushBack(x: Packet × ℝ){
+        data=data~[x];
+    }
+    def takeFront(){
+        r:=front();
+        popFront();
+        return r;
+    }
+    def takeBack(){
+        r:=data[size()-1];
+        data=data[0..size()-1];
+        return r;
+    }
+    def size(){
+        return data.length;
+    }
+    def front(){
+        return data[0];
+    }
+    def popFront(){
+        data=data[1..size()];
+    }
+}
+
+def main(){
+	q := Queue();
+	q.pushFront(Packet(flip(1/2)),1);
+	return q;
+}
++/
+/+
+dat D{
+	x: ℝ;
+	def D(x){
+		this.x = x;
+	}
+	def foo(y,z){
+		x += y;
+		return x;
+	}
+}
+
+def main(){
+	d := D(2);
+	return d.foo(3,4);
+	//return x.foo();
+	//return x;
+}
++/
+
+/+def foo(x){
+	return flip(x)+flip(1-x);
+}
+
+def main(){
+	/*x := if 1 { 3 } else { assert(0); };
+	if x {
+		x *= 5;
+	}else{
+		x = 15;
+	}
+	// observe(x==15);
+	return x;*/
+	//r:=flip(1/2)+flip(1/2)+flip(1/2)+flip(1/2)+flip(1/2)+flip(1/2)+flip(1/2)+flip(1/2)+flip(1/2)+flip(1/2);
+	//return foo(x);
+	//assert(1);
+	//assert(flip(1/2));
+	//x := flip(1/2);
+	//return foo(x);
+	/*x := 1;
+	r := foo(1/2);
+	r+=foo(1/2);
+	return (x,r);*/
+	x := [];
+	if flip(1/2) { x ~= [1]; }
+	if flip(1/2) { x ~= [2]; }
+	if flip(1/2) { x ~= [3]; }
+	if flip(1/2) { x ~= [4]; }
+	if flip(1/2) { x ~= [5]; }
+	if flip(1/2) { x ~= [6]; }
+	if flip(1/2) { x ~= [7]; }
+	return x.length;
+}
++/

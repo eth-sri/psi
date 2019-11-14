@@ -1,0 +1,27 @@
+// skipped
+
+def max_probability(d: Distribution[ℝ]){
+	return expectation(infer((){
+		q := uniform(0,2);
+		observe(!expectation(infer((){
+			x := sample(d);
+			p := expectation(then((y)=>x==y)(d));
+			return p>=q;
+		})));
+		return q;
+	}))*2-2;
+}
+
+def log₂(x)=>log(x)/log(2);
+
+def min_entropy(d: Distribution[ℝ]){
+	return -log₂(max_probability(d));
+}
+
+def main(){
+	//return max_probability(infer(()=>flip(1/3)));
+	return max_probability(infer(()=>uniformInt(1,5)+uniformInt(1,3)));
+}
+
+
+def then[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));

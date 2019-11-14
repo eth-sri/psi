@@ -1,0 +1,24 @@
+// skipped
+// https://www.quora.com/unanswered/Five-foxes-and-seven-hounds-run-into-a-foxhole-While-inside-they-get-all-jumbled-up-so-that-all-orderings-are-equally-likely-The-foxes-and-hounds-run-out-of-the-hole-in-a-neat-line-On-average-how-many-foxes-are
+
+// TODO: make this fast
+
+def main(){
+	n := 5; // num foxes
+	m := 7; // num hounds
+	a := array(5+7,0);
+	for i in [n..n+m){
+		a[i]=1;
+	}
+	for i in [0..n+m-1){
+		j := uniformInt(i,n+m-1);
+		t := a[i];
+		a[i] = a[j];
+		a[j] = t;
+	}
+	r := 0;
+	for i in [0..n+m-1){
+		r += a[i]=0 && a[i+1]≠0;
+	}
+	return r;
+}

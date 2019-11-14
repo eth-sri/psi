@@ -1,0 +1,29 @@
+// skipped
+// TODO: make fast
+import genCap;
+
+def informationFlow[a,b](input: Distribution[a], channel: a→ b,eqa: a×a→ℝ,eqb: b×b→ℝ)⇒
+I(infer((){
+	i := sample(input);
+	o := channel(i);
+	return (i,o);
+}),eqa,eqb);
+
+def bsc(q)⇒(b)⇒b⊕flip(q);
+
+/+def main(/+p,q+/q){
+	input := infer(()⇒ flip(p));
+	channel := bsc(q);
+	return informationFlow(input, channel, eqℝ,eqℝ);
+}+/
+
+def main(n,q){
+	/+n := 5; 
+	input := infer(()⇒ uniformInt(0,n));+/ // TODO: get rid of sums in result
+	input := UniformInt(0,n);
+	channel := (i)⇒ if flip(q) then
+	                   if flip(1/2) then (i-1)%n
+	                                else (i+1)%n
+	                else i;
+	return informationFlow(input, channel, eqℝ, eqℝ);
+}

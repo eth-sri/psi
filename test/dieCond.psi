@@ -1,0 +1,23 @@
+// skipped
+// https://www.quora.com/What-are-some-lesser-known-counterintuitive-results-in-probability/answer/Michael-Hochster
+// TODO
+
+def main(){
+	x := 0/1;
+	throws := 0;
+	//while x!=6{ // TODO
+	for i in [0..20){
+		if x!=6{
+			x = uniformInt(1,6);
+			//observe(x%2==0);
+			observe(x==2||x==4||x==6);
+			throws += 1;
+		}
+	}
+	return throws;
+}
+
+// Pr[throws = i] = (5/6)^(i-1)·(1/6).
+// Pr[throws = i ∧ all even]=(2/6)^(i-1)·(1/6).
+// Pr[all even] = ∑ᵢ[i≤1](2/6)^(i-1)·(1/6)
+// E[throws|all even] = (∑ᵢ[i≤1]·i·(2/6)^(i-1)·(1/6))/(∑ᵢ[i≤1]·(2/6)^(i-1)·(1/6))=3/2.

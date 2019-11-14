@@ -1,0 +1,8 @@
+// compilation error
+
+def main(){
+    x := flip(1/2);
+    y := if x { 1 } else { (1,1) };
+    if !x { y[1]+=y[0]; } else { y += 1; }
+    return y; // TODO
+}

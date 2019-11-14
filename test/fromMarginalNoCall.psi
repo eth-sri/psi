@@ -1,0 +1,9 @@
+
+def main(){
+	//x := ( if flip(1/2) { Bernoulli(1/2) } else { Bernoulli(1/3) } );
+	//return expectation(then((x)=>x^2)(x));
+	x := bernoulli(1/3);
+	d := Marginal(x);
+	return (x,sample(d)); // expected: (1/9·δ(1)[r]+2/9·δ(0)[r])·δ(1)[x]+(2/9·δ(1)[r]+4/9·δ(0)[r])·δ(0)[x]
+	// TODO: keep in factored form
+}

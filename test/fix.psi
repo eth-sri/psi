@@ -1,0 +1,52 @@
+// skipped
+
+/+
+def fix2[a,b,c,d](f: (a→ b)×(c→ d)→ (a→ b)×(c→ d)):(a→ b)×(c→ d){
+	r:=fix((arg: a+c→ b+d)=>
+		   (k: a+c)=>
+		   match k{
+			   (u:a)=>f((x:a)=>arg(inl(x)),(y:b)=>arg(inr(y)))[0](u)
+			   (v:c)=>f((x:a)=>arg(inl(x)),(y:b)=>arg(inr(y)))[1](v)
+		   });
+	return ((x:a)=>lforce(r(inl(x))),(x:c)=>rforce(r(inr(y))));
+}
++/
+
+def fix[a,b](f:(a → b)→ (a → b)):a→ b{
+	return f((y:a)=>fix(f)(y));
+}
+//def fix2[a,b](x:
+
+
+def fib(f:ℝ → ℝ):ℝ → ℝ{
+	return (x){
+		if x <= 1 { return x; }
+		return f(x-1)+f(x-2);
+	}
+}
+
+def base[a,b](x:a):b{
+	assert(0);
+}
+
+def geom(g:ℝ→ ℝ)(p)⇒ if flip(p) then 0 else 1+g(p);
+
+/+def geom(g:ℝ→ ℝ)(p){
+	if flip(p){ return 0; }
+	return 1+g(p);
+}+/
+
+def main(){
+	//f := fix(k);
+	//f := k(k(k(f_base)));
+	//return f(3);
+	//f := base[ℝ,ℝ];
+	g := base[ℝ,ℝ];
+	//for i in [0..20){
+	for i in [0..20){
+		//f = fib(f);
+		g = geom(g);
+	}
+	//return f();
+	return g(1/2); // expected: 1/1024·δ(9)[r]+1/1048576·δ(19)[r]+1/128·δ(6)[r]+1/131072·δ(16)[r]+1/16384·δ(13)[r]+1/16·δ(3)[r]+1/2048·δ(10)[r]+1/256·δ(7)[r]+1/262144·δ(17)[r]+1/2·δ(0)[r]+1/32768·δ(14)[r]+1/32·δ(4)[r]+1/4096·δ(11)[r]+1/4·δ(1)[r]+1/512·δ(8)[r]+1/524288·δ(18)[r]+1/64·δ(5)[r]+1/65536·δ(15)[r]+1/8192·δ(12)[r]+1/8·δ(2)[r]
+}

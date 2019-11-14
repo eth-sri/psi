@@ -1,0 +1,7 @@
+def test(){
+	assert(flip(1/2));
+	return 0;
+}
+def main(){
+	return sample(infer(test)); // expected: 1/2·δ(0)[r]
+}

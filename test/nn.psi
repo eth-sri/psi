@@ -1,0 +1,30 @@
+// skipped
+
+def max(x, y){
+	if (x > y)
+	{
+		return x;
+	}
+	else
+	{
+		return y;
+	}
+}
+
+def main(){
+	i1 := uniform(-1, 1);
+	i2 := uniform(-1, 1);
+	
+	h1_in := i1 * 0.4 - i2 * 2.4 + 2;
+	h1_out := max(h1_in , 0);
+	
+	h2_in := i1 * 3.7 + i2 * 0.3 - 1;
+	h2_out := max(h2_in, 0);
+	
+	o_in := h1_out * 2 + h2_out * 1.1 + 0.2;
+	o_out := max(o_in, 0);
+	
+	//observe(o_out >= 0.5);
+	
+	return (i1,i2);
+}

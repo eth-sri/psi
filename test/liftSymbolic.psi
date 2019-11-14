@@ -1,0 +1,60 @@
+// skipped
+
+def differentiate(f: ℝ → ℝ)(x)⇒
+    if __NOCHECK__
+    then sampleFrom("(r;f,x)=>δ(d/dx[(∫dy f(x)[y]·y)](x))[r]",f,x):ℝ
+    else sampleFrom("(r;f,x)=>δ(d/dx[(∫dy f(x)[y]·(case(y){ val(y') ⇒ y'; ⊥ ⇒ 0 }))](x))[r]",f,x):ℝ;
+
+def integrate(f: ℝ → ℝ)⇒
+    if __NOCHECK__
+    then sampleFrom("(r;f)=>δ(∫dx∫dy f(x)[y]·y)[r]",f):ℝ
+    else sampleFrom("(r;f)=>δ(∫dx∫dy f(x)[y]·(case(y){ val(y') ⇒ y'; ⊥ ⇒ 0 }))[r]",f):ℝ;
+def integrate2(f: ℝ × ℝ → ℝ)⇒ integrate((x)⇒ integrate((y)⇒ f(x,y)));
+def integrate3(f: ℝ × ℝ × ℝ → ℝ)⇒ integrate((x)⇒integrate2((y,z)⇒ f(x,y,z)));
+def integrate4(f: ℝ × ℝ × ℝ × ℝ → ℝ)⇒ integrate((x)⇒integrate3((y,z,w)⇒ f(x,y,z,w)));
+def integrate5(f: ℝ × ℝ × ℝ × ℝ × ℝ → ℝ)⇒ integrate((x)⇒integrate4((y,z,w,a)⇒ f(x,y,z,w,a)));
+def integrate6(f: ℝ × ℝ × ℝ × ℝ × ℝ × ℝ → ℝ)⇒ integrate((x)⇒integrate5((y,z,w,a,b)⇒ f(x,y,z,w,a,b)));
+def integrate7(f: ℝ × ℝ × ℝ × ℝ × ℝ × ℝ × ℝ → ℝ)⇒ integrate((x)⇒integrate6((y,z,w,a,b,c)⇒ f(x,y,z,w,a,b,c)));
+def integrate8(f: ℝ × ℝ × ℝ × ℝ × ℝ × ℝ × ℝ × ℝ → ℝ)⇒ integrate((x)⇒integrate7((y,z,w,a,b,c,d)⇒ f(x,y,z,w,a,b,c,d)));
+
+def gaussInt(x)⇒ integrate((y)⇒ (y<=x)*exp(-y^2));
+
+def limInf(f: ℝ → ℝ)⇒
+    if __NOCHECK__
+    then sampleFrom("(r;f)=>δ(lim[x→ ∞](∫dy f(x)[y]·y))[r]",f):ℝ
+    else sampleFrom("(r;f)=>δ(lim[x→ ∞](∫dy f(x)[y]·(case(y){ val(y') ⇒ y'; ⊥ ⇒ 0 })))[r]",f):ℝ;
+
+def grad1(f: ℝ → ℝ) ⇒ differentiate(f);
+def grad2(f: ℝ × ℝ → ℝ) ⇒ (x,y)⇒ (differentiate((x₁)⇒ f(x₁,y))(x),differentiate((y₁)⇒ f(x,y₁))(y));
+def grad3(f: ℝ × ℝ × ℝ → ℝ) ⇒ (x,y,z)⇒ (differentiate((x₁)⇒ f(x₁,y,z))(x),differentiate((y₁)⇒ f(x,y₁,z))(y),differentiate((z₁)⇒ f(x,y,z₁))(z));
+
+def relu(x)⇒ max(x,0);
+def sigmoid(x:ℝ) ⇒ 1/(1+exp(-x));
+
+def nn(x,y,z)(a,b,c)⇒ sigmoid(x*a+b*y+z*c);
+
+def loss1(f: ℝ × ℝ × ℝ → ℝ){
+	return (f(1,2,3)-1)^2+(f(3,2,1)-0)^2;
+}
+
+
+def loss2(f: ℝ × ℝ × ℝ → ℝ){
+	return (f(1,2,3)-1)*(f(1,2,3)-1)+(f(3,2,1)-0)*(f(3,2,1)-0);
+}
+
+def main(x){
+	//return grad3((x,y,z)⇒ loss(nn(x,y,z)))(x,y,z);
+	//return loss1(nn(x,x,x)); // TODO: make this simpler
+	//return loss2(nn(5,5,5)); // TODO: make this smaller
+	//return loss;
+	//return (nn(5,5,5)(1,2,3)-1)^2+(nn(5,5,5)(3,2,1)-0)^2;
+	//return grad3((x,y,z)⇒ x*y*z)(x,y,z);
+	//return differentiate((x)=>exp(x^2))(x);
+	return differentiate(differentiate(differentiate((x)⇒ x^3)))(x);
+	//return limInf(gaussInt);
+	//return gaussInt(x);
+	//return integrate2((x,y)=>x*y*(0<=x&&x<=1&&0<=y&&y<=1));
+	//return integrate3((x,y,z)=>exp(-x^2-y^2-z^2)*(x<=y));
+	//return integrate((x)=>(0<=x)*(x<=1)*x^3);
+}
+

@@ -1,0 +1,20 @@
+// skipped
+
+def getCDF(d: Distribution[ℝ]){
+	return (x)⇒ Expectation(sample(d)<=x);
+}
+
+def getInvCDF(d: Distribution[ℝ]){
+	cdf := getCDF(d);
+	return (x)⇒ expectation(infer((){
+		y := gauss(0,1);
+		cobserve(cdf(y),x); // TODO: this only works if the support of d is (-∞,∞).
+		return y;
+	}));
+}
+
+def main(){
+	return getInvCDF(Gauss(0,1))(uniform(0,1));
+	//return getInvCDF(Uniform(0,1))(uniform(0,1)); // TODO: how to deal with this?
+	//return gauss(0,1);
+}

@@ -1,0 +1,26 @@
+// skipped
+
+n:=4;
+
+def randPerm(){
+	r := array(n,0);
+	for i in [0..n){ r[i] = i; }
+	for i in [0..n){
+		j := uniformInt(i,n-1);
+		t := r[j];
+		r[j] = r[i];
+		r[i] = t;
+	}
+	return r;
+}
+
+def main(){
+	p1 := randPerm();
+	p2 := randPerm();
+	for i in [0..n){
+		if p1[i]==p2[i]{
+			return 0;
+		}
+	}
+	return 1;
+}

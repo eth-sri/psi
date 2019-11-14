@@ -1,0 +1,9 @@
+// skipped
+
+def main(){
+	x := 0;
+	for i in [0..10){
+		x += flip(1/2);
+	}
+	return x;
+}

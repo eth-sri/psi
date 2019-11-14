@@ -1,0 +1,85 @@
+// skipped
+
+def main(x:ℝ){
+    return H(infer((){
+        seq := array(4,0);
+        seq[0] = flip(1/2);
+        for i in [1..4){
+            seq[i] = seq[i-1] ⊕ flip(x);
+        }
+        return seq;
+    }),eq_a(eqℝ));
+}
+
+def log₂(x)=>log(x)/log(2);
+
+def S[a](d: Distribution[a], x: a, eq: a×a→ ℝ) ⇒
+	-log₂(expectation(infer((){
+		y := sample(d);
+		return eq(x,y);
+	})));
+
+def H[a](d: Distribution[a], eq: a×a→ℝ) ⇒ expectation(infer((){ x := sample(d); return S(d,x,eq); }));
+
+
+def eqℝ(x,y)=>x==y;
+def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
+	for i in [0..4){
+		if !eq(x[i],y[i]){
+			return false;
+		}
+	}
+	return true;
+}
+def eq_p[a,b](eqa:a×a→ℝ,eqb:b×b→ℝ)(x:a×b,y:a×b)⇒
+	eqa(x[0],y[0])&&eqb(x[1],y[1]);
+
+def eq_t[a,b,c](eqa: a×a→ℝ, eqb: b×b→ℝ, eqc: c×c→ℝ)(x:a×b×c,y:a×b×c)⇒
+	eqa(x[0],y[0])&&eqb(x[1],y[1])&&eqc(x[2],y[2]);
+
+
+
+/+
+def main(){
+    a := [uniform(0,2), uniformInt(1,3)/3];
+    x := a[flip(1/2)];
+    p := infer((){
+        y := uniform(0,1);
+        observe(y <= x);
+        return y;
+    });
+    return (expectation(p), sample(p));
+}
++/
+/+def main(){
+    x := flip(1/2) + uniform(0,1/2);
+    p := infer((){
+        y := uniform(0,1);
+        observe(y <= x);
+        return y;
+    });
+    return (expectation(p), sample(p));
+}+/
+
+
+
+/+def main(){
+	x := uniform(0,1);
+	z := flip(1/2);
+	p := infer((){
+		y := uniform(0,1);
+		observe(x+y<=z+1);
+		return y;
+	});
+	return (x, sample(p));
+}+/
+
+/*
+// old example
+def main(){
+  x := uniform(0,1);
+  y := uniform(0,1);
+  z := x + y;
+  observe(z <= 1);
+  return x;
+}*/

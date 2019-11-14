@@ -1,0 +1,13 @@
+// skipped
+// TODO
+// https://www.quora.com/A-machine-outputs-random-real-numbers-between-0-and-1-until-their-sum-exceeds-1-How-many-numbers-will-it-need-to-generate-on-average
+
+def main(){
+	i := 0;
+	x := 0;
+	while x < 1{
+		x += uniform(0,1);
+		i += 1;
+	}
+	return i;
+}

@@ -1,0 +1,10 @@
+// skipped
+// AnW SS 2019 sheet 5 1b)
+
+def main(){
+	hotdogs := [[0,0],[0,1],[1,1]];
+	hotdog := hotdogs[uniformInt(0,2)];
+	end := hotdog[flip(1/2)];
+	observe(end==1);
+	return hotdog[0]==1 && hotdog[1]==1;
+}

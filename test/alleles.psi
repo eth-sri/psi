@@ -1,0 +1,12 @@
+// skipped
+// interesting case: learning something about daughter reveals nothing about father.
+
+A := 0, B := 1; // alleles
+
+def main(){
+	(boballele0,boballele1) := (flip(0.9),flip(0.9));
+	carolallele0 := flip(1/2);
+	carolallele1 := if flip(1/2) then boballele1 else boballele0;
+	observe(carolallele0==0 && carolallele1==1||carolallele1==0&&carolallele0==1);
+	return ((boballele0,boballele1),);
+}

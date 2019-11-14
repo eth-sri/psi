@@ -1,0 +1,16 @@
+// skipped
+// https://www.quora.com/What-are-some-ways-to-solve-high-difficulty-math-problems/answer/Jack-Fraser-11
+
+def main(){
+    n := uniformInt(6,20);
+    def orange(sweet)=>sweet<=6;
+    p := expectation(infer((){
+        sweet1 := uniformInt(1,n);
+        sweet2 := uniformInt(1,n);
+        observe(sweet1 != sweet2);
+        return orange(sweet1) && orange(sweet2);
+    }));
+    observe(p==1/3);
+    //return n==10; // expected: δ(0)[-r₁+1]
+    return n; // expected: TODO: δ(10)[n]
+}

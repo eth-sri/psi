@@ -1,0 +1,5 @@
+
+def main(){
+	x := if flip(1/2) { 2 } else { assert(false); };
+	return x; // expected: 1/2·δ(2)[x]
+}

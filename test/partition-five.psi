@@ -1,0 +1,13 @@
+
+def main(){
+	male := 0;
+	female := 0;
+	for i in [0..5){
+		if flip(1/2){
+			female += 1;
+		}else{
+			male += 1;
+		}
+	}
+	return Expectation(abs(male-female)<=1)<Expectation(abs(male-female)>1); // expected: δ(0)[r]
+}

@@ -1,0 +1,12 @@
+// https://www.quora.com/What-are-some-lesser-known-counterintuitive-results-in-probability/answer/Ben-Fitzgearl-1
+
+def main(){
+	x := uniform(0,1);
+	y := 1 - x;
+	if x > y{
+		t := x;
+		x = y;
+		y = t;
+	}
+	return Expectation(x/y); // expected: δ(-1+2·log(2))[r]
+}

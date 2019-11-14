@@ -1,0 +1,15 @@
+// skipped
+// TODO: make fast for /arbitrary/ n.
+
+def main(){
+	n := 10;
+	pecked := array(n, 0);
+	for i in [0..n){
+		pecked[(i+if flip(1/2){ 1 } else { -1 })%n]=1;
+	}
+	n_unpecked := 0;
+	for i in [0..n){
+		n_unpecked += !pecked[i];
+	}
+	return n_unpecked;
+}

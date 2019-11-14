@@ -1,0 +1,4 @@
+def main(){
+	p := uniform(0,1);
+	return errorPr(infer((){assert(flip(p));}))==1-p; // expected: δ(1)[r]
+}

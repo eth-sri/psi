@@ -1,0 +1,24 @@
+// skipped
+// https://en.wikipedia.org/wiki/Moment-generating_function
+
+def mgf(d: Distribution[ℝ])(t: ℝ){
+	return expectation(infer((){ x := sample(d); return exp(t*x); }));
+}
+
+def main(n,p,t){
+	// return mgf(Bernoulli(p))(t); // OK.
+	// return mgf(Geometric(p))(t); // TODO: evaluate the sums
+	// return mgf(Binomial(n,p))(t); // TODO: evaluate the sums
+	// return mgf(Poisson(λ))(t); // TODO: evaluate the integrals and the sums
+	// return mgf(Uniform(a,b))(t); // OK.
+	// return mgf(UniformInt(a,b))(t); // TODO: evaluate the sums
+	// return mgf(Gauss(μ,ν))(t); // OK. TODO: simplify better
+	// return mgf(ChiSquared(k))(t); // TODO: add χ² distribution
+	// return mgf(Gamma(α,β))(t); // TODO: evaluate the integrals
+	// return mgf(Exponential(λ))(t); // TODO: evaluate the integrals	
+	// return mgf(MultiGauss(μ,Σ)); // TODO: add multivariate gaussians
+	// return mgf(Dirac(a))(t); // OK.
+	// return mgf(Laplace(μ,b))(t); // TODO: evaluate the integrals
+	// return mgf(NegBinomial(r,p)); // TODO: add negative binomial distribution
+	// return mgf(Cauchy(x₀,γ))(t); // TODO: add Cauchy distribution (and arctan)
+}

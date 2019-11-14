@@ -1,0 +1,16 @@
+// skipped
+
+def base[a,b](x:a):b{
+	assert(0);
+}
+
+def f_step(f: 𝟙→ℝ)(){
+	x := gauss(0,10^2);
+	if x>=0 { return x; }
+	return f();
+}
+
+def main(){
+	f := f_step(f_step(base[𝟙,ℝ]));
+	return 3/4*Expectation(f()>5);
+}

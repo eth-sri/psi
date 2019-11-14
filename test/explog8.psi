@@ -1,0 +1,5 @@
+def main(){
+	return exp(exp(uniform(0,1))); // expected: [-1+log(log(r))≤0]·[-e^e+e≤0]·[-log(r)+1≤0]·[-r≤0]·[r≠0]·⅟log(r)·⅟r
+	// TODO: compute normalization constaint
+	// TODO: simplify Iverson brackets better
+}

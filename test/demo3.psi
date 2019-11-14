@@ -1,0 +1,26 @@
+// skipped
+
+/*
+def then[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));
+def expectationOf[a](d: Distribution[a],f: a→ ℝ)=>expectation(then(f)(d));
+
+def entropy(distribution: D[R]){
+    for i in [0..10){
+	p:=expectationOf(distribution,x=>x==i);
+    }
+}
+
+def query2(){
+    x:=Bernoulli(1/2);
+    distribution := infer(()=>query(x));
+
+    a := expectation(distribution.andThen((x)=>x^2));
+    b := expectation(distribution.andThen((x)=>x^3));
+    c := sample(distribution);
+    return a+b+c;
+}
+
+def main(){
+    z := infer(query2);
+}
+*/

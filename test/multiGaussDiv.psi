@@ -1,0 +1,12 @@
+// skipped
+def main(rho){
+	//(x,y) := sampleFrom("(x,y)=>5/2·e^(-25/42·x²+-25/42·y²+10/21·x·y)·⅟π·⅟√2̅1̅");
+	assert(0<=rho&&rho<1);
+	(x,y) := sample(infer(()=>sampleFrom("(x,y;ρ)=>e^(-x²+-y²+2·ρ·x·y)",rho)));
+	//return x/y;
+	return log(x)-log(y);
+	// (antiderivative is actually found, limit evaluation engine fails)
+	// TODO: solve 
+}
+
+// PDF: (E^r*Sqrt[1 - rho^2]*Boole[1 - rho^2 != 0]^2)/((2 + 2*E^(2*r) - 4*E^r*rho)*(ArcTan[Sqrt[1 - rho]/Sqrt[1 + rho]] + ArcTan[rho/Sqrt[1 - rho^2]]))

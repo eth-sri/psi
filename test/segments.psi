@@ -1,0 +1,9 @@
+// skipped
+// https://www.quora.com/Two-points-are-chosen-at-random-on-a-line-of-unit-length-What-is-the-probability-that-the-three-line-segments-so-formed-will-have-a-length-greater-than-1-4
+
+def main(){
+	x₁ := uniform(0,1);
+	x₂ := uniform(0,1);
+	if x₁>x₂{ tmp:=x₁; x₁=x₂; x₂=tmp; }
+	return x₁>1/4 && x₂-x₁>1/4 && 1-x₂>1/4
+}

@@ -1,0 +1,5 @@
+
+def main(){
+	def foo():ℝ{ assert(false); };
+	return foo; // expected: δ(λξ₁. Λξ₂. δ(⊥)[ξ₂])[foo]
+}

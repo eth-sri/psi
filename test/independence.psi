@@ -1,0 +1,30 @@
+// skipped
+
+n := 3; // TODO: loops.
+
+def log₂(x)=>log(x)/log(2);
+
+def S[a](d: Distribution[a], x: a, eq: a×a→ ℝ)⇒
+	log₂(1/expectation(infer(()⇒ eq(sample(d),x))));
+
+def H[a](d: Distribution[a], eq: a×a→ ℝ)⇒
+	expectation(infer(()⇒ S(d,sample(d),eq)));
+
+def π₁[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[0]);
+def π₂[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[1]);
+
+def I[a,b](d: Distribution[a×b], eq₁: a×a→ ℝ, eq₂: b×b→ℝ)⇒
+	  H(π₁(d),eq₁) + H(π₂(d),eq₂) - H(d,eq_p(eq₁,eq₂));
+
+def independent[a,b](d: Distribution[a×b],eq₁: a×a→ ℝ, eq₂: b×b→ℝ){
+	return I(d,eq₁,eq₂)==0;
+}
+
+def main(){
+	return independent(infer((){a:=flip(1/2); return (a,a); }),eqℝ,eqℝ);
+}
+
+
+def eq_p[a,b](eqa:a×a→ℝ,eqb:b×b→ℝ)(x:a×b,y:a×b)⇒
+	eqa(x[0],y[0])&&eqb(x[1],y[1]);
+def eqℝ(x,y)=>x==y;

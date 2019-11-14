@@ -1,0 +1,14 @@
+
+def main(){
+	y := 3;
+	def foo(x){
+		if true{
+			return x+y;
+		}
+		assert(false);
+	}
+	if true{
+		return foo(2); // expected: δ(5)[r]
+	}
+	assert(false);
+}

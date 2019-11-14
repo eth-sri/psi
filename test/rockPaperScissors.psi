@@ -1,0 +1,63 @@
+// skipped
+// ACM ICPC World Finals 2017, Problem K
+// TODO: symbolic loops
+R := 0, P := 1, S := 2; 
+
+n := 20, p := 5;
+
+/+def solve(/*n, */pattern: ℝ[]){// TODO: make fast for large inputs
+
+	assert(pattern.length==p);
+	a := array(n, 0);
+	for i in [0..n){
+		a[i] = uniformInt(R,S);
+	}
+	occurs := 0;
+	for i in [0..n-p+1){
+		occursHere := 1;
+		for j in [0..p){
+			occursHere &&= a[i+j]==pattern[j];
+		}
+		occurs |= occursHere;
+	}
+	return occurs;
+}+/
+
+def solve(/*n, */pattern: ℝ[]){
+	// TODO: make fast with symbolic backend
+	// TODO: make fast with explicit array in input
+	assert(pattern.length==p);
+	f := array(p+1, 0);
+	j := -1;
+	f[0] = j;
+	for i in [0..p+1){
+		repeat p+1{ // TODO: while loop
+			if (if j != -1 then pattern[j]!=pattern[i] else false){ // TODO: use shortcut and
+				j = f[j];
+			}
+		}
+		f[i+1]=j+1;
+		j+=1;
+	}
+	j = 0;
+	for i in [0..n){
+		cur := uniformInt(P,S);
+		repeat p+1{ // TODO: while loop
+			if (if j != -1 then pattern[j]!=cur else false){ // TODO: use shortcut and
+				j = f[j];
+			}
+		}
+		j+=1;
+		if j == p { return 1; }
+	}
+	//return (f[0],f[1],f[2],f[3],f[4],f[5]);
+	return 0;
+}
+
+
+def main(){
+	//return solve(/*3, */[P,S]);
+	return (solve(/*20,*/[P,R,S,P,S]),solve(/*20,*/[P,P,S,P,P]),solve(/*20,*/[S,S,S,S,S]));
+	//return solveAll(/*3, */[[P,P],[R,R],[P,S],[S,S]]);
+	//return solveAll(20, [[P,R,S,P,S],[S,S,S,S,S],[P,P,S,P,P]]);
+}

@@ -1,0 +1,45 @@
+// skipped
+// https://www.quora.com/Have-evolutionary-biologists-calculated-the-mathematical-probabilities-behind-any-particular-type-of-protein-evolving-or-even-the-simplest-tRNAs/answer/Franklin-Veaux
+
+// TODO: make fast for n=10000.
+
+// TODO: also make explicit simulation fast.
+// (I.e., repeatedly roll all dice that don't show 6 until all dice show 6.)
+
+/+
+def main(){
+	n := 3; // TODO: make fast for n=10000.
+	x := 0;
+	for i in [0..n){
+		x = max(x, geometric(1/6)+1);
+	}
+	return Expectation(x); // expected: δ(10566/1001)[r]
+}
++/
+/+
+def main(k,p){
+	return geometric(p)<=k; // TODO: solve this in closed form
+}+/
+
+def main(k){
+	n := 10000;
+	p := 1/6;
+	return (1-(1-p)^k)^n-(1-(1-p)^(k-1))^n;
+}
+
+/+
+maximum of n geometric(p)+1 random variables has CDF:
+
+Pr[max_i X_i ≤ k] = Pr[X_i ≤ k]^n
+                  = (1-(1-p)^k)^n.
+
+Pr[max_i X_i = k]
+  = (1-(1-p)^k)^n-(1-(1-p)^(k-1))^n.
+  = ∑_i (n choose i) (-1)^i ((1-p)^(ki)-(1-p)^((k-1)i)).
+  = ∑_i (n choose i) (-1)^i (1-p)^((k-1)i)((1-p)^i-1).
+
+∑ₖ k·Pr[max_i X_i = k]
+= ∑ₖ Pr[max_i X_i ≥ k]
+= ∑ₖ(1-(1-(1-p)^(k-1))^n).
+
++/

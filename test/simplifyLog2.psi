@@ -1,0 +1,5 @@
+// skipped
+
+def main(){
+	return log(4/3)/log(8/3); // TODO: simplify more nicely?
+}

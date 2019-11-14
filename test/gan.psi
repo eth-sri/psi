@@ -1,0 +1,100 @@
+// skipped
+
+import genCap;
+
+def max(a,b)⇒ if a>=b then a else b;
+
+def ganModel(dataSource: 𝟙→ℝ, generator: 𝟙→ℝ, discriminator: ℝ→ℝ)⇒
+	infer((){
+		truth := flip(1/2);
+		data := if truth
+		        then dataSource()
+		        else generator();
+		guess := flip(discriminator(data));
+		return (truth, guess);
+	});
+
+
+// ganLoss: standard GAN loss
+def ganLoss(dataSource: 𝟙→ℝ, generator: 𝟙→ℝ, discriminator: ℝ→ℝ){
+	d := ganModel(dataSource, generator, discriminator);
+	return expectation(infer((){ (truth, guess) := sample(d); observe(truth); return log(max(guess,0.001)); }))
+		+ expectation(infer((){ (truth, guess) := sample(d); observe(!truth); return log(max(1-guess,0.001)); }));	
+}
+
+
+// ganLoss2: mutual information between truth and discriminator guess
+def ganLoss2(dataSource: 𝟙→ℝ, generator: 𝟙→ℝ, discriminator: ℝ→ℝ)⇒I(ganModel(dataSource,generator,discriminator),eqℝ,eqℝ);
+
+def bayesianDiscriminator(dataSource: 𝟙→ℝ, generator: 𝟙→ℝ)(x:ℝ)⇒
+	expectation(infer((){
+		truth := flip(1/2);
+		data := if truth
+		then dataSource()
+		else generator();
+		observe(data==x);
+		return truth;
+	}));
+
+def bayesianHardDiscriminator(dataSource: 𝟙→ℝ, generator: 𝟙→ℝ)(x:ℝ)⇒
+	bayesianDiscriminator(dataSource, generator)(x)>1/2;
+
+def model1(a,b){
+	if a<0||b<0||a+b>1 { return 0; }
+	def dataSource()⇒ categorical([1/5,1/3,7/15]); // real data
+	def generator()⇒ categorical([a,b,1-a-b]); // generator, we are optimizing this
+	discriminator := makeDiscriminator(dataSource,generator);
+	return loss(dataSource,generator,discriminator);	
+}
+
+def model2(μ){
+	def dataSource()⇒ gauss(0,1); // real data
+	def generator()⇒ gauss(μ,1); // generator, we are optimizing this
+	// discriminator := makeDiscriminator(dataSource,generator)
+	def discriminator(x: ℝ){
+		//return abs(x-μ)>abs(x-0);
+		return x<0;
+	}
+	return loss(dataSource,generator,discriminator);
+}
+
+def model3(p){
+	if p<0||p>1 { return 0; }
+	def dataSource()⇒ flip(1/3);
+	def generator()⇒ flip(p);
+	discriminator := makeDiscriminator(dataSource,generator);
+	return loss(dataSource,generator,discriminator);
+}
+
+def makeDiscriminator(dataSource: 𝟙→ℝ, generator: 𝟙→ℝ)⇒ bayesianHardDiscriminator(dataSource, generator);
+def loss(dataSource: 𝟙→ℝ, generator: 𝟙→ℝ, discriminator: ℝ→ℝ)⇒ ganLoss2(dataSource,generator,discriminator);
+
+//def main(a,b)⇒ model1(a,b);
+def main(μ)⇒ model2(μ);
+//def main(p)⇒ model3(p);
+/+
+// gan loss illustration:
+def main(p₁,p₂){
+	if p₁<=0||p₂<=0||p₁>=1||p₂>=1{ return 0; }
+	d:=infer((){
+		real := flip(1/2);
+		guess := if real then p₁ else p₂;
+		return (real,guess);
+	});
+	//return (real,guess);
+	return expectation(infer((){ (truth, guess) := sample(d); observe(truth); return log(guess); }))
+		+ expectation(infer((){ (truth, guess) := sample(d); observe(!truth); return -log(guess); }));	
+}
+/+
+// gan2 loss illustration:
+def main(p₁,p₂){
+	if p₁<0||p₂<0||p₁>1||p₂>1{ return 0; }
+	d:=infer((){
+		real := flip(1/2);
+		guess := if real then p₁ else p₂;
+		return (real,guess);
+	});
+	return I(infer((){ (real,guess) := sample(d); guess=flip(guess); return (real,guess); }),eqℝ,eqℝ);
+}
++/
++/

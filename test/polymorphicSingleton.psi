@@ -1,0 +1,12 @@
+def foo[a](x:a,){
+	return (x,);
+}
+
+def bar[a](x:a){
+	return x;
+}
+
+def main(){
+	(x,) := foo(1,);
+	return (x,bar(2)); // expected: δ(1)[x]·δ(2)[r]
+}

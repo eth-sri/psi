@@ -1,0 +1,17 @@
+// skipped
+// https://www.quora.com/There-are-4-cards-on-the-table-all-facing-downwards-Each-time-one-of-the-cards-is-randomly-chosen-and-flipped-until-all-cards-are-facing-upwards-If-n-denotes-the-total-number-of-flippings-what-is-the-probability
+
+// TODO
+
+def all[a](f: a → ℝ, x: a[]):ℝ⇒if x.length then f(x[0]) && all(f, x[1..x.length]) else true;
+
+def main(){
+	cards := array(4,0);
+	def up(cards: ℝ[])⇒all((x)⇒x=1, cards);
+	num_flips := 0;
+	while !up(cards){
+		cards[uniformInt(0,3)] ⊕← 1;
+		num_flips +← 1;
+	}
+	return num_flips%4 = 0;
+}

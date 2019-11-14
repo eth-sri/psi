@@ -1,0 +1,41 @@
+// skipped
+
+def log₂(x)=>log(x)/log(2);
+
+
+def entropy(d: Distribution[ℝ]){
+    return expectation(infer((){
+        x := sample(d);
+        //p := expectation(then((y) ⇒ x==y)(d)); // TODO: 'then' in bruteforce-backend
+        p := expectation(infer((){ y:=sample(d); return x==y;}));
+        return log₂(1/p);
+    }));
+}
+
+def entropy2(d: Distribution[ℝ×ℝ]){
+    return expectation(infer((){
+        (x1,y1) := sample(d);
+        //p := expectation(then((y) ⇒ x==y)(d)); // TODO: 'then' in bruteforce-backend
+        p := expectation(infer((){ (x2,y2):=sample(d); return x1==x2 && y1==y2;}));
+        return log₂(1/p);
+    }));
+}
+
+def cond_entropy(d: Distribution[ℝ×ℝ]){ // H(X[0]|X[1])
+    // return entropy2(d)-entropy(then((x:ℝ×ℝ)=>x[1])(d)); // TODO: 'then' in bruteforce-backend
+    return entropy2(d)-entropy(infer(()=>sample(d)[1]));
+}
+
+def P(x) {
+	if (x <= 1) {
+		return 0;
+	}
+	else {
+		return 1;
+	}
+}
+
+def main(){
+	joint := infer((){ x := uniformInt(0,3); return (x,P(x));});
+	return cond_entropy(joint);
+}

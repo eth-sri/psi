@@ -1,0 +1,19 @@
+// skipped
+
+def main(){
+    a := 0;
+    b := uniform(0,1);
+    c := uniform(0,1);
+    if b>c{
+      tmp := b;
+      b = c;
+      c = tmp;
+    }
+    d := 1;
+
+    m := 0;
+    if b-a > m{ m = b - a; }
+    if c-b > m{ m = c - b; }
+    if d-c > m{ m = d - c; }
+    return m;
+}

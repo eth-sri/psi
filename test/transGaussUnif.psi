@@ -1,0 +1,6 @@
+// skipped
+
+def main(){
+	x := gauss(0,1);
+	return expectation(infer(()=>gauss(0,1)<=x)); // expected: TODO: [-1+r≤0]·[-r≤0]
+}

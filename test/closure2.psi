@@ -1,0 +1,14 @@
+
+def main(){
+	f := ()=>2;
+	i := 3;
+	if true{
+		x := 3;
+		f = ()=>x+i;
+	}
+	r := (0,0);
+	for j in [2..10){
+		return (f(),(()=>j)()); // expected: δ(2)[r₂]·δ(6)[r₁]
+	}
+	assert(false);
+}

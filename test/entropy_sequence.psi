@@ -1,0 +1,48 @@
+// skipped
+// TODO: this is a nice example. make it work for sequence length 4
+def log₂(x)=>log(x)/log(2);
+
+def S[a](d: Distribution[a], x: a, eq: a×a→ ℝ) ⇒
+	-log₂(expectation(infer((){
+		y := sample(d);
+		return eq(x,y);
+	})));
+
+def H[a](d: Distribution[a], eq: a×a→ℝ) ⇒ expectation(infer((){ x := sample(d); return S(d,x,eq); }));
+
+n := 4;
+
+def genSeq(x){
+	seq := [flip(1/2)];
+	for i in [1..n){
+		if flip(x){
+			seq ~= [!seq[i-1]];
+		}else{
+			seq ~= [seq[i-1]];
+		}
+	}
+	return seq;
+}
+
+
+def main(x:ℝ){
+	//return H(infer(()=>flip(1/2)),(a,b)⇒ a==b);
+	//return genSeq();
+	return H(infer(()=>genSeq(x)),eq_a(eqℝ));
+}
+
+
+def eqℝ(x,y)=>x==y;
+def eq_a[a](eq: a×a→ℝ)(x: a[],y: a[]){
+	for i in [0..n){
+		if !eq(x[i],y[i]){
+			return false;
+		}
+	}
+	return true;
+}
+def eq_p[a,b](eqa:a×a→ℝ,eqb:b×b→ℝ)(x:a×b,y:a×b)⇒
+	eqa(x[0],y[0])&&eqb(x[1],y[1]);
+
+def eq_t[a,b,c](eqa: a×a→ℝ, eqb: b×b→ℝ, eqc: c×c→ℝ)(x:a×b×c,y:a×b×c)⇒
+	eqa(x[0],y[0])&&eqb(x[1],y[1])&&eqc(x[2],y[2]);

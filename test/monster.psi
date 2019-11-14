@@ -1,0 +1,12 @@
+// skipped
+// Kahan's "Monster"
+
+def sqrt(x:ℝ)=>x^(1/2);
+
+def main(x){
+	observe(x>0); // TODO: should be a precondition
+	def T(z:ℝ)=> if z==0 { 1 } else { (exp(z)-1)/z };
+	def Q(y:ℝ)=> abs(y-sqrt(y^2+1)) - 1/(y+sqrt(y^2+1));
+	def G(x:ℝ)=> T(Q(x)^2);
+	return G(x)==1;
+}

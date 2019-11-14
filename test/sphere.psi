@@ -1,0 +1,33 @@
+// skipped
+// https://www.quora.com/Four-points-are-chosen-uniformly-at-random-on-the-surface-of-a-sphere-What-is-the-probability-that-the-center-of-the-sphere-lies-inside-the-tetrahedron-whose-vertices-are-at-the-four-points
+// TODO
+
+/+
+def uniformOnCircle(){
+	x := uniform(-1,1);
+	y := uniform(-1,1);
+	cobserve(x^2+y^2,1);
+	return (x,y);
+}
+def main(){
+	return uniformOnCircle()[1];
+}
++/
+
+def uniformOnUnitSphere(){
+	return sample(infer((){
+		x := uniform(-1,1);
+		y := uniform(-1,1);
+		z := uniform(-1,1);
+		cobserve(x^2+y^2+z^2,1); // TODO: gobserve
+		return (x,y,z);
+	}));
+}
+def main(){
+	pts := array(4,(0,0,0));
+	for i in [0..4){
+		pts[i]=uniformOnUnitSphere();
+	}
+	return pts;
+}
+

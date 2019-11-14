@@ -1,0 +1,24 @@
+// skipped
+
+def bob(alice_loc){
+	bob_loc := flip(0.6);
+	observe(bob_loc==alice_loc);
+	return bob_loc;
+}
+
+def alice(bob_loc){
+	alice_loc := flip(0.6);
+	observe(alice_loc==bob_loc);
+	return alice_loc;
+}
+
+depth := 8;
+
+def main(){
+	bob_loc := flip(0.6);
+	for i in [0..depth){
+		alice_loc := alice(bob_loc);
+		bob_loc = bob(alice_loc);
+	}
+	return bob_loc;
+}

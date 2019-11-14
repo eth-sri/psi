@@ -1,0 +1,16 @@
+// skipped
+
+def sin(k){
+	x := (k+π)%(2*π)-π;
+	sign := 1;
+	if x>π{
+		x=2*π-x;
+		sign = -1;
+	}
+	return sign*(x-x^3/6+x^5/120-x^7/5040+x^9/362880);
+}
+
+def main(x){
+	//observe(-π/2<=x&&x<=π/2);
+	return sin(x);
+}

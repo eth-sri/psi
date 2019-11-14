@@ -1,0 +1,22 @@
+// skipped
+// from: Nesting Probabilistic Programs
+
+def conditional[a,b](f: a → b)(x:a) ⇒ infer(() ⇒ f(x));
+
+def inner(y,D){
+	z := gamma(y,1);
+	observe(z!=0);
+	cobserve(gauss(y,z^2), D);
+	return z;
+}
+
+def outer(D){
+	y := beta(2,3);
+	dist := conditional(inner);
+	z := sample(dist(y,D));
+	return y*z;
+}
+
+def main(D){
+	return outer(D);
+}

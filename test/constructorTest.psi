@@ -1,0 +1,10 @@
+
+dat Foo{
+	def Foo(){
+		return this;
+	}
+}
+
+def main(){
+	return Foo(); // expected: δ({})[r]
+}

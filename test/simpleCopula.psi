@@ -1,0 +1,87 @@
+// skipped
+
+def π₁[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[0]);
+def π₂[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[1]);
+
+def makeCDF(d: Distribution[ℝ]){
+	return (x)=>expectation(infer(()=>sample(d)<=x));
+}
+
+def extractCopula(d: Distribution[ℝ×ℝ]){
+	(cdfA, cdfB) := (makeCDF(π₁(d)), makeCDF(π₂(d)));
+	return infer((){ x:=sample(d); return (cdfA(x[0]),cdfB(x[1])); });
+}
+
+def invert(f: ℝ → ℝ){
+	return (x)⇒ expectation(infer((){
+		y := gauss(0,1);
+		cobserve(f(y),x);
+		return y;
+	}));
+}
+
+
+def makeInvCDF(d: Distribution[ℝ])⇒ invert(makeCDF(d));
+
+def addCopula(copula: Distribution[ℝ×ℝ])(marginalA: Distribution[ℝ], marginalB: Distribution[ℝ]){
+	icdf1 := makeInvCDF(marginalA); // TODO: add invert as a built-in?
+	icdf2 := makeInvCDF(marginalB);
+	
+}
+
+n := 2;
+
+
+def mmv(A: ℝ[][], b: ℝ[]){ // matrix-vector product
+	return sampleFrom("(r;A,b)=>δ([i↦ ∑_j[0≤j]·[j<b.length] A@[i]@[j]·b@[j]] (A.length))[r]",A,b):ℝ[]; // performance hack
+}
+
+def avv(a: ℝ[], b: ℝ[]){ // vector addition
+	return sampleFrom("(r;a,b)=>δ([i↦ a@[i]+b@[i]] (a.length))[r]",a,b):ℝ[]; // performance hack
+}
+
+def dot(a: ℝ[], b: ℝ[]){ // dot product for first m entries of vector
+	return sampleFrom("(r;a,b)=>δ(0)[-r+∑_i[0≤i]·[i<a.length] a@[i]·b@[i]]",a,b); // performance hack
+}
+
+def cholesky(A: ℝ[][]){ // cholesky decomposition
+	assert(sampleFrom("(r;A)=>δ([∑_i[0≤i]·[i<A.length]∑_j[0≤j]·[j<A.length]·[A@[i]@[j]≠A@[j]@[i]]=0])[r]",A));
+	L := array(A.length,array(A.length,0));
+	for i in [0..n){
+		if i < A.length {
+			for j in [0..i+1){
+				if j < A.length{
+					t := dot(L[i][0..j],L[j][0..j]);
+					if i == j {
+						assert(A[i][j]>=t);
+						L[i][j] = (A[i][j]-t)^(1/2)
+					}else if L[j][j]!=0{
+						L[i][j] = (A[i][j]-t)/L[j][j];
+					};
+				}
+			}
+		}
+	}
+	return L;
+}
+
+def multiGauss(μ: ℝ[], Σ: ℝ[][]){
+	r := array(n,0);
+	for i in [0..n){
+		r[i] = gauss(0,1);
+	}
+	return avv(mmv(cholesky(Σ),r),μ);
+}
+
+
+def main(){
+	rho := 4/5;
+	v := multiGauss([0,0],[[1,rho],[rho,1]]);
+	copula := extractCopula(Marginal(v[0],v[1]));
+	//return sample(copula); // TODO: closed-form expression?
+	(x,y) := sample(copula);
+	icdf := makeInvCDF(Gauss(0,1));
+	return (icdf(x),icdf(y)); // TODO: this should recover the original multiGauss
+	//return (v[0],v[1]);
+	//return v[0];
+}

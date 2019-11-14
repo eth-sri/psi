@@ -1,0 +1,10 @@
+// skipped
+// TODO: reason about sin and cos and figure out that result is a pair of independent normals
+
+def sqrt(x)⇒x^(1/2);
+
+def main(){
+	(u₁,u₂) := (uniform(0,1), uniform(0,1));
+	(R,Θ) := (sqrt(-2*log(u₁)),2*π*u₂);
+	return (R*cos(Θ), R*sin(Θ));
+}

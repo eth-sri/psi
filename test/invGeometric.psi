@@ -1,0 +1,6 @@
+// skipped
+
+def main(p){
+	observe(0<=p&p<=1);
+	return Expectation(1/(1+geometric(p))); // TODO: δ(-p·log(p)/(1-p))[r]
+}

@@ -1,0 +1,7 @@
+// skipped
+def main(rho){
+	(x,y) := sample(infer(()=>sampleFrom("(x,y;ρ)=>e^(-x²+-y²+2·ρ·x·y)",rho)));
+	observe(x>0 && y>0);
+	return log(x)-log(y);
+	// TODO: solve for arbitrary mean
+}

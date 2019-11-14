@@ -1,0 +1,33 @@
+// skipped
+
+def isSorted(a: ℝ[]){
+	for i in [0..a.length-1){
+		if a[i]>a[i+1]{
+			return false;
+		}
+	}
+	return true;
+}
+
+def notQuiteBogosort(a: ℝ[]){
+	b := a;
+	done := 0;
+	def randomIndex()⇒ uniformInt(0,b.length-1);
+	while !isSorted(b){
+		done=0;
+		while !done{
+			(i,j) := (randomIndex(),randomIndex());
+			if b[i]>b[j]{
+				tmp := b[i];
+				b[i] = b[j];
+				b[j] = tmp;
+				done=1;
+			}
+		}
+	}
+	return b;
+}
+
+def main(){
+	return notQuiteBogosort([32,1,55,2,3]);
+}

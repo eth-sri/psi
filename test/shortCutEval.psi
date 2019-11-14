@@ -1,0 +1,18 @@
+
+def fail():𝔹{ // TODO: add bottom type
+	assert(false);
+}
+
+def main(){
+	x := false;
+	x &&= fail();
+	assert(errorPr(infer((){ x := true; x &&= fail(); }))==1);
+	x = true;
+	x ||= fail();
+	assert(errorPr(infer((){ x := false; x ||= fail(); }))==1);
+	x = false && fail();
+	assert(errorPr(infer(()⇒ true && fail()))==1);
+	x = true || fail();
+	assert(errorPr(infer(()⇒ false || fail()))==1);
+	return x; // expected: δ(1)[x]
+}

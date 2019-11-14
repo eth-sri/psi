@@ -1,0 +1,33 @@
+// skipped
+
+def isSorted(a: ℝ[]){
+	for i in [0..a.length-1){
+		if a[i]>a[i+1]{
+			return false;
+		}
+	}
+	return true;
+}
+
+def shuffle(a: ℝ[]){
+	b := a;
+	for i in [0..b.length){
+		j := uniformInt(i,b.length-1);
+		t := b[j];
+		b[j] = b[i];
+		b[i] = t;
+	}
+	return b;
+}
+
+def bogosort(a: ℝ[]){
+	b := a;
+	while !isSorted(b){
+		b=shuffle(b);
+	}
+	return b;
+}
+
+def main(){
+	return bogosort([32,1,55,2,3]);
+}

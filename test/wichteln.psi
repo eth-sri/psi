@@ -1,0 +1,66 @@
+// skipped
+
+n := 4;
+
+dat Person{
+    knowledge: Distribution[ℝ[]];
+    def Person(knowledge: Distribution[ℝ[]]){
+        this.knowledge = knowledge;
+    }
+    def learn(i,v){
+        knowledge=infer((){ a:=sample(knowledge);
+            observe(a[i]==v);
+            return a;
+        });
+    }
+    def doesKnow(index){
+        p := expectation(infer((){ x:=sample(knowledge);
+            k := -1;
+            for i in [0..n){
+                if x[i]==index { k = i; }
+            }
+            return expectation(infer((){ y:=sample(knowledge); return y[k]==index;}));
+        }));
+        return p == 1;
+    }
+}
+
+def main(){
+    knowledge := infer((){
+        a := array(n,-1);
+        k := array(n,-1);
+        for i in [0..n){
+            a[i] = uniformInt(0,n-1);
+            observe(a[i]!=i);
+            k[a[i]] = 1;
+        }
+        for i in [0..n){
+            observe(k[i]==1);
+        }
+        return a;
+    });
+    persons := array(n,Person(knowledge));
+    data := [2,3,0,1];
+    dataInv := array(n,-1);
+    for i in [0..n){ dataInv[data[i]]=i; }
+    //data := [2,0,1];
+    //dataInv := [1,2,0];
+    for i in [0..n){
+        persons[i].learn(i,data[i]);
+    }
+    persons[0].learn(1,data[1]);
+    persons[1].learn(0,data[0]);
+    r := 0;
+    for i in [0..n){
+        // r += persons[i].doesKnow(i);
+        r += sample(persons[i].knowledge)[dataInv[i]]==i;
+        for k in [0..n){
+            if data[k]==i{
+                for j in [0..n){
+                    persons[j].learn(k,i);
+                }               
+            }
+        }
+    }
+    return r;
+}

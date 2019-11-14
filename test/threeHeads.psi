@@ -1,0 +1,7 @@
+// https://www.quora.com/What-is-the-probability-that-after-three-fair-coin-tosses-that-I-will-end-up-with-three-heads-given-that-there-is-at-least-one-head
+
+def main(){
+	n:=binomial(3,1/2);
+	observe(n>0);
+	return n==3; // expected: 1/7·δ(1)[r]+6/7·δ(0)[r]
+}

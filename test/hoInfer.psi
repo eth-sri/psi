@@ -1,0 +1,10 @@
+def main(){
+	x := flip(1/2);
+	y := infer(()=>x+flip(1/2));
+	//r:=map([0,1,2],(x)=>expectationOf((r)=>r==x)(y)); return (r[0],r[1],r[2]);
+	//k:=()=>expectation(y);
+	//return (x,y);
+	//turn y;
+	//return k((x)=>2*x)
+	return sample(y); // expected: 1/2·δ(1)[r]+1/4·δ(0)[r]+1/4·δ(2)[r]
+}

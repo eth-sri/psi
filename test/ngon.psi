@@ -1,0 +1,6 @@
+// skipped
+// https://www.quora.com/Three-points-are-chosen-randomly-from-the-vertices-of-a-regular-n-gon-What-is-the-probability-that-the-center-of-the-polygon-lies-inside-the-triangle-whose-vertices-are-at-these-three-points-Can-we-prove-that-as-n-approaches-infinity-it-is-1-4
+// TODO
+def main(n){
+	
+}

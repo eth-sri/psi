@@ -1,0 +1,18 @@
+// skipped
+// TODO: make fast
+// from last POPL'17 talk in pp session
+
+def main(){
+	cards := 0;
+	start := 0; // or 1
+	sum := start;
+	last := -1;
+	for i in [0..100){
+		if sum<=100{
+			cards+=1;
+			last = sum;
+			sum+=uniformInt(1,9);
+		}
+	}
+	return last;
+}

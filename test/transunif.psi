@@ -1,0 +1,7 @@
+// skipped
+
+def main(f: Distribution[ℝ]){
+	x := sample(f);
+	return expectation(infer(()=>sample(f)<=x));
+	// TODO?: [-1+r≤0]·[-r≤0]
+}

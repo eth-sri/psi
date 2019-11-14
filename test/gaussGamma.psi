@@ -1,0 +1,17 @@
+// skipped
+
+def main(y,D){
+	z := gamma(y,1);
+	observe(z!=0);
+	cobserve(gauss(y,z^2), D);
+	return z;
+}
+
+/+
+def main(){
+	z := gamma(2,1);
+	cobserve(gauss(4,1/z),0);
+	return z;
+	//return 1/z;
+}
++/
