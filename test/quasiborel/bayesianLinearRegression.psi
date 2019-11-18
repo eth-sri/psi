@@ -1,0 +1,17 @@
+// skipped
+
+def sampleFunction(){
+	(s,b):=(gauss(0,3), gauss(0,3));
+	return (x)⇒s*x+b;
+}
+
+def main(){
+	f:=sampleFunction();
+	observations:=[(1,2.5),(2,3.8),(3,4.5),(4,6.2),(5,8.0)];
+	// for (x,y) in observations
+	for i in [0..observations.length){
+		(x,y):=observations[i];
+		cobserve(f(x)+gauss(0,0.5),y);
+	}
+	return (f(6));
+}

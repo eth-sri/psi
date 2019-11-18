@@ -1,0 +1,36 @@
+// skipped
+
+def sampleLinear(){
+	(s,b):=(gauss(0,3), gauss(0,3));
+	f:=(x)⇒s*x+b;
+	return f;
+}
+
+def piecewise(samplePiece:𝟙→(ℝ→ℝ)){
+	(lower,upper):=(1,5);
+	numPieces:=sample(infer((){ r:=geometric(1/2); observe(lower<=r&&r<=upper); return r; }));
+	def step(next:(ℕ×(ℝ×ℝ))→(ℝ→ℝ))(n:ℕ,interval:ℝ×ℝ):ℝ→ℝ{
+		if n==1{ return samplePiece(); }
+		(lower,upper):=interval;
+		middle:=uniform(lower,upper);
+		f₁:=next(n div 2,(lower,middle));
+		f₂:=next((n+1) div 2,(middle,upper));
+		return (x)⇒if x<middle then f₁(x) else f₂(x);
+	}
+	rec:=(n:ℕ,interval:ℝ×ℝ)(x:ℝ){ assert(false); return 0:ℝ; };
+	//rec:=(n:ℕ,interval:ℝ×ℝ):ℝ→ℝ{ assert(false); };
+	for i in [0..3){ rec=step(rec); }
+	return rec(numPieces,(0,6));
+}
+
+def main(){
+	f:=piecewise(sampleLinear);
+	observations:=[(0,0.6),(1,0.7),(2,1.2),(3,3.2),(4,6.8),(5,8.2),(6,8.4)];
+	// for (x,y) in observations { }
+	//for i in [0..observations.length){
+	for i in [0..7){
+		(x,y):=observations[i];
+		cobserve(f(x)+gauss(0,0.5),y);
+	}
+	return f(7);
+}
