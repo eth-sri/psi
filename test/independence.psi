@@ -21,7 +21,8 @@ def independent[a,b](d: Distribution[a×b],eq₁: a×a→𝔹, eq₂: b×b→�
 }
 
 def main(){
-	return independent(infer((){a:=flip(1/2); return (a,a); }),eqℝ,eqℝ);
+	return (independent(infer((){a:=flip(1/2); return (a,a); }),eqℝ,eqℝ),
+			independent(infer(()⇒(flip(1/2),flip(1/3))),eqℝ,eqℝ));
 }
 
 

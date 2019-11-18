@@ -11,7 +11,7 @@ def dynkin(s,N){
 }
 
 def main(){
-	r := array(21,0);
+	r := array(21,0:ℝ);
 	for N in [11..21){
 		// bound := (9/10)^(N/5-2); // TODO: allow PSI to prove that the bound bounds the result
 		r[N] = TV(infer(()=>dynkin(1,N)),infer(()=>dynkin(10,N)))
@@ -26,7 +26,7 @@ def TV(a: Distribution[ℝ], b: Distribution[ℝ]){
 			x := sample(a);
 			p₁ := expectation(infer(()=>sample(a)==x));
 			p₂ := expectation(infer(()=>sample(b)==x));
-			if !p₂ { return 1; }
+			if p₂=0 { return 1:ℝ; }
 			return abs(p₁-p₂)/(2*p₁);
 		}));
 	}

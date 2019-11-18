@@ -1,9 +1,7 @@
 // skipped
-// TODO: make fast
-
 
 def Variance(x:Distribution[ℝ]){
-    //return expectation(then((x)=>x^2)(x))-expectation(x)^2; // TODO: make this work
+    //return expectation(then_((x)=>x^2)(x))-expectation(x)^2; // TODO: make this work
 	return Expectation(sample(x)^2)-Expectation(sample(x))^2;
 }
 
@@ -16,7 +14,8 @@ def main(){
     nu' := Variance(g);
     nu'' := Expectation(sample(g)^2)-Expectation(sample(g))^2;
     assert(nu' == nu'');
-    return (); // expected: 1
+    assert(nu == nu');
+    return (mu,mu',nu,nu'); // expected: δ(12)[mu₁]·δ(12)[mu₂]·δ(36)[nu₁]·δ(36)[nu₂]
 }
 
-def then[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));
+def then_[a,b](f: a→ b)(d: Distribution[a])=>infer(()=>f(sample(d)));

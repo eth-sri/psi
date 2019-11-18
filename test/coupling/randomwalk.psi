@@ -8,7 +8,7 @@ def randomWalk(s,T){
 		x = x + r;
 		// l = [r] ~ l;
 		ι = ι + 1;
-		assert(ι);
+		assert(ι≠0);
 	}
 	return x;	
 }
@@ -16,7 +16,7 @@ def randomWalk(s,T){
 def main(){
 	k := 2;
 	l := 0, r:=20;
-	tvs := array(r,0);
+	tvs := array(r,0:ℝ);
 	for i in [l..r){
 		a := infer(()=>randomWalk(k,i));
 		b := infer(()=>randomWalk(-k,i));
@@ -35,7 +35,7 @@ def TV(a: Distribution[ℝ], b: Distribution[ℝ]){
 			x := sample(a);
 			p₁ := expectation(infer(()=>sample(a)==x));
 			p₂ := expectation(infer(()=>sample(b)==x));
-			if !p₂ { return 1; }
+			if p₂=0 { return 1:ℝ; }
 			return abs(p₁-p₂)/(2*p₁);
 		}));
 	}

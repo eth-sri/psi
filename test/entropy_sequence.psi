@@ -1,5 +1,5 @@
 // skipped
-// TODO: this is a nice example. make it work for sequence length 4
+
 def log₂(x)=>log(x)/log(2);
 
 def S[a](d: Distribution[a], x: a, eq: a×a→𝔹) ⇒
