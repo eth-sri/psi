@@ -2931,6 +2931,15 @@ class DIvr: DExpr{ // iverson brackets
 				}
 				// monotone functions
 				// TODO: ⌊⌋/⌈⌉, ...
+				if(auto la=cast(DLog)a) // log is strictly monotone increasing
+					if(auto lb=cast(DLog)b)
+						return dIvr(type,la.e-lb.e);
+				if(auto ga=cast(DGaussInt)a) // gauss integral is strictly monotone increasing
+					if(auto gb=cast(DGaussInt)b)
+						return dIvr(type,ga.x-gb.x);
+				if(auto ga=cast(DGaussIntInv)a) // inverse gauss integral is strictly monotone increasing
+					if(auto gb=cast(DGaussIntInv)b)
+						return dIvr(type,ga.x-gb.x);
 				if(auto pa=cast(DPow)a){
 					if(auto pb=cast(DPow)b){
 						if(dLtZ(pa.operands[1]).simplify(facts)==one&&
