@@ -30,7 +30,7 @@ def ℑ[a](c₁: Distribution[a], c₂: Distribution[a], n: ℕ, eq: a×a→𝔹
 	})));
 }
 
-def genCap[a,b](A: a→ Distribution[b], d: Distribution[a], noise: a→ a, n: ℝ, eq: b×b→ℝ){
+def genCap[a,b](A: a→ Distribution[b], d: Distribution[a], noise: a→ a, n: ℕ, eq: b×b→𝔹){
 	return expectation(infer((){ // "context-dependent" information
 		x := sample(d);
 		x₁ := noise(x);
