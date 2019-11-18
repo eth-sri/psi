@@ -166,6 +166,8 @@ int main(string[] args){
 version=TEST;
 void test(){
 	import ast.type,dparse,dexpr,integration,summation;
+	//writeln("[2·a²≤2·b²]".dParse.simplify("[0≤a]·[0≤b]".dParse.simplify(one)));
+	//writeln("[2·a²≤2·b²]".dParse.simplify("[0≤a]".dParse.simplify(one)));
 	//writeln("[log(2)≤log(3)]".dParse.simplify(one)); // TODO
 	//writeln("[e^2≤e^3]".dParse.simplify(one)); // TODO
 	//writeln("[⌊x⌋≤⌊(2/3)·x⌋]".dParse.simplify(one)); // TODO

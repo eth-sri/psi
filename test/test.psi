@@ -1,9 +1,19 @@
 // skipped
+
+/+
+def main(X,Y){
+	x := uniform(0,1);
+	y := x^2+uniform(0,1);
+	observe(y>Y);
+	return x<X;
+}
++/
+/+
 def main(){
 	p := uniform(0,1);
 	return errorPr(infer((){assert(flip(p));}))==1-p; // expected: δ(1)[r]
 }
-
++/
 /+
 def allSprouted(state) => state == 3;
 def someSprouted(state) => state > 0;

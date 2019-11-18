@@ -2897,6 +2897,63 @@ class DIvr: DExpr{ // iverson brackets
 				}
 			}+/
 		}
+		if(auto p=cast(DPlus)e){
+			if(p.operands.length==2){ // TODO: generalize to sums of this shape
+				DExpr a=null,b=null;
+				foreach(s;p.summands){
+					if(!a) a=s;
+					else if(!b) b=s;
+					else assert(0);
+				}
+				auto fa=a.getFractionalFactor();
+				auto fb=b.getFractionalFactor();
+				auto na=fa.c.num<0,nb=fb.c.num<0;
+				if(na^nb){
+					if(na){
+						swap(a,b);
+						swap(fa,fb);
+					}
+					b=(-b).simplify(one);
+					fb=b.getFractionalFactor();
+				}
+				// monotone functions
+				// TODO: ⌊⌋/⌈⌉, ...
+				// strictly monotone functions
+				if(auto pa=cast(DPow)a){
+					if(auto pb=cast(DPow)b){
+						if(dGtZ(pa.operands[0]).simplify(facts)==one&& // TODO: perform case distinction symbolically?
+						   dGtZ(pb.operands[0]).simplify(facts)==one||
+						   dGeZ(pa.operands[0]).simplify(facts)==one&&
+						   dGeZ(pb.operands[0]).simplify(facts)==one&&
+						   dGtZ(pa.operands[1]).simplify(facts)==one&&
+						   dGtZ(pb.operands[1]).simplify(facts)==one
+						   // TODO: negative base, integer power
+						){
+							final switch(type){
+								case Type.eqZ,Type.neqZ:
+									auto baseEq=dEq(pa.operands[0],pb.operands[0]).simplify(facts);
+									auto exponentEq=dEq(pa.operands[1],pb.operands[1]).simplify(facts);
+									if(baseEq==one) return dIvr(type,pa.operands[1]-pb.operands[1]).simplify(facts);
+									if(exponentEq==one) return dIvr(type,pa.operands[0]-pb.operands[0]).simplify(facts);
+									break;
+								case Type.leZ:
+									auto baseLe=dLe(pa.operands[0],pb.operands[0]).simplify(facts);
+									auto exponentLe=dLe(pa.operands[1],pb.operands[1]).simplify(facts);
+									if(baseLe==one&&exponentLe==one) return one;
+									auto baseEq=dEq(pa.operands[0],pb.operands[0]).simplify(facts);
+									if(baseEq==one) return exponentLe;
+									auto exponentEq=dEq(pa.operands[1],pb.operands[1]).simplify(facts);
+									if(exponentEq==one) return baseLe;
+									break;
+								case Type.lZ: // unreachable
+									break;
+							}
+						}
+					}
+				}
+				// TODO: other strictly monotone functions?
+			}
+		}
 		return null;
 	}
 	override DExpr simplifyImpl(DExpr facts){
