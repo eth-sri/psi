@@ -3,7 +3,7 @@
 
 import options,ast.expression,ast.declaration,distrib,ast.error,dexpr,util;
 import symbolic,dp;
-import std.stdio, std.path, std.algorithm;
+import std.stdio, std.path, std.algorithm, std.range;
 
 Distribution getCDF(Distribution dist){
 	dist=dist.dup;
@@ -39,8 +39,8 @@ void printResult(Backend be,string path,FunctionDef fd,ErrorHandler err,bool isM
 	if(opt.expectation||opt.cdf){
 		bool check(Expression ty){
 			if(isSubtype(ty,ℂ)) return true;
-			if(auto tpl=cast(TupleTy)ty)
-				return tpl.types.all!check;
+			if(auto tpl=ty.isTupleTy)
+				return iota(tpl.length).all!(i=>check(tpl[i]));
 			return false;
 		}
 		if(!check(fd.ret)){
@@ -50,9 +50,9 @@ void printResult(Backend be,string path,FunctionDef fd,ErrorHandler err,bool isM
 	}
 	static DExpr computeExpectation(Distribution dist, DExpr e,Expression ty){
 		if(opt.backend!=InferenceMethod.simulate){
-			if(auto tpl=cast(TupleTy)ty){
+			if(auto tpl=ty.isTupleTy){
 				DExpr[] r;
-				foreach(i,nty;tpl.types) r~=computeExpectation(dist,e[i.dℚ],nty);
+				foreach(i;0..tpl.length) r~=computeExpectation(dist,e[i.dℚ],tpl[i]);
 				return dTuple(r);
 			}
 		}
