@@ -2916,37 +2916,138 @@ class DIvr: DExpr{ // iverson brackets
 					b=(-b).simplify(one);
 					fb=b.getFractionalFactor();
 				}
+				final switch(type){
+					case Type.eqZ,Type.neqZ:
+						// TODO: compare dE against arbitrary fractions
+						if(a==dE&&b==one||a==one&&b==dE) return type==Type.eqZ?zero:one;
+						break;
+					case Type.leZ:
+						// TODO: compare dE against arbitrary fractions
+						if(a==dE&&b==one) return zero;
+						if(a==one&&b==dE) return one;
+						break;
+					case Type.lZ: // unreachable
+						break;
+				}
 				// monotone functions
 				// TODO: ⌊⌋/⌈⌉, ...
-				// strictly monotone functions
 				if(auto pa=cast(DPow)a){
 					if(auto pb=cast(DPow)b){
-						if(dGtZ(pa.operands[0]).simplify(facts)==one&& // TODO: perform case distinction symbolically?
-						   dGtZ(pb.operands[0]).simplify(facts)==one||
-						   dGeZ(pa.operands[0]).simplify(facts)==one&&
-						   dGeZ(pb.operands[0]).simplify(facts)==one&&
-						   dGtZ(pa.operands[1]).simplify(facts)==one&&
-						   dGtZ(pb.operands[1]).simplify(facts)==one
-						   // TODO: negative base, integer power
+						if(dLtZ(pa.operands[1]).simplify(facts)==one&&
+						   dLtZ(pb.operands[1]).simplify(facts)==one
 						){
+							return dIvr(type,one/pb-one/pa).simplify(facts);
+						}
+						auto ia=pa.operands[1].isInteger();
+						auto ib=pb.operands[1].isInteger();
+						// TODO: perform case distinction symbolically in constraint linearizer
+						if(dGtZ(pa.operands[0]).simplify(facts)==one&&
+						   dGtZ(pb.operands[0]).simplify(facts)==one||
+						   (dGeZ(pa.operands[0]).simplify(facts)==one||dIsℤ(pa.operands[1]).simplify(facts)==zero)&&
+						   (dGeZ(pb.operands[0]).simplify(facts)==one||dIsℤ(pb.operands[1]).simplify(facts)==zero)&&
+						   dGtZ(pa.operands[1]).simplify(facts)==one&&
+						   dGtZ(pb.operands[1]).simplify(facts)==one||
+						   ia&&ib&&(ia.c.num&1)&&ia.c.num==ib.c.num
+						){
+							// strictly positive base or non-negative base and strictly positive exponent
+							auto baseEq=dEq(pa.operands[0],pb.operands[0]).simplify(facts);
+							auto exponentEq=dEq(pa.operands[1],pb.operands[1]).simplify(facts);
 							final switch(type){
 								case Type.eqZ,Type.neqZ:
-									auto baseEq=dEq(pa.operands[0],pb.operands[0]).simplify(facts);
-									auto exponentEq=dEq(pa.operands[1],pb.operands[1]).simplify(facts);
-									if(baseEq==one) return dIvr(type,pa.operands[1]-pb.operands[1]).simplify(facts);
-									if(exponentEq==one) return dIvr(type,pa.operands[0]-pb.operands[0]).simplify(facts);
+									if(baseEq==one){
+										auto base=pa.operands[0];
+										if(dNeq(base,one).simplify(facts)==one){
+											auto exponentCmp=dIvr(type,pa.operands[1]-pb.operands[1]).simplify(facts);
+											return exponentCmp;
+										}
+									}
+									if(exponentEq==one){
+										auto exponent=pa.operands[1];
+										if(dNeqZ(exponent).simplify(facts)==one){
+											auto baseCmp=dIvr(type,pa.operands[0]-pb.operands[0]).simplify(facts);
+											return baseCmp;
+										}
+									}
 									break;
 								case Type.leZ:
-									auto baseLe=dLe(pa.operands[0],pb.operands[0]).simplify(facts);
-									auto exponentLe=dLe(pa.operands[1],pb.operands[1]).simplify(facts);
-									if(baseLe==one&&exponentLe==one) return one;
-									auto baseEq=dEq(pa.operands[0],pb.operands[0]).simplify(facts);
-									if(baseEq==one) return exponentLe;
-									auto exponentEq=dEq(pa.operands[1],pb.operands[1]).simplify(facts);
-									if(exponentEq==one) return baseLe;
+									if(baseEq==one){
+										auto base=pa.operands[0];
+										if(dGt(base,one).simplify(facts)==one){ // |base|>1
+											auto exponentLe=dLe(pa.operands[1],pb.operands[1]).simplify(facts);
+											return exponentLe;
+										}
+										if(dLt(base,one).simplify(facts)==one){ // |base|<1
+											auto exponentGe=dGe(pa.operands[1],pb.operands[1]).simplify(facts);
+											return exponentGe;
+										}
+									}
+									if(exponentEq==one){
+										auto exponent=pa.operands[1];
+										if(dGeZ(exponent).simplify(facts)==one){
+											auto baseLe=dLe(pa.operands[0],pb.operands[0]).simplify(facts);
+											if(baseLe==one||dEq(exponent,one).simplify(facts)==zero) return baseLe;
+										}
+									}
 									break;
 								case Type.lZ: // unreachable
 									break;
+							}
+						}else if(ia&&ib&&ia.c.num>0&&ib.c.num>0){
+							auto baseEq=dEq(pa.operands[0],pb.operands[0]).simplify(facts);
+							auto exponentEq=dEq(ia,ib).simplify(facts);
+							if(dLeZ(pa.operands[0]).simplify(facts)==one&&
+							   dLeZ(pb.operands[0]).simplify(facts)==one
+							){
+								final switch(type){
+									case Type.eqZ,Type.neqZ:
+										if(baseEq==one){
+											auto base=pa.operands[0];
+											if(dNeq(base,one).simplify(facts)==one){
+												auto exponentCmp=dIvr(type,ia-ib).simplify(facts);
+												return exponentCmp;
+											}
+										}
+										if(exponentEq==one){
+											auto exponent=ia;
+											if(dNeqZ(exponent).simplify(facts)==one){
+												auto baseCmp=dIvr(type,pa.operands[0]-pb.operands[0]).simplify(facts);
+												return baseCmp;
+											}
+										}
+										break;
+									case Type.leZ:
+										if((ia.c.num&1)&&!(ib.c.num&1)) return one;
+										if(!(ia.c.num&1)&&(ib.c.num&1)) return zero;
+										if(!(ia.c.num&1)&&!(ib.c.num&1)){
+											if(baseEq==one){
+												auto base=pa.operands[0];
+												if(dLt(base,mone).simplify(facts)==one){ // |base|>1
+													auto exponentLe=dLe(pa.operands[1],pb.operands[1]).simplify(facts);
+													return exponentLe;
+												}
+												if(dGt(base,mone).simplify(facts)==one){ // |base|<1
+													auto exponentGe=dGe(pa.operands[1],pb.operands[1]).simplify(facts);
+													return exponentGe;
+												}
+											}
+											if(exponentEq==one){
+												auto exponent=pa.operands[1];
+												if(dGeZ(exponent).simplify(facts)==one){
+													auto baseGe=dGe(pa.operands[0],pb.operands[0]).simplify(facts);
+													if(baseGe==one||dEq(exponent,one).simplify(facts)==zero) return baseGe;
+												}
+											}
+										}
+										break;
+									case Type.lZ: // unreachable
+										break;
+								}
+							}
+							if(baseEq==one){
+								auto common=2*(min(ia.c.num,ib.c.num)/2);
+								if(common!=0){
+									return dIvr(type,pa.operands[0]^^(ia.c.num-common)-pb.operands[0]^^(ib.c.num-common)).simplify(facts);
+								}
 							}
 						}
 					}

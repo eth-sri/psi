@@ -166,6 +166,15 @@ int main(string[] args){
 version=TEST;
 void test(){
 	import ast.type,dparse,dexpr,integration,summation;
+	//writeln("[x^4≤y^4]".dParse.simplify("[0≤x]·[0≤y]".dParse.simplify(one)));
+	//writeln("[x^4≤y^4]".dParse.simplify("[x≤0]·[y≤0]".dParse.simplify(one)));
+	//writeln("[(x+1)^-(1/2)≤x^-(1/2)]".dParse.simplify(one));
+	//writeln("[x^(1/2)≤(x+1)^(1/2)]".dParse.simplify(one));
+	//writeln("[x^-(1/2)≤(x+1)^-(1/2)]".dParse.simplify(one));
+	//writeln("[x^(1/2)≤(x+1)^(1/2)]".dParse.simplify(one));
+	//writeln("[x^(-1)≤(x-1)^(-1)]".simplify(one));
+	//writeln("[x^(-1)≤(x-1)^(-1)]".dParse.linearizeConstraints("x".dVar).simplify(one));
+	//writeln("[x^(1/2)≤(x+1)^(1/2)]".dParse.linearizeConstraints("x".dVar).simplify(one));
 	//writeln("[2·a²≤2·b²]".dParse.simplify("[0≤a]·[0≤b]".dParse.simplify(one)));
 	//writeln("[2·a²≤2·b²]".dParse.simplify("[0≤a]".dParse.simplify(one)));
 	//writeln("[log(2)≤log(3)]".dParse.simplify(one)); // TODO
