@@ -2064,6 +2064,21 @@ Q!(DExpr,DExpr) splitCommonDenominator(DExpr e){
 		if(cden.length) denom.insert(dMult(cden));
 	}
 	if(!denom.length) return q(e,one);
+	DExprSet remove;
+	foreach(x;denom){ // if multiple small powers exist, remove smaller ones. TODO: generalize this
+		if(auto p=cast(DPow)x){
+			if(auto n=p.operands[1].isInteger()){
+				if(n&&n.c<5){
+					foreach(i;0..cast(long)n.c.num){
+						auto cand=(p.operands[0]^^i).simplify(one);
+						if(cand in denom)
+							remove.insert(cand);
+					}
+				}
+			}
+		}
+	}
+	foreach(x;remove) denom.remove(x);
 	DExprSet num;
 	foreach(s;e.summands){
 		DExprSet cnum=denom.dup;
@@ -3062,6 +3077,20 @@ class DIvr: DExpr{ // iverson brackets
 					}
 				}
 				// TODO: other strictly monotone functions?
+			}
+			// detect cases where linearization can simplify the Iverson bracket
+			auto numden=e.splitCommonDenominator();
+			numden[0]=numden[0].simplify(facts);
+			numden[1]=numden[1].simplify(facts);
+			if(auto var=e.getCanonicalFreeVar()){
+				if(auto poly=numden[0].asPolynomialIn(var,2)){
+					auto pc=poly.coefficients;
+					auto a=pc.get(2,zero),b=pc.get(1,zero),c=pc.get(0,zero);
+					if(dNeqZ(a).simplify(facts)==one){
+						if(auto ivr=cast(DIvr)dIvr(type,e))
+							return linearizeConstraint(ivr,var).simplify(facts);
+					}
+				}
 			}
 		}
 		return null;

@@ -5,7 +5,7 @@ def sampleFunction(){
 	return (x)⇒s*x+b;
 }
 
-def main(){
+def main(X){
 	f:=sampleFunction();
 	observations:=[(1,2.5),(2,3.8),(3,4.5),(4,6.2),(5,8.0)];
 	// for (x,y) in observations
@@ -13,5 +13,5 @@ def main(){
 		(x,y):=observations[i];
 		cobserve(f(x)+gauss(0,0.5),y);
 	}
-	return (f(6));
+	return (f(X));
 }

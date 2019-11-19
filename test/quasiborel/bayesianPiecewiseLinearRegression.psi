@@ -6,11 +6,13 @@ def sampleLinear(){
 	return f;
 }
 
-def piecewise(samplePiece:𝟙→(ℝ→ℝ)){
-	(lower,upper):=(1,5);
-	numPieces:=sample(infer((){ r:=geometric(1/2); observe(lower<=r&&r<=upper); return r; }));
+def piecewise(samplePiece:𝟙→(ℝ→ℝ),interval:ℝ×ℝ){
+	(lower,upper):=(1,3);
+	//numPieces:=sample(infer((){ r:=geometric(1/2); observe(lower<=r&&r<=upper); return r; }));
+	numPieces:=3;
 	def step(next:(ℕ×(ℝ×ℝ))→(ℝ→ℝ))(n:ℕ,interval:ℝ×ℝ):ℝ→ℝ{
-		if n==1{ return samplePiece(); }
+		//if n==1{ return samplePiece(); }
+		if n==1{ return sampleLinear(); }
 		(lower,upper):=interval;
 		middle:=uniform(lower,upper);
 		f₁:=next(n div 2,(lower,middle));
@@ -20,11 +22,11 @@ def piecewise(samplePiece:𝟙→(ℝ→ℝ)){
 	rec:=(n:ℕ,interval:ℝ×ℝ)(x:ℝ){ assert(false); return 0:ℝ; };
 	//rec:=(n:ℕ,interval:ℝ×ℝ):ℝ→ℝ{ assert(false); };
 	for i in [0..3){ rec=step(rec); }
-	return rec(numPieces,(0,6));
+	return rec(numPieces,interval);
 }
 
-def main(){
-	f:=piecewise(sampleLinear);
+def main(X){
+	f:=piecewise(sampleLinear,(0,7));
 	observations:=[(0,0.6),(1,0.7),(2,1.2),(3,3.2),(4,6.8),(5,8.2),(6,8.4)];
 	// for (x,y) in observations { }
 	//for i in [0..observations.length){
@@ -32,5 +34,6 @@ def main(){
 		(x,y):=observations[i];
 		cobserve(f(x)+gauss(0,0.5),y);
 	}
-	return f(7);
+	return f(X);
 }
+
