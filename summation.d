@@ -25,6 +25,9 @@ DExpr computeSum(DExpr expr,DExpr facts=one){
 				foreach(d;p.allOf!DIvr(true))
 					if(d.hasFreeVar(var))
 						return true;
+				foreach(d;p.allOf!DDelta(true))
+					if(d.hasFreeVar(var))
+						return true;
 				return false;
 			}
 			if(check()){
@@ -69,14 +72,16 @@ DExpr computeSum(DExpr expr,DExpr facts=one){
 		if(auto d=cast(DDelta)f){
 			auto fv=d.freeVars.setx;
 			assert(var in fv);
-			fv.remove(var);
-			auto svar=getCanonicalVar(d.var.freeVars); // TODO: more clever choice?
-			SolutionInfo info;
-			SolUse usage={caseSplit:false,bound:false};
-			auto sol=d.var.solveFor(svar,zero,usage,info);
-			if(sol&&!info.needCaseSplit){
-				factSubstVars~=svar;
-				factSubstExprs~=sol;
+			if(fv.length>1){
+				fv.remove(var);
+				auto svar=getCanonicalVar(fv); // TODO: more clever choice?
+				SolutionInfo info;
+				SolUse usage={caseSplit:false,bound:false};
+				auto sol=d.var.solveFor(svar,zero,usage,info);
+				if(sol&&!info.needCaseSplit){
+					factSubstVars~=svar;
+					factSubstExprs~=sol.simplify(newFacts);
+				}
 			}
 		}
 	}
@@ -92,7 +97,7 @@ DExpr computeSum(DExpr expr,DExpr facts=one){
 			if(nivr.type==DIvr.Type.leZ){
 				newIvrs=newIvrs*nivr;
 			}else{
-				if(!expr.hasAny!DDelta&&!expr.hasAny!DDistApply){ // TODO: improve IR to enable less conservative rules (trouble with e.g. (∑ᵢδ(i)[x])·δ(x)(y), as the rewrite to [x=⌊x⌋]·(δ(y)(x))² is not valid.)
+				if(!expr.hasAny!DDelta&&!expr.hasAny!DDistApply){ // TODO: improve IR to enable less conservative rules (trouble with e.g. (∑ᵢδ(i)[x])·δ(x)[y], as the rewrite to [x=⌊x⌋]·(δ(y)(x))² is not valid.)
 					assert(nivr.type==DIvr.Type.eqZ);
 					DExpr bound; // TODO: get rid of code duplication?
 					auto status=getBoundForVar(nivr,var,bound);
