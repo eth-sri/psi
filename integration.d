@@ -342,7 +342,7 @@ DExpr tryGetAntiderivative(DExpr expr){
 		}
 		// constraints: none!
 		auto r=dNeqZ(a)*fac*dGaussInt(transform(v));
-		auto isZero=dEqZ(a).simplify(one);
+		auto isZero=dEqZ(a).simplify(one).linearizeConstraints(v).simplify(one);
 		if(isZero!=zero){
 			auto rest=tryGetAntiderivative(dE^^(b*v+c));
 			if(!rest) return null;
