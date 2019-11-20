@@ -674,6 +674,10 @@ struct Interpreter{
 			if(auto pl=cast(PlaceholderExp)e) return dVar(pl.ident.name);
 			if(auto id=cast(Identifier)e){
 				if(!id.meaning&&id.name=="π") return dΠ;
+				if(id.substitute){
+					if(auto vd=cast(VarDecl)id.meaning)
+						return doIt(vd.initializer);
+				}
 				if(auto r=lookupMeaning!(readLocal,readFunction)(id)) return r;
 				assert(0,"unsupported");
 			}

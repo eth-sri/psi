@@ -1,5 +1,17 @@
 // skipped
-
+/+
+n:=3;
+def main(){
+	arr := [1,2,0];
+	cmp := array(n,array(n,0:𝔹));
+	for i in [0..n){
+		for j in [0..n){
+			cmp[i][j]=arr[i]<arr[j];
+		}
+	}
+}
++/
+/+
 def main(X){
 	(s,b):=(gauss(0,1),gauss(0,1));
 	e:=gauss(0,1);
@@ -7,7 +19,7 @@ def main(X){
 	return (s*X+b);
 	//r:=sampleFrom("(r;X)=>(-[X≤0]·⅟X+[-X≤0]·⅟X)·[X≠0]·e^((-10·r·⅟X³-4·r²·⅟X³+15·r·⅟X²+4·r²·⅟X⁴+r²·⅟X²)·⅟(-4·⅟X+4+4·⅟X²)+-r²·⅟X²+r·⅟X)+[X=0]·e^(r²)",X);
 }
-
++/
 /+
 def main(X,Y){
 	x := uniform(0,1);
