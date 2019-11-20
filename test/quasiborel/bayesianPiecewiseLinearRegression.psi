@@ -1,7 +1,7 @@
 // skipped
 
 def sampleLinear(){
-	(s,b):=(gauss(0,3), gauss(0,3));
+	(s,b):=(gauss(0,3^2), gauss(0,3^2));
 	f:=(x)⇒s*x+b;
 	return f;
 }
@@ -25,7 +25,7 @@ def piecewise(samplePiece:𝟙→(ℝ→ℝ),interval:ℝ×ℝ){
 	return rec(numPieces,interval);
 }
 
-def main(X){
+def main(){
 	f:=piecewise(sampleLinear,(0,7));
 	observations:=[(0,0.6),(1,0.7),(2,1.2),(3,3.2),(4,6.8),(5,8.2),(6,8.4)];
 	// for (x,y) in observations { }
@@ -34,6 +34,6 @@ def main(X){
 		(x,y):=observations[i];
 		cobserve(f(x)+gauss(0,0.5),y);
 	}
-	return f(X);
+	return f(7);
 }
 
