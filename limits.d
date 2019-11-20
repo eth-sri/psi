@@ -106,7 +106,7 @@ DExpr getLimit(DVar v,DExpr e,DExpr x,DExpr facts=one)in{assert(isInfinite(e));}
 					if(growsFasterThanNormalized(v,minfAsymp,infAsymp))
 						return -dInf;
 				}
-				if(simplified) return finite+dLim(v,e,dPlus(unsupported)+dPlus(inf)+dPlus(minf));
+				//if(simplified) return finite+dLim(v,e,dPlus(unsupported)+dPlus(inf)+dPlus(minf));
 				return null;
 			}
 			ExpLim handlePlus(ExpLim[] c){ return ExpLim(p,handlePlusImpl(c)); }
@@ -136,7 +136,7 @@ DExpr getLimit(DVar v,DExpr e,DExpr x,DExpr facts=one)in{assert(isInfinite(e));}
 			// TODO: this is a hack and not generally correct:
 			// (It might be fine for the cases that this is actually called with though. This should still be fixed.)
 			auto owZNoDeltas=replaceDeltasByIvrs(ow[0]);
-			auto owZneqZ=dNeqZ(owZNoDeltas).simplify(facts);
+			//auto owZneqZ=dNeqZ(owZNoDeltas).simplify(facts);
 			Case!ExpLim[] handleMult(ExpLim[] c){
 				bool simplified=false;
 				DExpr finite=one;
@@ -188,7 +188,7 @@ DExpr getLimit(DVar v,DExpr e,DExpr x,DExpr facts=one)in{assert(isInfinite(e));}
 						return doIt(v,e,finite*dDiff(v,f)/dDiff(v,g));
 					}
 				}
-				return [Case!ExpLim(owZneqZ,ExpLim(m,null))];
+				return [Case!ExpLim(one,ExpLim(m,null))];
 				// TODO: repeated simplification ugly, how to do without?
 			}
 			auto res=expandFlatMap!handleMult(r);

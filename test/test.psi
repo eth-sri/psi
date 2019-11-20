@@ -1,12 +1,21 @@
 // skipped
 
+def main(X){
+	(s,b):=(gauss(0,1),gauss(0,1));
+	e:=gauss(0,1);
+	cobserve(s+b+e,2.5);
+	return (s*X+b);
+	//r:=sampleFrom("(r;X)=>(-[X≤0]·⅟X+[-X≤0]·⅟X)·[X≠0]·e^((-10·r·⅟X³-4·r²·⅟X³+15·r·⅟X²+4·r²·⅟X⁴+r²·⅟X²)·⅟(-4·⅟X+4+4·⅟X²)+-r²·⅟X²+r·⅟X)+[X=0]·e^(r²)",X);
+}
+
+/+
 def main(X,Y){
 	x := uniform(0,1);
 	y := x^2+uniform(0,1);
 	observe(y>Y);
 	return x<X;
 }
-
++/
 /+
 def main(){
 	p := uniform(0,1);
