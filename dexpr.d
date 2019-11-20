@@ -2047,8 +2047,48 @@ DExpr uglyFractionCancellation(DExpr e){
 	return dℚ(ℚ(dlcm,ngcd));
 }
 
+bool divides(DExpr a,DExpr b){
+	if(a==b) return true;
+	if(auto pa=cast(DPow)a){
+		if(auto pb=cast(DPow)b){
+			if(pa.operands[0]==pb.operands[0]){
+				if(dLe(pa.operands[1],pb.operands[1]).simplify(one)==one)
+					return true;
+			}
+		}
+	}else if(auto pb=cast(DPow)b){
+		if(a==pb.operands[0]){
+			if(dLe(one,pb.operands[1]).simplify(one)==one)
+				return true;
+		}
+	}
+	return false;
+}
+
+DExprSet lcmFactors(S,T)(S a,T b){
+	DExprSet r;
+	void add(DExpr e){
+		DExprSet toRemove;
+		foreach(x;r){
+			if(divides(e,x)) return;
+			if(divides(x,e)) toRemove.insert(x);
+		}
+		foreach(x;toRemove) r.remove(x);
+		r.insert(e);
+	}
+	foreach(e;a) add(e);
+	foreach(e;b) add(e);
+	return r;
+}
+
+DExprSet lcmFactors(DExprSet exprs){
+	DExprSet result;
+	foreach(x;exprs) result=lcmFactors(result,x.factors);
+	return result;
+}
+
 Q!(DExpr,DExpr) splitCommonDenominator(DExpr e){
-	DExprSet denom;
+	DExprSet denoms;
 	foreach(s;e.summands){
 		DExprSet cden;
 		foreach(f;s.factors){
@@ -2061,27 +2101,13 @@ Q!(DExpr,DExpr) splitCommonDenominator(DExpr e){
 				}
 			}
 		}
-		if(cden.length) denom.insert(dMult(cden));
+		if(cden.length) denoms.insert(dMult(cden));
 	}
-	if(!denom.length) return q(e,one);
-	DExprSet remove;
-	foreach(x;denom){ // if multiple small powers exist, remove smaller ones. TODO: generalize this
-		if(auto p=cast(DPow)x){
-			if(auto n=p.operands[1].isInteger()){
-				if(n&&n.c<5){
-					foreach(i;0..cast(long)n.c.num){
-						auto cand=(p.operands[0]^^i).simplify(one);
-						if(cand in denom)
-							remove.insert(cand);
-					}
-				}
-			}
-		}
-	}
-	foreach(x;remove) denom.remove(x);
-	DExprSet num;
+	if(!denoms.length) return q(e,one);
+	auto lcm=lcmFactors(denoms);
+	DExprSet nums;
 	foreach(s;e.summands){
-		DExprSet cnum=denom.dup;
+		DExprSet cnum=lcm.dup;
 		foreach(f;s.factors){
 			if(auto p=cast(DPow)f){
 				auto n=p.operands[1].isInteger();
@@ -2096,9 +2122,9 @@ Q!(DExpr,DExpr) splitCommonDenominator(DExpr e){
 			}
 			DMult.insert(cnum,f);
 		}
-		DPlus.insert(num,dMult(cnum));
+		DPlus.insert(nums,dMult(cnum));
 	}
-	return q(dPlus(num),dMult(denom));
+	return q(dPlus(nums),dMult(lcm));
 }
 
 enum BoundStatus{

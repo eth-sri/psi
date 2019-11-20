@@ -166,6 +166,8 @@ int main(string[] args){
 version=TEST;
 void test(){
 	import ast.type,dparse,dexpr,integration,summation;
+	//writeln("(-109561/9·⅟X⁴·X⁴+-900·⅟X²·X⁴+331/6·⅟X²·X⁴+6620·⅟X³·X⁴)".dParse.polyNormalize("X".dVar));
+	//writeln("[-16200·⅟(-120·⅟X+62/3+662/3·⅟X²)·⅟X²+-219122·⅟(-120·⅟X+62/3+662/3·⅟X²)·⅟X⁴+119160·⅟(-120·⅟X+62/3+662/3·⅟X²)·⅟X³+993·⅟X²=0]".dParse.simplify(one).linearizeConstraints("X".dVar).simplify(one));
 	//auto x="lim[r→∞](λX.(e^((-⅟(-⅟X+1+⅟X²)·⅟X+⅟X)·r)+1)·[X≠0]·[X≤0]+(e^((-⅟(-⅟X+1+⅟X²)·⅟X+⅟X)·r)·[-⅟(-⅟X+1+⅟X²)·⅟X+⅟X=0]+1)·[-X≤0]·[X≠0])";
 	//writeln((x~"(1)").dParse.simplify(one));
 	//writeln((x~"(-1)").dParse.simplify(one));
