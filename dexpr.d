@@ -795,6 +795,7 @@ class DΠ: DExpr{
 		if(formatting==Format.gnuplot) return "pi";
 		if(formatting==Format.matlab) return "pi";
 		if(formatting==Format.maple) return "Pi";
+		if(formatting==Format.python) return "pi";
 		if(formatting==Format.mathematica) return "Pi";
 		if(formatting==Format.sympy) return "pi";
 		else return "π";
