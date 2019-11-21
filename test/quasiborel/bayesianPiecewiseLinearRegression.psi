@@ -32,7 +32,7 @@ def main(){
 	//for i in [0..observations.length){
 	for i in [0..7){
 		(x,y):=observations[i];
-		cobserve(f(x)+gauss(0,0.5),y);
+		cobserve(f(x)+gauss(0,(1/2)^2),y);
 	}
 	return f(7);
 }

@@ -10,7 +10,7 @@ def main(X){
 	observations:=[(1,2.5),(2,3.8),(3,4.5),(4,6.2),(5,8.0)];
 	for i in [0..observations.length){
 		(x,y):=observations[i];
-		cobserve(f(x)+gauss(0,0.5),y);
+		cobserve(f(x)+gauss(0,(1/2)^2),y);
 	}
 	return (f(X));
 }
