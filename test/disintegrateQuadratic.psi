@@ -1,0 +1,9 @@
+import disintegrate;
+def ex3(){
+	x:=gauss(0,1);
+	return ((x-1)^2,x);
+}
+
+def main(){
+	return expectation(disintegrate(infer(ex3))(2));
+}
