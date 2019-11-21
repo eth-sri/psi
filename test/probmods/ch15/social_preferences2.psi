@@ -1,18 +1,16 @@
 // skipped
 
 a := 0, b := 1; // TODO: chars and strings.
-bagel := 0, cookie := 1, nothing := 2, state := 3;
+bagel := 2, cookie := 3, nothing := 4, state := 5;
 
-def haveCookie(obj) ⇒ obj==cookie;
-
-def vendingMachine(state,action)=>
+def vendingMachine(state:ℕ,action:ℕ)=>
 	if action == a { [bagel,cookie][categorical([0.1,0.9])] } else
 	if action == b { [bagel,cookie][categorical([0.1,0.9])] } else
                    { nothing };
 
 def main(){
 	actionPrior := infer(()=>[a,b][categorical([0.5,0.5])]);
-	def chooseAction(goalSatisfied: ℝ → 𝔹, transition: ℝ×ℝ → ℝ, state)=>
+	def chooseAction(goalSatisfied: ℕ → 𝔹, transition: ℕ×ℕ → ℕ, state: ℕ)=>
 		infer((){
 			action := sample(actionPrior);
 			observe(goalSatisfied(transition(state, action)));
@@ -21,10 +19,10 @@ def main(){
 	goalPosterior := infer((){
 		preference := uniform(0,1);
 		def goalPrior()=>[bagel,cookie][flip(preference)];
-		def makeGoal(food)(outcome)=>outcome==food;
+		def makeGoal(food:ℕ)(outcome:ℕ)=>outcome==food;
 		def act()=>sample(chooseAction(makeGoal(goalPrior()), vendingMachine, state));
 		observe(act()==b && act()==b && act()==b);
 		return goalPrior();
 	});
-	return sample(goalPosterior); // expected: 1/2·δ(0)[r]+1/2·δ(1)[r]
+	return sample(goalPosterior); // expected: 1/2·δ(2)[r]+1/2·δ(3)[r]
 }

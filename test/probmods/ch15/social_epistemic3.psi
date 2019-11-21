@@ -18,22 +18,22 @@ def main(){
 		if flip(0.7){ return [a,a]; }
 		observe(false);
 	}
-	def chooseAction(goalSatisfied: ℝ → 𝔹, transition: ℝ×ℝ[] → ℝ, state)=>
+	def chooseAction(goalSatisfied: ℕ → 𝔹, transition: ℕ×ℕ[] → ℕ, state: ℕ)=>
 		infer((){
 			action := actionPrior();
 			observe(goalSatisfied(transition(state, action)));
 			return action;
 		});
 	outcomeProbs := [dirichlet([1,1]),dirichlet([1,1])];
-	def buttonsToOutcomeProbs(buttons: ℝ[]){ // TODO: mem/random functions
+	def buttonsToOutcomeProbs(buttons: ℕ[]){ // TODO: mem/random functions
 		assert(buttons.length==1||buttons.length==2&&buttons[0]==a);
 		if(buttons.length==2){ assert(buttons[1]==a); }
 		return outcomeProbs[buttons.length-1];
 	}
-	def vendingMachine(state,action: ℝ[])=>
+	def vendingMachine(state:ℕ,action: ℕ[])=>
 		[bagel,cookie][categorical(buttonsToOutcomeProbs(action))];
 	goal := [bagel,cookie][categorical([0.5,0.5])];
-	def goalSatisfied(outcome) => outcome == goal;
+	def goalSatisfied(outcome:ℕ) => outcome == goal;
 	chosenAction := sample(chooseAction(goalSatisfied, vendingMachine, state));
 	observe(vendingMachine(state,[a,a]) == cookie);
 	observe(chosenAction.length==2 && chosenAction[0]==a && chosenAction[1]==a);

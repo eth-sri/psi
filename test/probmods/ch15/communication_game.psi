@@ -3,28 +3,28 @@
 A := 0, B := 1; // TODO: characters/strings/sum types/...
 red := 0, green := 1, blue := 2;
 
-def dieToProbs(die)=>
+def dieToProbs(die:ℕ)=>
 	if die == A { [0, 0.2, 0.8 ] } else
 	if die == B { [0.1, 0.3, 0.6] } else {
 		assert(false);
 	};
 
-def roll(die)=>[red,green,blue][categorical(dieToProbs(die))];
+def roll(die:ℕ)=>[red,green,blue][categorical(dieToProbs(die))];
 
 def main(){
 	sidePrior := infer(()=>[red,green,blue][categorical([1/3,1/3,1/3])]);
 	diePrior := infer(()=>[A,B][categorical([1/2,1/2])]);
-	def teacher(die,learner: ℝ → Distribution[ℝ])=>infer((){
+	def teacher(die:ℕ,learner: ℕ → Distribution[ℕ])=>infer((){
 		side := sample(sidePrior);
 		observe(sample(learner(side)) == die);
 		return side;
 	});
-	def learner(side,teacher: ℝ → Distribution[ℝ])=>infer((){
+	def learner(side:ℕ,teacher: ℕ → Distribution[ℕ])=>infer((){
 		die := sample(diePrior);
 		observe(side == sample(teacher(die)));
 		return die;
 	});
-	def naive_learner(side)=>infer((){
+	def naive_learner(side:ℕ)=>infer((){
 		die := sample(diePrior);
 		observe(side == roll(die));
 		return die;
@@ -32,8 +32,8 @@ def main(){
 	cur_learner := naive_learner;
 	depth := 3;
 	for i in [0..depth){
-		cur_teacher := (die)=>teacher(die,cur_learner);
-		cur_learner = (side)=>learner(side,cur_teacher);
+		cur_teacher := (die:ℕ)=>teacher(die,cur_learner);
+		cur_learner = (side:ℕ)=>learner(side,cur_teacher);
 	}
 	return sample(cur_learner(green)); // expected: 5021372535/14946428426·δ(1)[r]+9925055891/14946428426·δ(0)[r]
 }

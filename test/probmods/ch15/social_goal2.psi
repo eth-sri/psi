@@ -5,14 +5,14 @@ bagel := 0, cookie := 1, nothing := 2, state := 3;
 
 def haveCookie(obj) ⇒ obj==cookie;
 
-def vendingMachine(state,action)=>
+def vendingMachine(state:ℕ,action:ℕ)=>
 	if action == a { [bagel,cookie][categorical([0.9,0.1])] } else
 	if action == b { [bagel,cookie][categorical([0.5,0.5])] } else
                    { nothing };
 
 def main(){
 	actionPrior := infer(()=>[a,b][categorical([0.5,0.5])]);
-	def chooseAction(goalSatisfied: ℝ → 𝔹, transition: ℝ×ℝ → ℝ, state)=>
+	def chooseAction(goalSatisfied: ℕ → 𝔹, transition: ℕ×ℕ → ℕ, state: ℕ)=>
 		infer((){
 			action := sample(actionPrior);
 			observe(goalSatisfied(transition(state, action)));
@@ -20,7 +20,7 @@ def main(){
 		});
 	goalPosterior := infer((){
 		goal := [bagel,cookie][categorical([0.5,0.5])];
-		goalSatisfied := (outcome) => outcome == goal;
+		goalSatisfied := (outcome:ℕ) => outcome == goal;
 		actionDist := chooseAction(goalSatisfied, vendingMachine, state);
 		observe(sample(actionDist)==b);
 		return goal;

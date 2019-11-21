@@ -3,9 +3,9 @@
 a := 0, b := 1; // TODO: chars and strings.
 bagel := 0, cookie := 1, nothing := 2, state := 3;
 
-def haveCookie(obj)⇒ obj==cookie;
+def haveCookie(obj:ℕ)⇒obj==cookie;
 
-def makeVendingMachine(aEffects: ℝ[],bEffects: ℝ[])(state,action)=>
+def makeVendingMachine(aEffects: ℝ[],bEffects: ℝ[])(state:ℕ,action:ℕ)=>
 	if action == a { [bagel,cookie][categorical(aEffects)] } else
 	if action == b { [bagel,cookie][categorical(bEffects)] } else
                    { nothing };
@@ -18,7 +18,7 @@ def dirichlet(α: ℝ[]){ // TODO: add dirichlet distribution
 
 def main(){
 	actionPrior := infer(()=>[a,b][categorical([0.5,0.5])]);
-	def chooseAction(goalSatisfied: ℝ → 𝔹, transition: ℝ×ℝ → ℝ, state)=>
+	def chooseAction(goalSatisfied: ℕ → 𝔹, transition: ℕ×ℕ → ℕ, state: ℕ)=>
 		infer((){
 			action := sample(actionPrior);
 			observe(goalSatisfied(transition(state, action)));
@@ -29,7 +29,7 @@ def main(){
 	bEffects := dirichlet([1,1]);
 	vendingMachine := makeVendingMachine(aEffects,bEffects);
 	goal := [bagel,cookie][categorical([0.5,0.5])];
-	def goalSatisfied(outcome) => outcome==goal;
+	def goalSatisfied(outcome:ℕ) => outcome==goal;
 	observe(goal==cookie&&sample(chooseAction(goalSatisfied, vendingMachine, state))==b);
 	//return bEffects[1]; // expected: (-2·log(bEffects₁)+2·log(2))·[-1+bEffects₁≤0]·[-bEffects₁≤0]·[bEffects₁≠0]·bEffects₁+2·[-1+bEffects₁≤0]·[-bEffects₁≤0]·bEffects₁·log(1/2+1/2·bEffects₁)
 	return (aEffects[1],bEffects[1]); // expected: [-1+aEffects₁≤0]·[-1+bEffects₁≤0]·[-aEffects₁≤0]·[-bEffects₁≤0]·bEffects₁·⅟(1/2·aEffects₁+1/2·bEffects₁)
