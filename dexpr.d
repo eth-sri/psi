@@ -3989,6 +3989,8 @@ class DGaussInt: DOp{
 			return "Sqrt[Pi]*(Erf["~x.toStringImpl(formatting,Precedence.none,binders)~"]+1)/2";
 		}else if(formatting==Format.maple){
 			return "sqrt(Pi)*(erf("~x.toStringImpl(formatting,Precedence.none,binders)~")+1)/2";
+		}else if(formatting==Format.python){
+			return "sqrt(pi)*(erf("~x.toStringImpl(formatting,Precedence.none,binders)~")+1)/2";
 		}else if(formatting==Format.matlab) return "(sqrt(pi)*(erf("~x.toStringImpl(formatting,Precedence.none,binders)~")+1)/2)";
 		else if(formatting==Format.lisp) return text("(gauss-integral ",x.toStringImpl(formatting,Precedence.none,binders),")");
 		else if(formatting==Format.sympy) return "sqrt(pi)*(erf("~x.toStringImpl(formatting,Precedence.none,binders)~")+1)/2";
