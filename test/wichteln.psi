@@ -1,6 +1,6 @@
 // skipped
 
-n := 4;
+n := 5;
 
 dat Person{
     knowledge: Distribution[ℝ[]];
@@ -40,7 +40,8 @@ def main(){
         return a;
     });
     persons := array(n,Person(knowledge));
-    data := [2,3,0,1];
+	//data := [2,3,0,1];
+    data := [4,2,3,0,1];
     dataInv := array(n,-1);
     for i in [0..n){ dataInv[data[i]]=i; }
     //data := [2,0,1];
