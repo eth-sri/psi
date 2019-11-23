@@ -1,5 +1,5 @@
 def main(){
     a:=[[0],[0]]:ℝ[][]; // TODO: this annotation should not be necessary
     a[0][0]=uniform(0,1);
-    return a; // expected: ∫dξ₁[-1+ξ₁≤0]·[-ξ₁≤0]·δ([ξ₂ ↦ ([ξ₃ ↦ 0] (1))·[-ξ₂+1=0]+([ξ₃ ↦ ξ₁] (1))·[ξ₂=0]] (2))[a]
+    return a; // expected: ∫dξ₁[-1+ξ₁≤0]·[-ξ₁≤0]·δ((ξ₁,),(0,))[a]
 }

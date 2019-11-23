@@ -1,3 +1,5 @@
+// skipped
+
 import disintegrate;
 def ex3(){
 	x:=gauss(0,1);

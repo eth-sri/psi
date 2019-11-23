@@ -1,4 +1,42 @@
 // skipped
+
+def main(){
+	return (0,2,3,1)[0..2];
+}
+
+/+
+def bar(x:ℝ){
+    cobserve(x,1/2); // not ok, in the current block, x is a dirac measure
+}
+
+
+def main(){
+	y:=uniform(0,1);
+	bar(y); // even though here we call the function with an uniform
+	return y;
+}
+
+def foo[n:ℕ](xs:ℝ^n):ℝ^(2·n)⇒xs~xs;
++/
+/+
+def main(){
+	which:=categorical([2^(1/2)*1/4,
+		if which==0{
+		x7 := uniform(0/1, (2/1)^(1/2) * (1/2));
+	}
+   weight(real2prob(x7 ^ 2 * (+2/1) + (+1/1)), return x7 < +1/2)) <|>
+weight
+  (real2prob(+1/1 + prob2real(sqrt(2/1)) * (-1/2)),
+   x7 <~ uniform(prob2real(sqrt(2/1)) * (+1/2), +1/1)
+   return x7 < +1/2)
+
+
+def main(){
+	x:=gauss(0,1);
+	//y:=gauss(0,1);
+	return x*x;
+}
++/
 /+
 n:=3;
 def main(){

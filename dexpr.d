@@ -4181,6 +4181,13 @@ class DIndex: DOp{
 		if(auto arr=cast(DArray)ne){
 			return arr.entries.apply(ni).simplify(facts);
 		}
+		if(auto tpl=cast(DTuple)ne){
+			DExprSet summands;
+			foreach(j;0..tpl.values.length){
+				DPlus.insert(summands,(dEq(ni,dℚ(j))*tpl.values[j]).simplify(facts));
+			}
+			return dPlus(summands).simplify(facts);
+		}
 		if(ne != e || ni != i) return dIndex(ne,ni);
 		return null;
 	}
@@ -4261,7 +4268,7 @@ class DSlice: DOp{
 			if(auto d=nr.isInteger()){
 				if(auto tpl=cast(DTuple)ne){
 					assert(c.c.den==1 && d.c.den==1);
-					if(0<=c.c.num&&c.c.num<tpl.values.length&&0<=d.c.num&&d.c.num<tpl.values.length)
+					if(0<=c.c.num&&c.c.num<=d.c.num&&d.c.num<=tpl.values.length)
 						return dTuple(tpl.values[cast(size_t)c.c.num.toLong()..cast(size_t)d.c.num.toLong()]).simplify(facts);
 				}
 			}
@@ -4470,7 +4477,16 @@ class DArray: DExpr{
 			nentries=cast(DLambda)dLambda(nentries.apply(zero).incDeBruijnVar(1,0)).simplify(facts);
 			assert(!!nentries);
 		}
-		if(nlength!= length||nentries!= entries) return dArray(nlength,nentries);
+		if(auto nli=nlength.isInteger()){
+			if(nli.c.num<32){
+				DExpr[] values;
+				foreach(i;0..cast(long)nli.c.num){
+					values~=nentries.apply(dℚ(i)).simplify(facts);
+				}
+				return dTuple(values);
+			}
+		}
+		if(nlength!=length||nentries!=entries) return dArray(nlength,nentries);
 		return null;
 	}
 	override DExpr simplifyImpl(DExpr facts){
@@ -4493,15 +4509,21 @@ class DCat: DAssocOp{ // TODO: this should have n arguments, as it is associativ
 		auto nop=operands.map!(a=>a.simplify(facts)).array;
 		if(nop!=operands) return dCat(nop).simplify(facts);
 		DExpr doCat(DExpr e1,DExpr e2){
-			auto a1=cast(DArray)e1;
-			auto a2=cast(DArray)e2;
+			auto a1=cast(DArray)e1, a2=cast(DArray)e2;
 			if(a1&&a1.length==zero) return e2;
 			if(a2&&a2.length==zero) return e1;
-			if(!a1||!a2) return null;
-			auto dbv=db1;
-			return dArray(a1.length+a2.length,
+			if(a1&&a2){
+				if(!a1||!a2) return null;
+				auto dbv=db1;
+				return dArray(a1.length+a2.length,
 			              dLambda(a1.entries.expr*dLt(dbv,a1.length)
 			                      +a2.entries.expr.substitute(dbv,dbv-a1.length)*dGe(dbv,a1.length)));
+			}
+			auto t1=cast(DTuple)e1, t2=cast(DTuple)e2;
+			if(t1&&!t1.values.length) return e2;
+			if(t2&&!t2.values.length) return e1;
+			if(t1&&t2) return dTuple(t1.values~t2.values);
+			return null;
 		}
 		nop=[];
 		foreach(i;0..operands.length-1){
