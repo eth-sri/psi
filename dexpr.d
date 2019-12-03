@@ -893,15 +893,17 @@ class DPlus: DCommutAssocOp{
 			if(!i) summand=summand.simplify(facts);
 		}
 
-		if(auto p=cast(DPow)summand){
-			if(cast(DPlus)p.operands[0]){
-				auto expanded=expandPow(p);
-				if(expanded != p){
-					insertAndSimplify(summands,expanded,facts);
-					return;
-				}
-			}
-		}
+		foreach(factor;summand.factors){
+	        if(auto p=cast(DPow)factor){
+		        if(cast(DPlus)p.operands[0]){
+			        auto expanded=expandPow(p);
+			        if(expanded != p){
+				        insertAndSimplify(summands,dDistributeMult(expanded,summand.withoutFactor(factor)),facts);
+				        return;
+			        }
+		        }
+	        }
+        }
 
 		DExpr combine(DExpr e1,DExpr e2,DExpr facts){
 			if(e1==zero) return e2;
@@ -1564,10 +1566,19 @@ class DPow: DBinaryOp{
 		auto ne2=e2.simplify(facts);
 		if(ne1!=e1||ne2!=e2) return dPow(ne1,ne2).simplify(facts);
 		if(e1 != mone){
-			auto c=e1.getFractionalFactor();
-			if(c.c<0)
-				if(e2.isInteger())
-					return (mone^^e2*(-e1)^^e2).simplify(facts);
+			if(e2.isInteger()){
+				if(auto v=e1.getCanonicalFreeVar()){
+					if(e1!=v){
+						if(auto p=e1.asPolynomialIn(v,1)){
+							auto a=p.coefficients.get(1,zero);
+							auto b=p.coefficients.get(0,zero);
+							if(dLtZ(a).simplify(facts)==one){
+								return (mone^^e2*((-a)*v-b)^^e2).simplify(facts);
+							}
+						}
+					}
+				}
+			}
 		}
 		if(auto m=cast(DMult)e1){
 			DExprSet outside;
@@ -1631,10 +1642,10 @@ class DPow: DBinaryOp{
 					return (r^^(e2*q.c.den)/c.c.den^^e2).simplify(facts);
 				}
 		}
-		if(cast(DPlus)e1){
+		/+if(cast(DPlus)e1){
 			if(auto r=expandPow(e1,e2))
 				return r.simplify(facts);
-		}
+		}+/
 
 		/+if(e1.isFraction()&&e2.isFraction()){
 			auto nd=e2.getFraction();
@@ -2069,11 +2080,9 @@ bool divides(DExpr a,DExpr b){
 DExprSet lcmFactors(S,T)(S a,T b){
 	DExprSet r;
 	void add(DExpr e){
+		foreach(x;r) if(divides(e,x)) return;
 		DExprSet toRemove;
-		foreach(x;r){
-			if(divides(e,x)) return;
-			if(divides(x,e)) toRemove.insert(x);
-		}
+		foreach(x;r) if(divides(x,e)) toRemove.insert(x);
 		foreach(x;toRemove) r.remove(x);
 		r.insert(e);
 	}
