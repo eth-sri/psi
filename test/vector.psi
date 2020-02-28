@@ -1,0 +1,4 @@
+
+def main(){
+	return vector(3,3); // expected: δ(3)[r₁]·δ(3)[r₂]·δ(3)[r₃]
+}

@@ -17,6 +17,7 @@ def ceil(x:ℝ):ℤ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌈x⌉]",x):ℤ;
 def inℤ(x:ℝ):ℝ ⇒ x==floor(x);
 
 def array[a](length: ℕ, init:a): a[] ⇒ sampleFrom("(r;length,init)=>δ([i↦ init] (length))[r]",length,init):a[];
+def vector[a](n: ℕ, init:a): a^n ⇒ sampleFrom("(r;length,init)=>δ([i↦ init] (length))[r]",n,init):a^n;
 
 // first-class inference
 dat Distribution[+a]{ } // TODO: dat Distribution[a];

@@ -20,8 +20,12 @@ def ceil(x:ℝ):ℤ ⇒ sampleFrom("(y;x)=>δ(0)[-y+⌈x⌉]",x):ℤ;
 def inℤ(x:ℝ):𝔹 ⇒ x==floor(x);
 
 def array[a](length: ℕ, init:a): a[]{
-	assert(length>=0&inℤ(length));
-	return sampleFrom("(r;length,init)=>δ([i↦ init] (length))[r]",length,init):a[];
+	assert(length>=0&inℤ(length)); // TODO: remove this after adding runtime checks to `coerce`
+    return sampleFrom("(r;length,init)=>δ([i↦ init] (length))[r]",length,init):a[];
+}
+def vector[a](length: ℕ, init:a): a^length{
+	assert(length>=0&inℤ(length)); // TODO: remove this after adding runtime checks to `coerce`
+    return sampleFrom("(r;length,init)=>δ([i↦ init] (length))[r]",length,init):a^length;
 }
 
 // first-class inference
