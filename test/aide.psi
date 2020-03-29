@@ -1,0 +1,65 @@
+// skipped
+
+import genCap;
+import hmm;
+
+def log₂(x)=>log(x)/log(2);
+
+def H_cross[a](p: Distribution[a], q: Distribution[a], eq: a×a→𝔹)⇒
+	expectation(infer(()⇒ S(q,sample(p),eq)));
+
+def KL[a](p: Distribution[a], q: Distribution[a], eq: a×a→𝔹)⇒
+	H_cross(p,q,eq)-H(p,eq);
+
+/+
+def sym_KL[a](p: Distribution[a], q: Distribution[a], eq: a×a→𝔹)⇒
+	KL(p,q,eq)+KL(q,p,eq);
++/
+
+a := [[0.6,0.4], // transitions
+	  [0.7,0.3]];
+b := [[0.5,0.5],[0.2,0.8]]; // hidden → observed
+def makeHMM()⇒HMM(a,b,0);
+
+seq:=[-1,-1,0,-1,1,-1];
+
+def exact()⇒infer((){
+	h:=makeHMM();
+	for i in [0..seq.length){
+		if seq[i]==-1{
+			h.update();
+		}else{
+			observe(h.predict()==seq[i]);
+		}
+	}
+	return h.x;
+});
+
+def filter(n:ℕ){
+	particles:=array(n,0);
+	weights:=array(n,1.0);
+	for i in [0..seq.length){
+		if seq[i]==-1{
+			for j in [0..n){
+				particles[j]=categorical(a[particles[j]]);
+			}
+		}else{
+			for j in [0..n){
+				weights[j]*=b[particles[j]][seq[i]];
+			}
+		}
+	}
+	sum:=0.0;
+	for j in [0..n){ sum+=weights[j]; }
+	for j in [0..n){ weights[j]/=sum; }
+	return infer(()=>particles[categorical(weights)]);
+}
+
+def main(){
+	q:=exact();
+	r₁:=Expectation(KL(filter(1),q,(a:ℕ,b:ℕ)⇒a=b));
+	r₂:=Expectation(KL(filter(2),q,(a:ℕ,b:ℕ)⇒a=b));
+	r₃:=Expectation(KL(filter(3),q,(a:ℕ,b:ℕ)⇒a=b));
+	r₄:=Expectation(KL(filter(4),q,(a:ℕ,b:ℕ)⇒a=b));
+	return (r₁,r₂,r₃,r₄);
+}
