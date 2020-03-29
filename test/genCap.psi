@@ -7,10 +7,10 @@ n := 3; // TODO: loops.
 
 def log₂(x)=>log(x)/log(2);
 
-def S[a](d: Distribution[a], x: a, eq: a×a→ ℝ)⇒
+def S[a](d: Distribution[a], x: a, eq: a×a→𝔹)⇒
 	log₂(1/expectation(infer(()⇒ eq(sample(d),x))));
 
-def H[a](d: Distribution[a], eq: a×a→ ℝ)⇒
+def H[a](d: Distribution[a], eq: a×a→𝔹)⇒
 	expectation(infer(()⇒ S(d,sample(d),eq)));
 
 def π₁[a,b](d: Distribution[a×b])⇒ infer(()=>sample(d)[0]);
@@ -72,14 +72,14 @@ def idPerm(k: ℕ){
 	return r;
 }
 
-def factorial(k: ℝ){
+def factorial(k: ℕ){
 	assert(k==n);
 	r := 1;
 	for i in [2..n]{ r *= i }
 	return r;
 }
 
-def allPermutations(k: ℝ){
+def allPermutations(k: ℕ){
 	assert(k==n);
 	c := idPerm(n);
 	r := [c];
@@ -170,7 +170,7 @@ def selectionSort(cmp: 𝔹[][]){
 }
 
 
-def randPerm(k: ℝ){
+def randPerm(k: ℕ){
 	assert(n == k);
 	r := array(n,0);
 	for i in [0..n){ r[i] = i; }
