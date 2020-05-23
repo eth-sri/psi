@@ -691,6 +691,11 @@ struct Interpreter{
 			}
 			if(auto ae=cast(AddExp)e) return doIt(ae.e1)+doIt(ae.e2);
 			if(auto me=cast(SubExp)e) return doIt(me.e1)-doIt(me.e2);
+			if(auto me=cast(NSubExp)e){
+				auto r = doIt(me.e1)-doIt(me.e2);
+				cur.assertTrue(dLambda(dGeZ(r)));
+				return r;
+			}
 			if(auto me=cast(MulExp)e) return doIt(me.e1)*doIt(me.e2);
 			if(cast(DivExp)e||cast(IDivExp)e){
 				auto de=cast(ABinaryExp)e;
