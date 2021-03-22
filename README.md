@@ -5,7 +5,10 @@
 PSI is a tool for performing exact inference on probabilistic programs.
 Given a probabilistic program, the tool produces an expression for the joint posterior distribution of the expressions computed by the program.
 
-PSI is described in the paper 'PSI: Exact Symbolic Inference for Probabilistic Programs' (available at http://psisolver.org).
+The PSI solver is described in the following research papers (see also http://psisolver.org):
+
+- [CAV 2016: "PSI: Exact Symbolic Inference for Probabilistic Programs"](https://www.sri.inf.ethz.ch/publications/gehr2016psi) (original publication)
+- [PLDI 2020: "λPSI: Exact Inference for Higher-order Probabilistic Programs"](https://www.sri.inf.ethz.ch/publications/gehr2020lpsi) (extension to higher-order inference)
 
 ## Compatibility Disclaimer
 
@@ -497,3 +500,31 @@ util.d:
 ## Adding new tests
 
 Add a `*.psi` file into the `test` directory.
+
+
+## Citing this Work
+
+You are encouraged to cite the CAV 2016 and PLDI 2020 publications using the following BibTex entries if you use PSI for academic research.
+
+```
+@inproceedings{gehr2016psi,
+  title={{PSI}: Exact Symbolic Inference for Probabilistic Programs},
+  author={Gehr, Timon and Misailovic, Sasa and Vechev, Martin},
+  booktitle={International Conference on Computer Aided Verification},
+  pages={62--83},
+  year={2016},
+  organization={Springer}
+}
+```
+
+```
+@inproceedings{gehr2020lpsi,
+  title = {$\lambda${PSI}: Exact Inference for Higher-Order Probabilistic Programs},
+  author = {Gehr, Timon and Steffen, Samuel and Vechev, Martin},
+  doi = {10.1145/3385412.3386006},
+  booktitle = {Proceedings of the 41st {ACM} {SIGPLAN} {Conference} on {Programming} {Language} {Design} and {Implementation}},
+  publisher = {ACM},
+  month = jun,
+  year = {2020}
+} 
+```
