@@ -306,11 +306,6 @@ DExpr tryGetAntiderivative(DExpr expr){
 			auto b=ba[0],a=ba[1];
 			if(a && b){
 				if(auto n=p.operands[1].isInteger()){
-					DExpr dInGamma(DExpr a,DExpr z){
-						a=a.incDeBruijnVar(1,0), z=z.incDeBruijnVar(1,0);
-						auto t=db1;
-						return dIntSmp(t^^(a-1)*dE^^(-t)*dLe(z,t),one);
-					}
 					if(n.c>0)
 						return dNeqZ(a)*dNeqZ(a*var+b)*mone^^n*dInGamma(n+1,-dLog(a*var+b))/a
 							+ dEqZ(a)*var*dLog(b)^^n;

@@ -4794,6 +4794,12 @@ DExpr dGamma(DExpr t){
 	return dInt(x^^(t-1)*dE^^(-x)*dGeZ(x));
 }
 
+DExpr dInGamma(DExpr a,DExpr z){
+	a=a.incDeBruijnVar(1,0), z=z.incDeBruijnVar(1,0);
+	auto t=db1;
+	return dIntSmp(t^^(a-1)*dE^^(-t)*dLe(z,t),one);
+}
+
 DExpr dBeta(DExpr x,DExpr y){ // constraints: x>0 and y>0
 	x=x.incDeBruijnVar(1,0), y=y.incDeBruijnVar(1,0);
 	auto t=db1;
