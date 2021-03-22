@@ -39,6 +39,12 @@ PSI is written in the D programming language. D compilers are available at http:
 `./build.sh` creates a debug build.
 `./build-release` creates a release build.
 
+### Using Docker
+
+Build with `docker build . -t psi`, then launch the container with `docker run -it psi`.
+
+You can eventually share files between your filesystem and the container using the `-v` option.
+
 ### Other platforms
 
 The build instructions given here are for GNU/Linux. PSI also works on other platforms.
