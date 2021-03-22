@@ -43,7 +43,7 @@ PSI is written in the D programming language. D compilers are available at http:
 
 Build with `docker build . -t psi`, then launch the container with `docker run -it psi`.
 
-You can eventually share files between your filesystem and the container using the `-v` option.
+You can share folders between your file system and the container using the `-v` option: `docker run -it psi -v host/path:container/path`.
 
 ### Other platforms
 
