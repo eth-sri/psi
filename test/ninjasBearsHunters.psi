@@ -1,0 +1,37 @@
+// skipped
+// flags: --nocheck --dp
+
+//Problem statement from: https://www.cadmo.ethz.ch/education/lectures/FS17/AW/restricted/programming_sheets/Week4/this.pdf
+//Run using DP for performance.
+def main() {
+	ninjas := 10:ℤ; bears := 2:ℤ; hunters := 5:ℤ; // TODO: support without type annotation
+	x := ninjas + bears + hunters ; //Maximum number of loops
+
+	//according to documentation use a for loop with cut-off using if statements.
+	for i in [1..x] { //i = number of victims, at most x
+		//there must be at least two remaining civilizations.
+		if(ninjas + bears > 0 && ninjas + hunters > 0 && bears + hunters > 0) {
+			(p1,p2) := sample(infer((){
+				sum := ninjas + bears + hunters;
+				arr := (ninjas / sum, bears / sum, hunters / sum);
+				p1 := categorical(arr); //0=ninja, 1=bear, 2=hunter
+				p2 := categorical(arr);
+				observe(p1 != p2);
+				observe(!(ninjas ==0&&(p1==0 || p2 == 0)));
+				observe(!(bears	 ==0&&(p1==1 || p2 == 1)));
+				observe(!(hunters==0&&(p1==2 || p2 == 2)));
+				return (p1,p2);
+			}));
+			if		((p1==0 && p2==1)||(p1==1 && p2==0)) {ninjas -=1;} //Bear kills ninja
+			else if ((p1==0 && p2==2)||(p1==2 && p2==0)) {hunters-=1;} //Ninja kills hunter
+			else if ((p1==1 && p2==2)||(p1==2 && p2==1)) {bears-=1;} //Hunter kills bear
+			else {assert(false);}
+		}
+	}
+	assert(!(ninjas == 0 && bears == 0 && hunters == 0));
+	assert(ninjas + bears == 0 || ninjas + hunters == 0 || bears + hunters == 0);
+	probNinjaSurvive := ninjas > 0;
+	probBearsSurvive := bears > 0;
+	probHuntersSurvive := hunters > 0;
+	return (probNinjaSurvive);
+}
