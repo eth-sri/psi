@@ -1,0 +1,10 @@
+// skipped
+
+def main() {
+    p := gauss(0.5,1);
+    r := [1,1,0,1,1,0];
+    for i in [0..r.length) {
+        observe( flip(p)==r[i]  );
+    }
+    return p;
+}

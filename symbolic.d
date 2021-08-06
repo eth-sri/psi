@@ -445,13 +445,13 @@ private struct Analyzer{
 		auto tmp=ndist.getVar("tmp");
 		ndist.initialize(tmp,e,ℝ);
 		foreach(v;dist.freeVars) ndist.marginalize(v);
+		DDelta deltaFactor=null;
 		foreach(f;ndist.distribution.factors)
-			if(!cast(DDelta)f&&!cast(Dℚ)f)
-				return null;
-		auto norm=dIntSmp(tmp,ndist.distribution,one);
-		if(norm == zero || (!cast(Dℚ)norm&&!cast(DFloat)norm))
-			return null;
-		auto r=(dIntSmp(tmp,tmp*ndist.distribution,one)/norm).simplify(one);
+			if(auto d=cast(DDelta)f)
+				if(d.hasFreeVar(tmp))
+					deltaFactor=d;
+		if(!deltaFactor) return null;
+		auto r=dIntSmp(tmp,tmp*deltaFactor,one);
 		if(r.hasAny!DInt) return null;
 		return r;
 	}
