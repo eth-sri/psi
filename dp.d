@@ -385,31 +385,31 @@ struct Dist{
 		foreach(k,v;state){
 			auto cf=dApply(f,k).simplify(one);
 			auto ca=dApply(a,k).simplify(one);
-			FunctionDef fun;
+			FunctionDef fdc;
 			DExpr ctx;
 			if(auto bcf=cast(DDPContextFun)cf){
-				fun=bcf.def;
+				fdc=bcf.def;
 				ctx=bcf.ctx;
-			}else if(auto bff=cast(DDPFun)cf) fun=bff.def;
+			}else if(auto bff=cast(DDPFun)cf) fdc=bff.def;
 			else assert(0,text(cf," ",typeid(cf)));
 			DExpr nk=k;
-			if(fun.isTuple){
-				foreach(i,prm;fun.params)
+			if(fdc.isTuple){
+				foreach(i,prm;fdc.params)
 					nk=dRUpdate(nk,prm.getName,ca[i.dℚ]).simplify(one);
 			}else{
-				assert(fun.params.length==1);
-				nk=dRUpdate(nk,fun.params[0].getName,ca).simplify(one);
+				assert(fdc.params.length==1);
+				nk=dRUpdate(nk,fdc.params[0].getName,ca).simplify(one);
 			}
-			assert(!!fun.context==!!ctx,text(fun.context," ",ctx," ",cf));
-			if(ctx) nk=dRUpdate(nk,fun.contextName,ctx).simplify(one);
-			if(fun !in byFun) byFun[fun]=typeof(byFun[fun]).init;
-			byFun[fun][nk]=v;
+			assert(!!fdc.context==!!ctx,text(fdc.context," ",ctx," ",cf));
+			if(ctx) nk=dRUpdate(nk,fdc.contextName,ctx).simplify(one);
+			if(fdc !in byFun) byFun[fdc]=typeof(byFun[fdc]).init;
+			byFun[fdc][nk]=v;
 		}
-		foreach(fun,kv;byFun){
+		foreach(fdc,kv;byFun){
 			auto ncur=distInit;
 			ncur.state=kv;
 			ncur.copyNonState(this);
-			auto intp=Interpreter(fun,fun.body_,ncur,true);
+			auto intp=Interpreter(fdc,fdc.body_,ncur,true);
 			auto nndist = distInit();
 			intp.runFun(nndist);
 			r+=nndist;
@@ -545,7 +545,7 @@ struct Dist{
 	void copyNonState(ref Dist rhs){
 		this.tupleof[1..$]=rhs.tupleof[1..$];
 	}
-	void pickOne()in{assert(opt.backend==InferenceMethod.simulate);}body{
+	void pickOne()in{assert(opt.backend==InferenceMethod.simulate);}do{
 		real f = uniform(0.0L,1.0L);
 		DExpr cur=zero;
 		foreach(k,v;state){
@@ -623,7 +623,7 @@ mixin FactoryFunction!DDPContextFun;
 class DDPDist: DExpr{
 	Dist dist;
 	alias subExprs=Seq!dist;
-	this(Dist dist)in{assert(!dist.tmpVars.length);}body{ this.dist=dist; }
+	this(Dist dist)in{assert(!dist.tmpVars.length);}do{ this.dist=dist; }
 	override string toStringImpl(Format formatting,Precedence prec,int binders){
 		auto d=dist.toDistribution(["r"],false);
 		d.addArgs([],true,null);
@@ -632,7 +632,7 @@ class DDPDist: DExpr{
 	override DExpr simplifyImpl(DExpr facts){ return dDPDist(dist.simplify(facts)); }
 	mixin Visitors;
 }
-DDPDist dDPDist(Dist dist)in{assert(!dist.tmpVars.length);}body{
+DDPDist dDPDist(Dist dist)in{assert(!dist.tmpVars.length);}do{
 	static MapX!(TupleX!(MapX!(DExpr,DExpr),DExpr),DDPDist) uniq;
 	auto t=tuplex(dist.state,dist.error);
 	if(t in uniq) return uniq[t];
@@ -644,7 +644,7 @@ DDPDist dDPDist(Dist dist)in{assert(!dist.tmpVars.length);}body{
 import ast.lexer: Tok;
 alias ODefExp=BinaryExp!(Tok!":=");
 DExpr readLocal(string name){ return dField(db1,name); }
-DExpr readFunction(Identifier id)in{ assert(id && id.scope_ && cast(FunctionDef)id.meaning); }body{
+DExpr readFunction(Identifier id)in{ assert(id && id.scope_ && cast(FunctionDef)id.meaning); }do{
 	auto fd=cast(FunctionDef)id.meaning;
 	assert(!!fd);
 	if(!fd.isNested) return dDPFun(fd);
@@ -825,8 +825,8 @@ struct Interpreter{
 										bool hasResult;
 										DExpr result;
 										foreach(k,v;cur.state){
-											auto args=dApply(arg,k);
-											auto μCand=toFloat(args[0.dℚ].simplify(one)), νCand=toFloat(args[1.dℚ].simplify(one));
+											auto gArgs=dApply(arg,k);
+											auto μCand=toFloat(gArgs[0.dℚ].simplify(one)), νCand=toFloat(gArgs[1.dℚ].simplify(one));
 											if(!hasResult){
 												μ=μCand, ν=νCand;
 												import std.math, std.mathspecial, std.random;
@@ -843,8 +843,8 @@ struct Interpreter{
 										bool hasResult;
 										DExpr result;
 										foreach(k,v;cur.state){
-											auto args=dApply(arg,k);
-											auto aCand=toFloat(args[0.dℚ].simplify(one)), bCand=toFloat(args[1.dℚ].simplify(one));
+											auto uArgs=dApply(arg,k);
+											auto aCand=toFloat(uArgs[0.dℚ].simplify(one)), bCand=toFloat(uArgs[1.dℚ].simplify(one));
 											if(!hasResult){
 												a=aCand, b=bCand;
 												result=dFloat(sampleUniform(a,b));
@@ -860,8 +860,8 @@ struct Interpreter{
 										bool hasResult;
 										DExpr result;
 										foreach(k,v;cur.state){
-											auto args=dApply(arg,k);
-											auto μCand=toFloat(args[0.dℚ].simplify(one)),bCand=toFloat(args[1.dℚ].simplify(one));
+											auto lArgs=dApply(arg,k);
+											auto μCand=toFloat(lArgs[0.dℚ].simplify(one)),bCand=toFloat(lArgs[1.dℚ].simplify(one));
 											if(!hasResult){
 												μ=μCand, b=bCand;
 												import std.math: log;
@@ -895,8 +895,8 @@ struct Interpreter{
 										bool hasResult;
 										DExpr result;
 										foreach(k,v;cur.state){
-											auto args=dApply(arg,k);
-											auto aCand=toFloat(args[0.dℚ].simplify(one)),bCand=toFloat(args[1.dℚ].simplify(one));
+											auto pArgs=dApply(arg,k);
+											auto aCand=toFloat(pArgs[0.dℚ].simplify(one)),bCand=toFloat(pArgs[1.dℚ].simplify(one));
 											if(!hasResult){
 												a=aCand, b=bCand;
 												import std.math: log;
@@ -913,8 +913,8 @@ struct Interpreter{
 										bool hasResult;
 										DExpr result;
 										foreach(k,v;cur.state){
-											auto args=dApply(arg,k);
-											auto αCand=toFloat(args[0.dℚ].simplify(one)),βCand=toFloat(args[1.dℚ].simplify(one));
+											auto gArgs=dApply(arg,k);
+											auto αCand=toFloat(gArgs[0.dℚ].simplify(one)),βCand=toFloat(gArgs[1.dℚ].simplify(one));
 											if(!hasResult){
 												α=αCand, β=βCand;
 												import std.math: log;
@@ -987,7 +987,7 @@ struct Interpreter{
 				auto fun=doIt(ce.e), arg=doIt(ce.arg);
 				return cur.call(fun,arg);
 			}
-			if(auto idx=cast(IndexExp)e) return dIndex(doIt(idx.e),doIt(idx.a[0])); // TODO: bounds checking
+			if(auto idx=cast(IndexExp)e) return dIndex(doIt(idx.e),doIt(idx.a)); // TODO: bounds checking
 			if(auto sl=cast(SliceExp)e) return dSlice(doIt(sl.e),doIt(sl.l),doIt(sl.r)); // TODO: bounds checking
 			if(auto le=cast(LiteralExp)e){
 				if(le.lit.type==Tok!"0"){
@@ -1208,6 +1208,8 @@ struct Interpreter{
 			if(hasFrame) rec["`frame"]=dField(db1,"`frame");
 			retDist += cur.map(dLambda(dRecord(rec)));
 			cur=distInit;
+			if(re.expected.length)
+				expected.parse(re.expected,new SimpleErrorHandler(),re.loc);
 		}else if(auto ae=cast(AssertExp)e){
 			auto cond=dNeqZ(runExp(ae.e));
 			cur=cur.assertTrue(dLambda(cond));

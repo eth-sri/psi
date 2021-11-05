@@ -152,8 +152,16 @@ struct Comparison{
 Comparison[] getResults(string source){
 	bool compilationError=source.fileStartsWithFlag("compilation error");
 	bool foundCompilationError=false;
+	auto fin=File(source,"r");
+	string args;
+	do{
+		args=fin.readln().strip();
+	}while(args==""||args.startsWith("//compilation error")||args.startsWith("// compilation error"));
+	if(args.startsWith("// args: "))
+		args=args["// args: ".length..$].strip()~" ";
+	else args="";
 	auto sw = StopWatch(Yes.autoStart);
-	auto output = shell("../psi "~source~" 2>&1").splitLines;
+	auto output = shell("../psi "~args~source~" 2>&1").splitLines;
 	sw.stop();
 	Comparison[] result;
 	foreach(i,l;output){

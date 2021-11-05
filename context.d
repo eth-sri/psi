@@ -8,7 +8,7 @@ DExpr readVariable(alias readLocal)(VarDecl var,Scope from){
 	if(r) return dField(r,var.getName);
 	return readLocal(var.getName);
 }
-DExpr getContextFor(alias readLocal)(Declaration meaning,Scope sc)in{assert(meaning&&sc);}body{
+DExpr getContextFor(alias readLocal)(Declaration meaning,Scope sc)in{assert(meaning&&sc);}do{
 	DExpr r=null;
 	auto meaningScope=meaning.scope_;
 	if(auto fd=cast(FunctionDef)meaning)
@@ -33,7 +33,7 @@ DExpr getContextFor(alias readLocal)(Declaration meaning,Scope sc)in{assert(mean
 	}
 	return r;
 }
-DExpr buildContextFor(alias readLocal)(FunctionDef fd,Scope sc)in{assert(fd&&sc);}body{ // template, forward references 'doIt'
+DExpr buildContextFor(alias readLocal)(FunctionDef fd,Scope sc)in{assert(fd&&sc);}do{ // template, forward references 'doIt'
 	if(auto ctx=getContextFor!readLocal(fd,sc)) return ctx;
 	DExpr[string] record;
 	auto msc=fd.realScope;
@@ -74,7 +74,7 @@ DExpr buildContextFor(alias readLocal)(FunctionDef fd,Scope sc)in{assert(fd&&sc)
 	}
 	return dRecord(record);
 }
-DExpr lookupMeaning(alias readLocal,alias readFunction)(Identifier id)in{assert(id && id.scope_,text(id," ",id.loc));}body{
+DExpr lookupMeaning(alias readLocal,alias readFunction)(Identifier id)in{assert(id && id.scope_,text(id," ",id.loc));}do{
 	if(!id.meaning||!id.scope_||!id.meaning.scope_)
 		return readLocal(id.name);
 	if(auto vd=cast(VarDecl)id.meaning){

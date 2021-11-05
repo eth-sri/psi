@@ -122,13 +122,13 @@ struct DParser{
 		return dAbs(arg);
 	}
 
-	DExpr parseLog()in{assert(code.startsWith("log"));}body{
+	DExpr parseLog()in{assert(code.startsWith("log"));}do{
 		code=code["log".length..$];
 		auto e=parseParenthesized('(',')');
 		return dLog(e);
 	}
 
-	DExpr parseGaussInt()in{assert(code.startsWith("(d/dx)⁻¹[e^(-x²)]"));}body{
+	DExpr parseGaussInt()in{assert(code.startsWith("(d/dx)⁻¹[e^(-x²)]"));}do{
 		if(code.startsWith("(d/dx)⁻¹[e^(-x²)]⁻¹")){
 			code=code["(d/dx)⁻¹[e^(-x²)]⁻¹".length..$];
 			auto e=parseParenthesized('(',')');
@@ -171,7 +171,7 @@ struct DParser{
 		return dSum(iVar,iExp);
 	}
 
-	DExpr parseLim()in{assert(code.startsWith("lim"));}body{
+	DExpr parseLim()in{assert(code.startsWith("lim"));}do{
 		code=code["lim".length..$];
 		expect('[');
 		++numBinders;
@@ -186,7 +186,7 @@ struct DParser{
 		return dLim(var,e,x);
 	}
 
-	DExpr parseDiff()in{assert(code.startsWith("d/d"));}body{
+	DExpr parseDiff()in{assert(code.startsWith("d/d"));}do{
 		code=code["d/d".length..$];
 		++numBinders;
 		auto var=parseDVar();
@@ -205,7 +205,7 @@ struct DParser{
 		return dDiff(var,e,x);
 	}
 	
-	DExpr parseNumber()in{assert('0'<=cur()&&cur()<='9');}body{
+	DExpr parseNumber()in{assert('0'<=cur()&&cur()<='9');}do{
 		ℤ r=0;
 		while('0'<=cur()&&cur()<='9'){
 			r=r*10+cast(int)(cur()-'0');
@@ -297,7 +297,7 @@ struct DParser{
 	}
 
 	
-	DVal parseDVal()in{assert(code.startsWith("val"));}body{
+	DVal parseDVal()in{assert(code.startsWith("val"));}do{
 		code=code["val".length..$];
 		auto e=parseParenthesized('(',')');
 		return dVal(e);
@@ -308,7 +308,7 @@ struct DParser{
 		return dErr();
 	}
 
-	DMCase parseDMCase()in{assert(code.startsWith("case"));}body{
+	DMCase parseDMCase()in{assert(code.startsWith("case"));}do{
 		code=code["case".length..$];
 		auto e=parseParenthesized('(',')');
 		expect('{');

@@ -1,17 +1,15 @@
 #!/bin/bash
 
 if [ ! -d dmd2 ]; then
-    VERSION="2.088.1"
+    VERSION="2.098.0"
 
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         FILE="dmd.$VERSION.linux.zip"
-        SUM1="98bfc1e1645bdeb4296749e833ec3fcd  $FILE"
+        SUM1="05f384a3f5d77a2b34aa553bbe433ea4  $FILE"
         MD5="md5sum"
     elif [[ "$OSTYPE" == "darwin"* ]]; then
-        # Note that on macOS gnuplot should be installed with x11 set as terminal. 
-        # Using homebrew: brew install gnuplot --with-x11
         FILE="dmd.$VERSION.osx.zip"
-        SUM1="MD5 ($FILE) = 9c49109a79433d8a9669d9b000914be1"
+        SUM1="MD5 ($FILE) = dbdbd4b8240bf99f08ff6101d0b5e3d5"
         MD5="md5"
     else
         >&2 echo "This script does not support your platform at this time."

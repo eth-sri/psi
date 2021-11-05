@@ -136,7 +136,7 @@ def multiGauss(μ: ℝ[], Σ: ℝ[][]){
 	def cholesky(A: ℝ[][]){
 		L := array(A.length,array(A.length,0.0));
 		for i in [0..A.length){
-			for j in [0..i]{
+			for j in [0..i+1){
 				t := dot(L[i][0..j],L[j][0..j]);
 				if i == j {
 					L[i][j] = (A[i][j]-t)^(1/2)

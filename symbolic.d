@@ -121,7 +121,7 @@ private struct Analyzer{
 			if(v in dist.freeVars||dist.hasArg(v)) return v;
 			return null;
 		}
-		DExpr readFunction(Identifier id)in{ assert(id && id.scope_ && cast(FunctionDef)id.meaning); }body{
+		DExpr readFunction(Identifier id)in{ assert(id && id.scope_ && cast(FunctionDef)id.meaning); }do{
 			auto fd=cast(FunctionDef)id.meaning;
 			assert(!!fd);
 			auto summary=be.getSummary(fd,id.loc,err);
@@ -308,15 +308,13 @@ private struct Analyzer{
 					}
 				}
 				if(cast(ArrayTy)idx.e.type){
-					assert(idx.a.length==1);
 					auto de=doIt(idx.e);
-					auto di=doIt(idx.a[0]);
+					auto di=doIt(idx.a);
 					if(!opt.noBoundsCheck) dist.assertTrue(dIsℤ(di)*dGeZ(di)*dLt(di,dField(de,"length")),formatError("array access out of bounds",idx.loc));
 					auto r=dIndex(de,di);
 					return r;
 				}else if(auto tt=idx.e.type.isTupleTy()){
-					assert(idx.a.length==1);
-					return doIt(idx.e)[doIt(idx.a[0])];
+					return doIt(idx.e)[doIt(idx.a)];
 				}
 				assert(0,text(idx," ",idx.e.type));
 			}
@@ -463,10 +461,6 @@ private struct Analyzer{
 	}
 
 	DExpr indexArray(IndexExp idx){
-		if(idx.a.length!=1){
-			err.error("multidimensional arrays not supported",idx.loc);
-			return null;
-		}
 		auto id=cast(Identifier)idx.e;
 		if(!id){
 			err.error("indexed expression should be identifier",idx.e.loc);
@@ -477,10 +471,10 @@ private struct Analyzer{
 			return null;
 		}
 		auto arr=arrays[id.name];
-		if(auto index=transformExp(idx.a[0])){
+		if(auto index=transformExp(idx.a)){
 			auto cidx=isDeterministicInteger(index);
 			if(!cidx){
-				err.error("index expression should be provably deterministic integer",idx.a[0].loc);
+				err.error("index expression should be provably deterministic integer",idx.a.loc);
 				return null;
 			}
 			if(!(0<=cidx.c&&cidx.c<arr.length)){
@@ -620,8 +614,7 @@ private struct Analyzer{
 				}
 				if(idx.e.type.isTupleTy||cast(ArrayTy)idx.e.type){
 					auto old=transformExp(idx.e);
-					assert(idx.a.length==1);
-					auto index=transformExp(idx.a[0]);
+					auto index=transformExp(idx.a);
 					if(old&&index&&rhs){
 						if(!opt.noBoundsCheck) dist.assertTrue(dGeZ(index)*dLt(index,dField(old,"length")),"array access out of bounds"); // TODO: check that index is an integer.
 						assignToImpl(idx.e,dIUpdate(old,index,rhs),idx.e.type);
@@ -655,7 +648,7 @@ private struct Analyzer{
 		assignToImpl(lhs,rhs,ty);
 	}
 
-	private void analyzeStatement(Expression e,ref Distribution retDist,FunctionDef functionDef)in{assert(!!e);}body{
+	private void analyzeStatement(Expression e,ref Distribution retDist,FunctionDef functionDef)in{assert(!!e);}do{
 		if(opt.trace) writeln("statement: ",e);
 		/+writeln("before: ",dist);
 		 scope(success) writeln("after: ",dist);+/
@@ -868,20 +861,8 @@ private struct Analyzer{
 			if(!retDist) retDist=dist;
 			else retDist=dist.orderedJoin(retDist);
 			dist=odist;
-			if(re.expected.length){
-				import dparse;
-				bool todo=false;
-				import std.string: strip;
-				auto ex=re.expected.strip;
-				if(ex.strip.startsWith("TODO:")){
-					todo=true;
-					ex=ex["TODO:".length..$].strip;
-				}
-				if(!expected.exists){
-					expected=Expected(true,todo,ex);
-				}else if(expected != Expected(true,todo,ex))
-					err.error("can only have one 'expected' annotation, in 'main'.",re.loc);
-			}
+			if(re.expected.length)
+				expected.parse(re.expected,err,re.loc);
 		}else if(auto ae=cast(AssertExp)e){
 			if(auto c=transformConstr(ae.e))
 				dist.assertTrue(c,text("assertion '",ae.e,"' failed"));
@@ -900,7 +881,7 @@ private struct Analyzer{
 		}else if(!cast(ErrorExp)e) err.error(text("unsupported"),e.loc);
 	}
 	
-	Distribution analyze(CompoundExp ce,ref Distribution retDist,FunctionDef functionDef)in{assert(!!ce);}body{
+	Distribution analyze(CompoundExp ce,ref Distribution retDist,FunctionDef functionDef)in{assert(!!ce);}do{
 		foreach(e;ce.s){
 			analyzeStatement(e,retDist,functionDef);
 		}

@@ -1,0 +1,17 @@
+// args: --nocheck --dp
+
+tiles:=18;
+people:=16;
+def main(){
+	known:=0;
+	r:=[];
+	for i in 0..people{
+		alive := true;
+		while alive && known<tiles{
+			alive = flip(1/2);
+			known += 1;
+		}
+		r~=[Expectation(alive)];
+	}
+	return r; // expected: δ(1/262144,19/262144,43/65536,247/65536,253/16384,1577/32768,7795/65536,15751/65536,53381/131072,77691/131072,49785/65536,57741/65536,31191/32768,16131/16384,65289/65536,65493/65536)[r]
+}

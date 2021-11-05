@@ -63,6 +63,21 @@ struct Expected{
 	bool exists;
 	bool todo;
 	string ex;
+
+	void parse(T,L)(string dexp,T err,L loc){
+		import dparse;
+		bool todo=false;
+		import std.string: strip, startsWith;
+		auto ex=dexp.strip;
+		if(ex.startsWith("TODO:")){
+			todo=true;
+			ex=ex["TODO:".length..$].strip;
+		}
+		if(!exists){
+			this=Expected(true,todo,ex);
+		}else if(this != Expected(true,todo,ex))
+			err.error("can only have one 'expected' annotation, in 'main'.",loc);
+	}
 }
 Expected expected;
 string casExt(Format formatting=opt.formatting){
