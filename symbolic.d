@@ -5,7 +5,7 @@ import std.stdio, std.conv, std.format, std.string, std.range, std.algorithm;
 
 import options, backend;
 import ast.lexer, ast.expression, ast.declaration, ast.type, ast.semantic_, ast.error;
-import distrib, dexpr, util;
+import distrib, sym.dexpr, util;
 
 class Symbolic: Backend{
 	this(string sourceFile){

@@ -1,7 +1,7 @@
 import std.conv;
 
 import ast.expression, ast.declaration, ast.scope_;
-import dexpr;
+import sym.dexpr;
 // TODO: move this to semantic_, as a rewrite
 DExpr readVariable(alias readLocal)(VarDecl var,Scope from){
 	DExpr r=getContextFor!readLocal(var,from);

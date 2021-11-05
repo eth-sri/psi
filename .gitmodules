@@ -1,6 +1,9 @@
 [submodule "ast"]
 	path = ast
 	url = ../../tgehr/ast.git
+[submodule "sym"]
+	path = sym
+	url = ../../tgehr/sym.git
 [submodule "util"]
 	path = util
 	url = ../../tgehr/util.git

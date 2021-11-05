@@ -1,7 +1,7 @@
 // Written in the D programming language
 // License: http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0
 
-import options,ast.expression,ast.declaration,distrib,ast.error,dexpr,util;
+import options,ast.expression,ast.declaration,distrib,ast.error,sym.dexpr,util;
 import symbolic,dp;
 import std.stdio, std.path, std.algorithm, std.range;
 
@@ -139,7 +139,7 @@ void printResult(Backend be,string path,FunctionDef fd,ErrorHandler err,bool isM
 	}
 	auto dist=be.analyze(fd,err).dup;
 	if(isMain&&!opt.noNormalize) dist.renormalize();
-	import dparse;
+	import sym.dparse;
 	if(opt.expectation){ // TODO: deal with non-convergent expectations
 		auto exp=!dist.isTuple?dist.orderedFreeVars[0]:dTuple(cast(DExpr[])dist.orderedFreeVars);
 		// TODO: do not compute full distribution with --expectation switch

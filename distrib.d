@@ -3,7 +3,7 @@
 
 import std.algorithm, std.range, std.array, std.conv;
 
-import options, dexpr, ast.expression, util;
+import options, sym.dexpr, ast.expression, util;
 
 struct Cond{
 	DExpr cond;

@@ -9,7 +9,7 @@ import std.exception: enforce;
 
 import backend,options;
 import distrib;
-import dexpr,util.hashtable,util;
+import sym.dexpr,util.hashtable,util;
 import ast.expression,ast.declaration,ast.type,ast.error;
 import ast.semantic_,ast.scope_,context;
 

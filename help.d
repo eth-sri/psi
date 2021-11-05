@@ -53,7 +53,7 @@ see 'test' directory for more examples
 
 string computeDistributionDocString(){
 	import distrib, std.range, std.algorithm, std.uni, std.ascii;
-	import std.conv, dexpr;
+	import std.conv, sym.dexpr;
 	string[3][] lrc;
 	// TODO: domain constraints
 	foreach(i,name;ToTuple!distribNames){

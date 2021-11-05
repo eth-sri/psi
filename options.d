@@ -65,7 +65,7 @@ struct Expected{
 	string ex;
 
 	void parse(T,L)(string dexp,T err,L loc){
-		import dparse;
+		import sym.dparse;
 		bool todo=false;
 		import std.string: strip, startsWith;
 		auto ex=dexp.strip;
