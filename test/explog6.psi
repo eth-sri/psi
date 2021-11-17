@@ -1,5 +1,5 @@
 
 def mains(){
-	return log(uniform(0,10)+exp(uniform(0,5))); // expected: ((-1/50·[-e^r+11≠0]·[-e^r+11≤0]·log(-10+e^r)+1/10·[-r+5≤0]+1/50·[-5+r≤0]·[-r+5≠0]·r)·[-5+log(-10+e^r)≤0]·[-e^r+10≠0]·[-e^r+10≤0]·[-r+log(-10+e^r)≤0]·[-r≤0]+(1/10·[-r+5≤0]+1/50·[-5+r≤0]·[-r+5≠0]·r)·[-10+e^r≤0]·[-r≤0])·e^r
+	return log(uniform(0,10)+exp(uniform(0,5))); // expected: (-1/50·[-e^r+11≠0]·[-e^r+11≤0]·log(-10+e^r)+1/10·[-r+5≠0]·[-r+5≤0]+1/50·[-5+r≤0]·r)·[-10+-e⁵+e^r≤0]·[-r≤0]·e^r
 	// TODO: compute normalization constant
 }
