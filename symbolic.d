@@ -307,16 +307,10 @@ private struct Analyzer{
 						unwind();
 					}
 				}
-				if(cast(ArrayTy)idx.e.type){
-					auto de=doIt(idx.e);
-					auto di=doIt(idx.a);
-					if(!opt.noBoundsCheck) dist.assertTrue(dIsℤ(di)*dGeZ(di)*dLt(di,dField(de,"length")),formatError("array access out of bounds",idx.loc));
-					auto r=dIndex(de,di);
-					return r;
-				}else if(auto tt=idx.e.type.isTupleTy()){
-					return doIt(idx.e)[doIt(idx.a)];
-				}
-				assert(0,text(idx," ",idx.e.type));
+				auto de=doIt(idx.e);
+				auto di=doIt(idx.a);
+				if(!opt.noBoundsCheck) dist.assertTrue(dIsℤ(di)*dGeZ(di)*dLt(di,dField(de,"length")),formatError("array access out of bounds",idx.loc));
+				return dIndex(de,di);
 			}
 			if(auto sl=cast(SliceExp)e){
 				auto de=doIt(sl.e),dl=doIt(sl.l),dr=doIt(sl.r);
