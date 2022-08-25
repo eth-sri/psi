@@ -435,9 +435,9 @@ private struct Analyzer{
 		auto tmp=ndist.getVar("tmp");
 		ndist.initialize(tmp,e,ℝ);
 		foreach(v;dist.freeVars) ndist.marginalize(v);
-		DDelta deltaFactor=null;
+		DDeltaOld deltaFactor=null;
 		foreach(f;ndist.distribution.factors)
-			if(auto d=cast(DDelta)f)
+			if(auto d=cast(DDeltaOld)f)
 				if(d.hasFreeVar(tmp))
 					deltaFactor=d;
 		if(!deltaFactor) return null;
@@ -864,7 +864,7 @@ private struct Analyzer{
 		}else if(auto co=cast(CObserveExp)e){
 			if(auto var=transformExp(co.var))
 				if(auto ex=transformExp(co.val))
-					dist.distribution=dist.distribution*dDelta(var-ex);
+					dist.distribution=dist.distribution*dDelta(ex,var);
 		}else if(auto fe=cast(ForgetExp)e){
 			void doForget(Expression e){
 				if(auto id=cast(Identifier)e){
