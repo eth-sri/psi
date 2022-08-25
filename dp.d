@@ -749,7 +749,7 @@ struct Interpreter{
 			if(auto s=cast(DSum)e) return visit(s.expr,depth+1);
 			if(auto l=cast(DLim)e) return visit(l.e,depth)||visit(l.x,depth);
 			if(auto d=cast(DDiff)e) return visit(d.e,depth)||visit(d.x,depth);
-			if(auto d=cast(DDelta)e) return visit(d.var,depth);
+			if(auto d=cast(DDeltaOld)e) return visit(d.var,depth);
 			if(auto d=cast(DDiscDelta)e) return visit(d.e,depth)||visit(d.var,depth);
 			if(cast(DDPDist)e) return false; // (distributions of values)
 			bool r=false;
