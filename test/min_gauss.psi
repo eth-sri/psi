@@ -4,7 +4,7 @@ def main_(){
 	repeat k-1{
 		x = min(x, gauss(0,1));
 	}
-	return x; // expected: (((d/dx)⁻¹[e^(-x²)](x·⅟√̅2))²·⅟π^(3/2)·⅟√̅2+-(d/dx)⁻¹[e^(-x²)](x·⅟√̅2)·⅟π·√̅2+-⅟√̅2·⅟√̅π+⅟√̅π·√̅2)·⅟e^(1/2·x²)+(-(d/dx)⁻¹[e^(-x²)](x·⅟√̅2)·⅟e^(1/2·x²)·⅟π^(3/2)+⅟e^(1/2·x²)·⅟π)·(-(d/dx)⁻¹[e^(-x²)](x·⅟√̅2)·√̅2+√̅2·√̅π)
+	return x; // expected: (((d/dx)⁻¹[e^(-x²)](x·⅟√2̅))²·⅟π^(3/2)·⅟√2̅+-(d/dx)⁻¹[e^(-x²)](x·⅟√2̅)·⅟π·√2̅+-⅟√2̅·⅟√π̅+⅟√π̅·√2̅)·⅟e^(1/2·x²)+(-(d/dx)⁻¹[e^(-x²)](x·⅟√2̅)·⅟e^(1/2·x²)·⅟π^(3/2)+⅟e^(1/2·x²)·⅟π)·(-(d/dx)⁻¹[e^(-x²)](x·⅟√2̅)·√2̅+√2̅·√π̅)
 	// TODO: evaluate normalization constant
 	// TODO: gnuplot bug report? (the plotted result has negative values)
 }

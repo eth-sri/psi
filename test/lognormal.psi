@@ -1,6 +1,6 @@
 
 def mains(){
-	return exp(gauss(0,1)); // expected: [-r≤0]·[r≠0]·⅟e^(1/2·log(r)²)·⅟r·⅟√̅2·⅟√̅π
+	return exp(gauss(0,1)); // expected: [-r≤0]·[r≠0]·⅟e^(1/2·log(r)²)·⅟r·⅟√2̅·⅟√π̅
 	// TODO: compute normalization constant
 	// TODO: successfully compute cdf
 }
