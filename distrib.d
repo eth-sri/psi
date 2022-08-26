@@ -29,15 +29,15 @@ Cond[] cond(string name)(DExpr[] args)in{assert(args.length==paramNames!name.len
 
 DExpr gaussPDF(DVar var,DExpr μ,DExpr ν){
 	auto dist=one/(2*dΠ*ν)^^(one/2)*dE^^-((var-μ)^^2/(2*ν));
-	return dNeqZ(ν)*dist+dEqZ(ν)*dDelta(μ,var);
+	return dNeqZ(ν)*dist*dLebesgue(var)+dEqZ(ν)*dDelta(μ,var);
 }
 Cond[] gaussCond(DExpr μ,DExpr ν){
 	return [Cond(dGeZ(ν),"negative variance")];
 }
 
 DExpr chiSquaredPDF(DVar var,DExpr k){
-	return dNeqZ(k)*dGeZ(var)/(2^^(k/2)*dGamma(k/2))*var^^(k/2-1)*dE^^(-var/2)+
-		dEqZ(k)*dDelta(zero,var);
+	auto dist=dGeZ(var)/(2^^(k/2)*dGamma(k/2))*var^^(k/2-1)*dE^^(-var/2);
+	return dNeqZ(k)*dist*dLebesgue(var)+dEqZ(k)*dDelta(zero,var);
 }
 Cond[] chiSquaredCond(DExpr k){
 	return [Cond(dIsℤ(k),"k must be an integer"),
@@ -46,7 +46,7 @@ Cond[] chiSquaredCond(DExpr k){
 
 DExpr rayleighPDF(DVar var,DExpr ν){
 	auto dist=var/(ν)*dE^^-((var)^^2/(2*ν)) * dGeZ(var);
-	return dNeqZ(ν)*dist+dEqZ(ν)*dDelta(zero,var);
+	return dNeqZ(ν)*dist*dLebesgue(var)+dEqZ(ν)*dDelta(zero,var);
 }
 Cond[] rayleighCond(DExpr ν){
 	return [Cond(dGeZ(ν),"negative scale")];
@@ -55,7 +55,7 @@ Cond[] rayleighCond(DExpr ν){
 DExpr truncatedGaussPDF(DVar var,DExpr μ,DExpr ν,DExpr a,DExpr b){
 	auto gdist=one/(2*dΠ)^^(one/2)*dE^^-((var-μ)^^2/(2*ν));
 	auto dist = gdist/(ν)/(dGaussInt((b-μ)/ν^^(one/2))-dGaussInt((a-μ)/(ν)^^(one/2)));
-	return (dNeqZ(ν)*dist+dEqZ(ν)*dDelta(μ,var))*dBounded!"[]"(var,a,b);
+	return (dNeqZ(ν)*dist*dLebesgue(var)+dEqZ(ν)*dDelta(μ,var))*dBounded!"[]"(var,a,b);
 }
 Cond[] truncatedGaussCond(DExpr μ,DExpr ν,DExpr a,DExpr b){
 	return [Cond(dGeZ(ν),"negative variance"),
@@ -73,7 +73,7 @@ Cond[] paretoCond(DExpr a, DExpr b){
 
 DExpr uniformPDF(DVar var,DExpr a,DExpr b){
 	auto diff=b-a, dist=dBounded!"[]"(var,a,b)/diff;
-	return dNeqZ(diff)*dist+dEqZ(diff)*dDelta(a,var);
+	return dNeqZ(diff)*dist*dLebesgue(var)+dEqZ(diff)*dDelta(a,var);
 }
 Cond[] uniformCond(DExpr a,DExpr b){
 	return [Cond(dLe(a,b),"empty range")];
@@ -147,7 +147,7 @@ Cond[] poissonCond(DExpr λ){
 
 DExpr betaPDF(DVar var,DExpr α,DExpr β){
 	auto nnorm=dNeqZ(α)*dNeqZ(β)*
-		var^^(α-1)*(1-var)^^(β-1)*dBounded!"[]"(var,zero,one)+
+		var^^(α-1)*(1-var)^^(β-1)*dBounded!"[]"(var,zero,one)*dLebesgue(var)+
 		dEqZ(α)*dDelta(zero,var)+
 		dEqZ(β)*dDelta(one,var);
 	return nnorm/dIntSmp(var,nnorm,one);
@@ -158,8 +158,8 @@ Cond[] betaCond(DExpr α,DExpr β){
 }
 
 DExpr gammaPDF(DVar var,DExpr α,DExpr β){
-	auto nnorm=dNeqZ(α)*var^^(α-1)*dE^^(-β*var)*dGeZ(var)+dEqZ(α)*dDelta(zero,var);
-	return nnorm/dIntSmp(var,nnorm,one);
+	auto nnorm=var^^(α-1)*dE^^(-β*var)*dGeZ(var)*dLebesgue(var);
+	return dNeqZ(α)*nnorm/dIntSmp(var,nnorm,one)+dEqZ(α)*dDelta(zero,var);
 }
 Cond[] gammaCond(DExpr α,DExpr β){
 	return [Cond(dGeZ(α),"α must be non-negative"),
@@ -167,7 +167,7 @@ Cond[] gammaCond(DExpr α,DExpr β){
 }
 
 DExpr laplacePDF(DVar var, DExpr μ, DExpr b){
-	return dNeqZ(b)*dE^^(-dAbs(var-μ)/b)/(2*b)+
+	return dNeqZ(b)*dE^^(-dAbs(var-μ)/b)/(2*b)*dLebesgue(var)+
 		dEqZ(b)*dDelta(μ,var);
 }
 Cond[] laplaceCond(DExpr μ,DExpr b){
@@ -175,7 +175,7 @@ Cond[] laplaceCond(DExpr μ,DExpr b){
 }
 
 DExpr cauchyPDF(DVar var,DExpr x0,DExpr γ){
-	return dNeqZ(γ)/(dΠ*γ*(1+((var-x0)/γ)^^2))+
+	return dNeqZ(γ)/(dΠ*γ*(1+((var-x0)/γ)^^2))*dLebesgue(var)+
 		dEqZ(γ)*dDelta(x0,var);
 }
 Cond[] cauchyCond(DExpr x0,DExpr γ){
@@ -183,7 +183,7 @@ Cond[] cauchyCond(DExpr x0,DExpr γ){
 }
 
 DExpr exponentialPDF(DVar var,DExpr λ){
-	return λ*dE^^(-λ*var)*dGeZ(var);
+	return λ*dE^^(-λ*var)*dGeZ(var)*dLebesgue(var);
 }
 Cond[] exponentialCond(DExpr λ){
 	return [Cond(dGtZ(λ),"λ must be positive")];
@@ -191,7 +191,7 @@ Cond[] exponentialCond(DExpr λ){
 
 
 DExpr studentTPDF(DVar var,DExpr ν){ // this has a mean only if ν>1. how to treat this?
-	auto nnorm=(1+var^^2/ν)^^(-(ν+1)/2);
+	auto nnorm=(1+var^^2/ν)^^(-(ν+1)/2)*dLebesgue(var);
 	return dNeqZ(ν)*nnorm/dIntSmp(var,nnorm,one)+dEqZ(ν)*dDelta(zero,var);
 }
 Cond[] studentTCond(DExpr ν){
@@ -200,7 +200,7 @@ Cond[] studentTCond(DExpr ν){
 
 DExpr weibullPDF(DVar var,DExpr λ,DExpr k){
 	return dNeqZ(λ)*dNeqZ(k)*
-		dGeZ(var)*k/λ*(var/λ)^^(k-1)*dE^^(-(var/λ)^^k)+
+		dGeZ(var)*k/λ*(var/λ)^^(k-1)*dE^^(-(var/λ)^^k)*dLebesgue(var)+
 		dNeqZ(dEqZ(λ)+dEqZ(k))*dDelta(zero,var);
 }
 Cond[] weibullCond(DExpr λ,DExpr k){
