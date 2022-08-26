@@ -1,4 +1,4 @@
 
 def main(){
-    return pareto(3,0.1); // expected: 3/1000·[-r+1/10≤0]·⅟r⁴
+    return pareto(3,0.1); // expected: 3/1000·[-r+1/10≤0]·λ[r]·⅟r⁴
 }
