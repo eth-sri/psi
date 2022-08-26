@@ -435,11 +435,17 @@ private struct Analyzer{
 		auto tmp=ndist.getVar("tmp");
 		ndist.initialize(tmp,e,ℝ);
 		foreach(v;dist.freeVars) ndist.marginalize(v);
-		DDeltaOld deltaFactor=null;
-		foreach(f;ndist.distribution.factors)
+		DExpr deltaFactor=null;
+		foreach(f;ndist.distribution.factors){
 			if(auto d=cast(DDeltaOld)f)
 				if(d.hasFreeVar(tmp))
 					deltaFactor=d;
+			if(auto d=cast(DDelta)f){
+				if(d.var.hasFreeVar(tmp))
+					deltaFactor=d;
+				break;
+			}
+		}
 		if(!deltaFactor) return null;
 		auto r=dIntSmp(tmp,tmp*deltaFactor,one);
 		if(r.hasAny!DInt) return null;
