@@ -750,7 +750,7 @@ struct Interpreter{
 			if(auto l=cast(DLim)e) return visit(l.e,depth)||visit(l.x,depth);
 			if(auto d=cast(DDiff)e) return visit(d.e,depth)||visit(d.x,depth);
 			if(auto d=cast(DDeltaOld)e) return visit(d.var,depth);
-			if(auto d=cast(DDiscDelta)e) return visit(d.e,depth)||visit(d.var,depth);
+			if(auto d=cast(DDelta)e) return visit(d.e,depth)||visit(d.var,depth);
 			if(cast(DDPDist)e) return false; // (distributions of values)
 			bool r=false;
 			e.forEachSubExpr((DExpr x){ r=visit(x,depth); return r?1:0; });
@@ -1104,7 +1104,7 @@ struct Interpreter{
 												enforce(!cast(DInt)e,text("TODO: ",ce.e));
 												foreach(s;e.summands){
 													foreach(f;s.factors){
-														if(auto dd=cast(DDiscDelta)f){
+														if(auto dd=cast(DDelta)f){
 															assert(dd.var == tmp);
 															smpl.add(dRecord(["`value":retVars.length==1?dd.e[0.dℚ].simplify(one):dd.e]),(factor*s.withoutFactor(f)).substitute(tmp,dd.e).simplify(one));
 														}else if(auto sm=cast(DPlus)f){
