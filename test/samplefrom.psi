@@ -1,6 +1,6 @@
 
 def nice(y){
-    x := sampleFrom("(x;y) => [-y<=x]*[x<=y]*x^2",y);
+    x := sampleFrom("(x;y) => [-y<=x]*[x<=y]*x^2*lambda[x]",y);
     return x;
 }
 
