@@ -2,5 +2,5 @@ def main(){
     n := 2;
     x := [0:ℝ]; // TODO: this annotation should not be necessary
     x[0] = beta(1,1);
-    return x; // expected: ∫dξ₁[-1+ξ₁≤0]·[-ξ₁≤0]·δ(ξ₁,)[x]
+    return x; // expected: ∫dξ₁[-1+ξ₁≤0]·[-ξ₁≤0]·δ(ξ₁,)[x]·λ[ξ₁]
 }

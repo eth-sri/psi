@@ -1,4 +1,4 @@
 eps:=0.1;
 def main(){
-	return laplace(0,1/eps); // expected: 1/20·[-r≤0]·⅟e^(1/10·r)+1/20·[r≠0]·[r≤0]·e^(1/10·r)
+	return laplace(0,1/eps); // expected: (1/20·[-r≤0]·⅟e^(1/10·r)+1/20·[r≠0]·[r≤0]·e^(1/10·r))·λ[r]
 }
