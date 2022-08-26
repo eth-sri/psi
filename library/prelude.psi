@@ -136,7 +136,7 @@ def Binomial(n:ℝ,p:ℝ)pure:Distribution[ℕ]{
 
 def negBinomial(r:ℝ,p:ℝ):ℕ{
 	assert(r>0 & 0<=p&p<=1);
-	return sampleFrom("(x;r,p)=>∑_ξ₁(-p+1)^ξ₁·(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r+ξ₁)·⅟e^ξ₂·λ[ξ₂])·[-ξ₁≤0]·p^r·δ(ξ₁)[x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r)·⅟e^ξ₂·λ[ξ₂])·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂)",r,p):ℕ;
+	return sampleFrom("(x;r,p)=>∑_ξ₁(-p+1)^ξ₁·(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r+ξ₁)·⅟e^ξ₂·λ[ξ₂])·[-ξ₁≤0]·p^r·δ(ξ₁)[x]·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^(-1+r)·⅟e^ξ₂·λ[ξ₂])·⅟(∫dξ₂[-ξ₂≤0]·ξ₂^ξ₁·⅟e^ξ₂·λ[ξ₂])",r,p):ℕ;
 }
 def NegBinomial(r:ℝ,p:ℝ)pure:Distribution[ℕ]{
 	assert(r>0 & 0<=p&p<=1);
@@ -199,7 +199,7 @@ def Cauchy(x₀:ℝ,γ:ℝ)pure:Distribution[ℝ]{
 
 def exponential(λ:ℝ):ℝ{
 	assert(λ>0); // for λ=0, this would be the uniform distribution on the non-negative reals
-	return sampleFrom("(x;l)=>[0≤x]·l·e^(-x·l)",λ):ℝ;
+	return sampleFrom("(x;l)=>[0≤x]·l·e^(-x·l)·λ[x]",λ):ℝ;
 }
 def Exponential(λ:ℝ)pure:Distribution[ℝ]{
 	assert(λ>0); // for λ=0, this would be the uniform distribution on the non-negative reals
