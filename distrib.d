@@ -447,7 +447,7 @@ class Distribution{
 		if(!opt.noCheck){
 			auto ndist=dDistApply(dApply(q,arg),db1);
 			auto nerror=distribution*dInt(dMCase(db1,zero,one)*ndist);
-			distribution=distribution*dInt(dMCase(db1,dDiscDelta(db1,r),zero)*ndist);
+			distribution=distribution*dInt(dMCase(db1,dDelta(db1,r),zero)*ndist);
 			foreach(v;vars) nerror=dInt(v,nerror);
 			error=error+nerror;
 		}else distribution=distribution*dDistApply(dApply(q,arg),r);
@@ -478,12 +478,12 @@ class Distribution{
 		}
 		dist=dist.substituteAll(allVars,allVals);
 		if(!opt.noCheck){
-			auto r=dist*dDiscDelta(dVal(values),db1);
+			auto r=dist*dDelta(dVal(values),db1);
 			foreach(v;vars) r=dInt(v,r);
-			r=r+dDiscDelta(dErr,db1)*error.substituteAll(allVars,allVals);
+			r=r+dDelta(dErr,db1)*error.substituteAll(allVars,allVals);
 			return dDistLambda(r);
 		}else{
-			auto r=dist*dDiscDelta(values,db1);
+			auto r=dist*dDelta(values,db1);
 			foreach(v;vars) r=dInt(v,r);
 			return dDistLambda(r);
 		}
@@ -519,7 +519,7 @@ class Distribution{
 		auto args=argsIsTuple?dTuple(cast(DExpr[])r.args):r.args[0];
 		auto ndist=dDistApply(dApply(dexpr,args),db1);
 		if(!opt.noCheck){
-			r.distribution=dInt(r.distribution*dInt(dMCase(db1,dDiscDelta(db1,db3),zero)*ndist));
+			r.distribution=dInt(r.distribution*dInt(dMCase(db1,dDelta(db1,db3),zero)*ndist));
 			r.error=dInt(dMCase(db1,zero,one)*ndist);
 		}else r.distribution=dInt(r.distribution*ndist);
 		r.orderFreeVars(orderedFreeVars,isTuple);

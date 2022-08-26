@@ -180,7 +180,7 @@ struct Dist{
 			foreach(i,var;vars){
 				assert(!!var);
 				auto val = dField(k,"`value");
-				cur = cur*dDiscDelta(isTuple?val[i.dℚ]:val,var);
+				cur = cur*dDelta(isTuple?val[i.dℚ]:val,var);
 			}
 			r.distribution=r.distribution+cur;
 		}
