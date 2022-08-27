@@ -59,7 +59,7 @@ string computeDistributionDocString(){
 	foreach(i,name;ToTuple!distribNames){
 		DExpr cond=mixin(text(name~"Cond","(",paramNames!(name).map!(x=>`dVar("`~x~`")`).join(","),")")).extractConditions.simplify(one);
 		string lhs=text("x := ",name,"(",paramNames!(name).join(","),");");
-		string rhs=text("p(x) = ",mixin(text(name,"PDF",`(dVar("x"),`,paramNames!(name).map!(x=>`dVar("`~x~`")`).join(","),")")).simplify(cond).toString(opt.formatting));
+		string rhs=text("p[x|",paramNames!(name).join(","),"] = ",mixin(text(name,"PDF",`(dVar("x"),`,paramNames!(name).map!(x=>`dVar("`~x~`")`).join(","),")")).simplify(cond).toString(opt.formatting));
 		string cnd=text("where "~cond.toString(opt.formatting));
 		lrc~=[lhs,rhs,cnd];
 	}
