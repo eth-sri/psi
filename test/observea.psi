@@ -8,5 +8,4 @@ def main(){
     y := flip(1/2);
     r := p(y);
     return r; // expected: 1/2·δ(0)[r]+1/2·δ(1)[r]
-    // TODO: improve simplification
 }
