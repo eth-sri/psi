@@ -1,5 +1,5 @@
 
 def main(){
 	x := uniform(0,1);
-	return -log(x); // expected: [-r≤0]·⅟e^r
+	return -log(x); // expected: [-r≤0]·λ[r]·⅟e^r
 }

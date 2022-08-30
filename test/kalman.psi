@@ -1,4 +1,5 @@
 
+
 dat Filter{
     x: ℝ , v: ℝ, a: ℝ;
     def Filter(x: ℝ,v: ℝ, a: ℝ){
@@ -25,5 +26,5 @@ def main(){
         filter.update(1);
         filter.measureX(data[i],1);
     }
-    return filter.x; // expected: e^(-1677025/13528+-89/152·x²+1295/76·x)·⅟√π̅·√8̅9̅/̅1̅5̅2̅
+    return filter.x; // expected: e^(-1677025/13528+-89/152·x²+1295/76·x)·λ[x]·⅟√π̅·√8̅9̅/̅1̅5̅2̅
 }

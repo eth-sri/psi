@@ -1,6 +1,6 @@
 def main(){
     x := uniform(-2,2);
     if x^2 > 1 { x+=1; }
-    return x; // expected: (1/4·[-x+2≤0]+1/4·[x≤0])·[-1+-x≤0]·[-3+x≤0]·[-x+2≠0]·[x≠0]+1/4·[-1+-x≤0]·[-1+x≤0]
+    return x; // expected: 1/4·[-1+-x≤0]·[-1+x≤0]·λ[x]+1/4·[-1+-x≤0]·[x≠0]·[x≤0]·λ[x]+1/4·[-3+x≤0]·[-x+2≠0]·[-x+2≤0]·λ[x]
     // TODO: linearize the constraints?
 }
