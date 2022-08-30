@@ -1,4 +1,4 @@
 def main(){
 	x := uniform(0,exp(10));
-	return log(x); // expected: [-10+r≤0]·e^(-10+r)
+	return log(x); // expected: [-10+r≤0]·e^(-10+r)·λ[r]
 }

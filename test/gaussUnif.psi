@@ -1,6 +1,6 @@
 def main(){
 	d := Gauss(0,1);
 	x := sample(d);
-	return expectation(infer(()=>sample(d)<=x)); // expected: [-r·√π̅+√π̅≠0]·[-r≤0]·[-√π̅+r·√π̅≤0]·[r≠0]
+	return expectation(infer(()=>sample(d)<=x)); // expected: [-r·√π̅+√π̅≠0]·[-r≤0]·[-√π̅+r·√π̅≤0]·[r≠0]·λ[r]
 	// TODO: [-1+r₁≤0]·[-r₁+1≠0]·[-r₁≤0]·[r≠0]
 }

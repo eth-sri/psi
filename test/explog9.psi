@@ -1,5 +1,5 @@
 def main(){
-	return log(log(uniform(1,2))); // expected: [-2+e^(e^r)≤0]·[∫dξ₁[-2+e^(e^ξ₁)≤0]·e^(e^ξ₁+ξ₁)≠0]·e^(e^r+r)·⅟(∫dξ₁[-2+e^(e^ξ₁)≤0]·e^(e^ξ₁+ξ₁))
+	return log(log(uniform(1,2))); // expected: [-2+e^(e^r)≤0]·[∫dξ₁[-2+e^(e^ξ₁)≤0]·e^(e^ξ₁+ξ₁)·λ[ξ₁]≠0]·e^(e^r+r)·λ[r]·⅟(∫dξ₁[-2+e^(e^ξ₁)≤0]·e^(e^ξ₁+ξ₁)·λ[ξ₁])
 	// TODO: improve constraint linearization
 	// TODO: prove that normalization constant is 1
 }

@@ -6,6 +6,6 @@ def main(){
     outcome := 1;
     observe(flip(bias2) == outcome);
     //return Expectation(bias2); // expected: 5·δ(0)[-5·r₁+3]
-    return bias2; // expected: 3·[-1+bias2≤0]·[-bias2≤0]·bias2²
+    return bias2; // expected: 3·[-1+bias2≤0]·[-bias2≤0]·bias2²·λ[bias2]
     //return Bernoulli(bias2);
 }
