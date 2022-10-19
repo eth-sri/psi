@@ -1113,6 +1113,8 @@ struct Interpreter{
 			cur.assignTo(lhs,perform(lhs,rhs));
 		}else if(auto call=cast(CallExp)e){
 			runExp(call);
+		}else if(auto ce=cast(CompoundExp)e){
+			foreach(s;ce.s) runStm(s,retDist);
 		}else if(auto ite=cast(IteExp)e){
 			auto cond=runExp(ite.cond);
 			auto curP=cur.eraseErrors();

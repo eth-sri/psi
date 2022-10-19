@@ -764,6 +764,8 @@ private struct Analyzer{
 		}else if(auto call=cast(CallExp)e){
 			transformExp(call);
 			dist.marginalizeTemporaries();
+		}else if(auto ce=cast(CompoundExp)e){
+			foreach(s;ce.s) analyzeStatement(s,retDist,functionDef);
 		}else if(auto ite=cast(IteExp)e){
 			analyzeIte(ite.cond,ite.then,ite.othw);
 		}else if(auto re=cast(RepeatExp)e){
@@ -884,7 +886,7 @@ private struct Analyzer{
 			analyzeStatement(ce.e2,retDist,functionDef);
 		}else if(cast(Declaration)e){
 			// skip
-		}else if(!cast(ErrorExp)e) err.error(text("unsupported"),e.loc);
+		}else if(!cast(ErrorExp)e) err.error("unsupported ",e.loc);
 	}
 	
 	Distribution analyze(CompoundExp ce,ref Distribution retDist,FunctionDef functionDef)in{assert(!!ce);}do{
