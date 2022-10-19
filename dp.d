@@ -1217,6 +1217,17 @@ struct Interpreter{
 			enforce(opt.backend != InferenceMethod.simulate,"TODO: observe with --simulate");
 			auto cond=dNeqZ(runExp(oe.e));
 			cur=cur.observe(dLambda(cond));
+		}else if(auto fe=cast(ForgetExp)e){
+			void doForget(Expression e){
+				if(auto id=cast(Identifier)e){
+					cur.addTmpVar(id.name);
+				}else if(auto tpl=cast(TupleExp)e){
+					foreach(t;tpl.e)
+						doForget(t);
+				}
+			}
+			doForget(fe.var);
+			cur.marginalizeTemporaries();
 		}else if(auto ce=cast(CommaExp)e){
 			runStm(ce.e1,retDist);
 			runStm(ce.e2,retDist);

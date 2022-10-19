@@ -867,6 +867,18 @@ private struct Analyzer{
 			if(auto var=transformExp(co.var))
 				if(auto ex=transformExp(co.val))
 					dist.distribution=dist.distribution*dDelta(var-ex);
+		}else if(auto fe=cast(ForgetExp)e){
+			void doForget(Expression e){
+				if(auto id=cast(Identifier)e){
+					auto var=dVar(id.name);
+					assert(var in dist.freeVars);
+					dist.marginalize(var);
+				}else if(auto tpl=cast(TupleExp)e){
+					foreach(t;tpl.e)
+						doForget(t);
+				}
+			}
+			doForget(fe.var);
 		}else if(auto ce=cast(CommaExp)e){
 			analyzeStatement(ce.e1,retDist,functionDef);
 			analyzeStatement(ce.e2,retDist,functionDef);
