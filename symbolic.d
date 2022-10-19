@@ -1269,9 +1269,12 @@ private struct Analyzer{
 			if(auto c=transformConstr(oe.e,true))
 				dist.observe(c);
 		}else if(auto co=cast(CObserveExp)e){ // TODO: fix
-			if(auto var=transformExp(co.var))
-				if(auto ex=transformExp(co.val,true))
-					dist.distribution=dist.distribution*dDeltaOld(ex-var)/dLebesgue(var);
+			if(auto var=transformExp(co.var)){
+				if(auto ex=transformExp(co.val,true)){
+					auto tmp=dist.getTmpVar("__cobs");
+					dist.distribution=dDisintegrate(dist.distribution*dDelta(var,tmp)*dDelta(ex,tmp),dLebesgue(tmp));
+				}
+			}
 		}else if(auto fe=cast(ForgetExp)e){
 			deferForgets(fe); // (marginalized at the end of the statement)
 		}else if(auto ce=cast(CommaExp)e){
