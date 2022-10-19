@@ -868,9 +868,12 @@ private struct Analyzer{
 			if(auto c=transformConstr(oe.e))
 				dist.observe(c);
 		}else if(auto co=cast(CObserveExp)e){ // TODO: fix
-			if(auto var=transformExp(co.var))
-				if(auto ex=transformExp(co.val))
-					dist.distribution=dist.distribution*dDeltaOld(ex-var)/dLebesgue(var);
+			if(auto var=transformExp(co.var)){
+				if(auto ex=transformExp(co.val)){
+					auto tmp=dist.getTmpVar("__cobs");
+					dist.distribution=dDisintegrate(dist.distribution*dDelta(var,tmp)*dDelta(ex,tmp),dLebesgue(tmp));
+				}
+			}
 		}else if(auto fe=cast(ForgetExp)e){
 			void doForget(Expression e){
 				if(auto id=cast(Identifier)e){

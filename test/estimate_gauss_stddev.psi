@@ -1,0 +1,7 @@
+def main(){
+	x₁ := gauss(0,1);
+	x₂ := gauss(0,1);
+	μ_hat := (x₁+x₂)/2;
+	ν_aggr := (x₁-μ_hat)^2+(x₂-μ_hat)^2;
+	return ν_aggr^(1/2); // expected: [-r≤0]·[r≠0]·λ[r]·⅟e^(1/2·r²)·⅟√π̅·√2̅
+}
