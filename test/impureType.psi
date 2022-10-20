@@ -1,5 +1,8 @@
 // compilation error
 
+def foo(g: 𝟙→ℕ): (ℕ^g())[] ⇒ (); // error
+def bar(g: 𝟙→pure ℕ): (ℕ^g())[] ⇒ (); // ok
+
 def main(){
 	x:=vector(uniformInt(0,3) coerce ℕ, 0); // error
 	y:=vector(uniformInt(0,3) coerce ℕ, 0); // error
