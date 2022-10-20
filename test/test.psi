@@ -1,4 +1,41 @@
 // skipped
+
+def main(){
+	x:=vector(uniformInt(0,3) coerce ℕ, 0);
+	y:=vector(uniformInt(0,3) coerce ℕ, 0);
+	observe(x.length!=y.length);
+	return x.length==y.length;
+}
+
+
+/+
+def foo(x:ℕ)⇒2*x;
+
+def main(){
+	//(x,)~y:=(1,2,3);
+	//x:=2;
+	//x:=gauss(0,1);
+	x:=flip(1/2);
+	observe(x<=0);
+	forget(x=0);
+	return 2;
+}
++/
+/+
+def main(){
+	x:=gauss(0,1);
+	cobserve(x,2);
+	return x;
+}
++/
+/+
+def main(){
+	//x:=uniform(0,1);
+	//y:=uniform(0,1);
+	//y:=x^2;
+	return geometric(1/101);
+}
++/
 /+
 def reverse[a:*,n:ℕ](x: a^n):a^n⇒if n==0 then () coerce a^n else (x[n-1],)~reverse(x[0..n-1]);
 

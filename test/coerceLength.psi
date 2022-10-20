@@ -1,0 +1,6 @@
+
+def main(){
+	n:=uniformInt(0,3);
+	v:=vector(n coerce ℕ,0);
+	return v:ℕ[]; // expected: 1/4·δ()[r]+1/4·δ(0,)[r]+1/4·δ(0,0)[r]+1/4·δ(0,0,0)[r]
+}
