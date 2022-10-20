@@ -33,19 +33,19 @@ Expectation(r[1]*r[1]),Expectation(r[1]*r[2]),Expectation(r[2]*r[2]));+/
 }
 
 
-def mmv(A: ℝ[][], b: ℝ[]){ // matrix-vector product
+def mmv(A: ℝ[][], b: ℝ[])pure{ // matrix-vector product
 	return sampleFrom("(r;A,b)=>δ([i↦ ∑_j[0≤j]·[j<b.length] A@[i]@[j]·b@[j]] (A.length))[r]",A,b):ℝ[]; // performance hack
 }
 
-def avv(a: ℝ[], b: ℝ[]){ // vector addition
+def avv(a: ℝ[], b: ℝ[])pure{ // vector addition
 	return sampleFrom("(r;a,b)=>δ([i↦ a@[i]+b@[i]] (a.length))[r]",a,b):ℝ[]; // performance hack
 }
 
-def dot(a: ℝ[], b: ℝ[]){ // dot product for first m entries of vector
+def dot(a: ℝ[], b: ℝ[])pure{ // dot product for first m entries of vector
 	return sampleFrom("(r;a,b)=>δ(∑_i[0≤i]·[i<a.length] a@[i]·b@[i])[r]",a,b); // performance hack
 }
 
-def cholesky(A: ℝ[][]){ // cholesky decomposition
+def cholesky(A: ℝ[][])pure{ // cholesky decomposition
 	assert(sampleFrom("(r;A)=>δ([∑_i[0≤i]·[i<A.length]∑_j[0≤j]·[j<A.length]·[A@[i]@[j]≠A@[j]@[i]]=0])[r]",A):𝔹);
 	L := array(A.length,array(A.length,0:ℝ));
 	for i in [0..n){

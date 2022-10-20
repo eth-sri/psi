@@ -1,0 +1,70 @@
+// skipped
+
+// TODO: make this as fast as multiGauss
+// TODO: add tensor types
+
+k := 2; // global bound on the dimensions of all vectors and matrices
+
+def multiGaussCholesky[n:ℕ](μ: ℝ^n, D: (ℝ^n)^n){ // multivariate Gaussian based on cholesky decomposition of Σ.
+	r := vector(n,0:ℝ);
+	for i in [0..k){
+		if i < n{
+			r[i] = gauss(0,1);
+		}
+	}
+	return avv(mmv(D,r),μ);
+}
+
+def multiGauss[n:ℕ](μ: ℝ^n, Σ: (ℝ^n)^n){
+	return multiGaussCholesky(μ,cholesky(Σ));
+}
+
+def main(){ // demo for multivariate Gaussian prior
+	μ := (0,0);
+	Σ := ((1,3/5),(3/5,1));
+	//Σ := [[1,2],[2,4]];
+	//μ := [0,0,0];
+	//Σ :=[[1,2,1],[2,4,2],[1,2,2]];
+	r := multiGauss(μ,Σ); // using cholesky decomposition (somewhat slow)
+	//r := sampleFrom("(x,y)=>5·e^(-25·x²·⅟41+-25·y²·⅟82+15·x·y·⅟41)·⅟2·⅟π·⅟√4̅1̅"); // specifying PDF directly (very fast)
+	return (r[0],r[1]); // expected: 5/8·e^(-25/32·r₀²+-25/32·r₁²+15/16·r₀·r₁)·⅟π
+	//return (r[0],r[1],r[2]);
+	//D := cholesky(Σ);
+	/+return (Expectation(r[0]*r[0]),Expectation(r[0]*r[1]),Expectation(r[0]*r[2]),
+Expectation(r[1]*r[1]),Expectation(r[1]*r[2]),Expectation(r[2]*r[2]));+/
+		//return ((D[0][0],D[1][0],D[1][1],D[2][0],D[2][1],D[2][2]),);
+}
+
+
+def mmv[n:ℕ](A: (ℝ^n)^n, b: ℝ^n)pure{ // matrix-vector product
+	return sampleFrom("(r;A,b,n)=>δ([i↦ ∑_j[0≤j]·[j<n] A@[i]@[j]·b@[j]] (n))[r]",A,b,n):ℝ^n; // performance hack
+}
+
+def avv[n:ℕ](a: ℝ^n, b: ℝ^n)pure{ // vector addition
+	return sampleFrom("(r;a,b,n)=>δ([i↦ a@[i]+b@[i]] (n))[r]",a,b,n):ℝ^n; // performance hack
+}
+
+def dot[n:ℕ](a: ℝ^n, b: ℝ^n)pure{ // dot product for first m entries of vector
+	return sampleFrom("(r;a,b,n)=>δ(∑_i[0≤i]·[i<n] a@[i]·b@[i])[r]",a,b,n); // performance hack
+}
+
+def cholesky[n:ℕ](A: (ℝ^n)^n)pure{ // cholesky decomposition
+	assert(sampleFrom("(r;A,n)=>δ([∑_i[0≤i]·[i<n]∑_j[0≤j]·[j<n]·[A@[i]@[j]≠A@[j]@[i]]=0])[r]",A,n):𝔹);
+	L := vector(n,vector(n,0:ℝ));
+	for i in [0..k){
+		if i < n {
+			for j in [0..i+1){
+				if j < n{
+					t := dot(L[i][0..j],L[j][0..j]);
+					if i == j {
+						assert(A[i][j]>=t);
+						L[i][j] = (A[i][j]-t)^(1/2)
+					}else if L[j][j]!=0{
+						L[i][j] = (A[i][j]-t)/L[j][j];
+					}
+				}
+			}
+		}
+	}
+	return L;
+}
