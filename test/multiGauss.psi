@@ -42,7 +42,7 @@ def avv(a: ℝ[], b: ℝ[]){ // vector addition
 }
 
 def dot(a: ℝ[], b: ℝ[]){ // dot product for first m entries of vector
-	return sampleFrom("(r;a,b)=>δ(0)[-r+∑_i[0≤i]·[i<a.length] a@[i]·b@[i]]",a,b); // performance hack
+	return sampleFrom("(r;a,b)=>δ(∑_i[0≤i]·[i<a.length] a@[i]·b@[i])[r]",a,b); // performance hack
 }
 
 def cholesky(A: ℝ[][]){ // cholesky decomposition
