@@ -683,7 +683,7 @@ struct Interpreter{
 			}
 			if(auto fe=cast(FieldExp)e){
 				if(isBuiltIn(fe)){
-					if(auto at=cast(ArrayTy)fe.e.type){
+					if(fe.e.type.isTupleTy||cast(ArrayTy)fe.e.type||cast(VectorTy)fe.e.type){
 						assert(fe.f.name=="length");
 					}
 				}

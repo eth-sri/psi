@@ -110,7 +110,7 @@ def dirichlet(α: ℝ[]){
 def Dirichlet(α: ℝ[])pure ⇒ infer(()=>dirichlet(α));
 
 def multiGauss(μ: ℝ[], Σ: ℝ[][]){
-	def mmv(A: ℝ[][], b: ℝ[]){
+	def mmv(A: ℝ[][], b: ℝ[])pure{
 		r:=array(A.length,0.0);
 		for i in [0..A.length){
 			for j in [0..b.length){
@@ -119,21 +119,21 @@ def multiGauss(μ: ℝ[], Σ: ℝ[][]){
 		}
 		return r;
 	}
-	def avv(a: ℝ[], b: ℝ[]){
+	def avv(a: ℝ[], b: ℝ[])pure{
 		r:=array(a.length,0.0);
 		for i in [0..a.length){
 			r[i]=a[i]+b[i];
 		}
 		return r;
 	}
-	def dot(a: ℝ[], b: ℝ[]){
+	def dot(a: ℝ[], b: ℝ[])pure{
 		r:=0.0;
 		for i in [0..a.length){
 			r+=a[i]*b[i];
 		}
 		return r;
 	}
-	def cholesky(A: ℝ[][]){
+	def cholesky(A: ℝ[][])pure{
 		L := array(A.length,array(A.length,0.0));
 		for i in [0..A.length){
 			for j in [0..i+1){

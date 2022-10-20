@@ -154,7 +154,7 @@ private struct Analyzer{
 						return ℤ(arrays[id.name].length).dℚ;
 				}
 				if(isBuiltIn(fe)){
-					if(auto at=cast(ArrayTy)fe.e.type){
+					if(fe.e.type.isTupleTy||cast(ArrayTy)fe.e.type||cast(VectorTy)fe.e.type){
 						assert(fe.f.name=="length");
 					}else{ assert(0); }
 				}else if(auto fd=cast(FunctionDef)fe.f.meaning){
@@ -606,7 +606,7 @@ private struct Analyzer{
 						return;
 					}
 				}
-				if(idx.e.type.isTupleTy||cast(ArrayTy)idx.e.type){
+				if(idx.e.type.isTupleTy||cast(ArrayTy)idx.e.type||cast(VectorTy)idx.e.type){
 					auto old=transformExp(idx.e);
 					auto index=transformExp(idx.a);
 					if(old&&index&&rhs){
@@ -617,7 +617,7 @@ private struct Analyzer{
 					err.error(text("unsupported type '",idx.e.type,"' for index expression"),lhs.loc);
 				}
 			}else if(auto fe=cast(FieldExp)lhs){
-				if(!cast(ArrayTy)fe.e.type){
+				if(!(fe.e.type.isTupleTy||cast(ArrayTy)fe.e.type||cast(VectorTy)fe.e.type)){
 					auto old=transformExp(fe.e);
 					if(old) assignToImpl(fe.e,dRUpdate(old,fe.f.name,rhs),fe.e.type);
 				}
