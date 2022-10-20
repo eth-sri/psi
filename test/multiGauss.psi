@@ -24,7 +24,7 @@ def main(){ // demo for multivariate Gaussian prior
 	//Σ :=[[1,2,1],[2,4,2],[1,2,2]];
 	r := multiGauss(μ,Σ); // using cholesky decomposition (somewhat slow)
 	//r := sampleFrom("(x,y)=>5·e^(-25·x²·⅟41+-25·y²·⅟82+15·x·y·⅟41)·⅟2·⅟π·⅟√4̅1̅"); // specifying PDF directly (very fast)
-	return (r[0],r[1]); // expected: 5/8·e^(-25/32·r₀²+-25/32·r₁²+15/16·r₀·r₁)·⅟π
+	return (r[0],r[1]); // expected: 5/8·e^(-25/32·r₀²+-25/32·r₁²+15/16·r₀·r₁)·λ[r₀]·λ[r₁]·⅟π
 	//return (r[0],r[1],r[2]);
 	//D := cholesky(Σ);
 	/+return (Expectation(r[0]*r[0]),Expectation(r[0]*r[1]),Expectation(r[0]*r[2]),
