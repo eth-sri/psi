@@ -1,0 +1,9 @@
+// compilation error
+
+def main(){
+	(x,y,z):=(1,2,3);
+	forget(x,(y,z));
+	x+=1; // error
+	y+=1; // error
+	z+=1 // error
+}
