@@ -1,0 +1,7 @@
+// compilation error
+
+def main()pure{
+	x:=exp(2); // ok
+	y:=uniform(0,x); // error
+	return (x,y);
+}

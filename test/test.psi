@@ -1,13 +1,5 @@
 // skipped
 
-def main(){
-	x:=vector(uniformInt(0,3) coerce ℕ, 0);
-	y:=vector(uniformInt(0,3) coerce ℕ, 0);
-	observe(x.length!=y.length);
-	return x.length==y.length;
-}
-
-
 /+
 def foo(x:ℕ)⇒2*x;
 

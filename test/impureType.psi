@@ -1,0 +1,8 @@
+// compilation error
+
+def main(){
+	x:=vector(uniformInt(0,3) coerce ℕ, 0); // error
+	y:=vector(uniformInt(0,3) coerce ℕ, 0); // error
+	observe(x.length!=y.length);
+	return x.length==y.length;
+}
