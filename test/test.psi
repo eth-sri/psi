@@ -1,6 +1,92 @@
 // skipped
 
 /+
+def main(){
+	holes := array(20, 0);
+	balls := 3;
+	b1 := uniformInt(0,19);
+	b2 := uniformInt(0,19);
+	b3 := uniformInt(0,19);
+	return Expectation((b1==b2) + (b2==b3) + (b1==b3) == 1);
+}
++/
+/+
+def main(){
+	x:=uniformInt(1,6);
+	return Expectation(x);
+}
++/
+/+
+n:=3;
+
+def goodProbs(){
+	ps:=array(2^n,0:ℝ);
+	for i in [0..2^n){
+		ps[i]=uniform(0,1);
+	}
+	s:=0:ℝ;
+	for i in [0..2^n){
+		s+=ps[i];
+	}
+	cobserve(s,1);
+
+	//cobserve(ps[1]+ps[3]+ps[5]+ps[7],1/2);
+	//cobserve(ps[2]+ps[3]+ps[6]+ps[7],1/2);
+	//cobserve(ps[4]+ps[5]+ps[6]+ps[7],1/2);
+
+	/+cobserve(ps[0],1/8);
+	cobserve(ps[1]+ps[2]+ps[4],3/8);
+	cobserve(ps[6]+ps[5]+ps[3],3/8);
+	cobserve(ps[7],1/8);+/
+	return ps;
+}
+def main(){
+	return categorical(goodProbs());
+}
++/
+/+
+// TODO: make this fast:
+n:=3;
+def dirichlet(){
+	ps:=array(2^n,0:ℝ);
+	for i in [0..2^n){
+		ps[i]=uniform(0,1);
+	}
+	s:=0:ℝ;
+	for i in [0..2^n){
+		s+=ps[i];
+	}
+	cobserve(s,1);
+	return ps;
+}
+
+def goodProbs(){
+	ps:=infer(()=>Categorical(dirichlet()));
+
+	return sample(ps);
+}
+def main(){
+	return goodProbs();
+}
++/
+/+
+def main(){
+	k:=10;
+	x:=binomial(k,1/2);
+	return (Expectation(x<=k/4),Expectation(x>=3/4*k));
+}
++/
+/+
+def main() {
+    p := gauss(0.5,1);
+    observe(p >= 0 & p <= 1);
+    r := [1,1,0,1,1,0];
+    for i in [0..r.length) {
+        observe( flip(p)==r[i]  );
+    }
+    return p;
+
+/+
 def foo(x:ℕ)⇒2*x;
 
 def main(){
@@ -45,7 +131,7 @@ def main(){
 +/
 /+
 def main(){
-	return exp(gauss(0,1))>1/2;	
+	return exp(gauss(0,1))>1/2;
 }
 +/
 /+
@@ -531,7 +617,7 @@ def main(){
 	return (Expectation(nCk(x,k)),p^k*nCk(n,k));
 }
 +/
-	
+
 /+
 def main(){
 	a:=[uniform(0,2),uniformInt(1,3)/3];
@@ -645,7 +731,7 @@ def main():𝟙{
 	//x := foo: 𝟙→𝟙;
 	def foo(d: Distribution[ℝ])⇒sample(d);
 	x := foo : Distribution[ℝ] → ℝ;
-	
+
 	return;
 }
 +/
@@ -896,7 +982,7 @@ def main(){
 	assert(x!=10);
 	return ();
 }
-+/	
++/
 
 /+
 def main(){
@@ -919,7 +1005,7 @@ def main(){
 /+
 def main(){
 	for i in [0..n){
-		
+
 	}
 }
 +/
@@ -1393,7 +1479,7 @@ def main(){
 		//data[i] = gauss(centers[c],1);
 		cobserve(gauss(centers[c],1),observedData[i]);
 	}
-	
+
 	/*for i in [0..n){
 		cobserve(data[i],observedData[i]);
 	}
@@ -1502,7 +1588,7 @@ def main(){
 /+
 def main () {
 	ret:=1;
-	
+
 	mult1:=0;
 	if ?o1{
 		mult1=exp(?a1);
@@ -1510,7 +1596,7 @@ def main () {
 		mult1=1-exp(?a1);
 	}
 	ret*=mult1;
-	
+
 	mult2:=0;
 	if ?o2{
 		mult2=exp(?a2);
@@ -1656,7 +1742,7 @@ def approxGauss(μ,ν){
 }
 
 def main(){
-	
+
 }
 +/
 /+
@@ -1686,7 +1772,7 @@ def main(){
 	(aa,ab) := (flip(0.9),flip(0.9));
 
 	(ba,bb) := (flip(0.9),flip(0.9));
-	
+
 	(ca,cb) := (if flip(1/2) then aa else ab,if flip(1/2) then ba else bb);
 	if flip(1/2){
 		tmp := ca;
@@ -1723,7 +1809,7 @@ def main(){
 	n := 2;
 	x := array(n,0);
 	for i in [0..n){
-		
+
 	}
 }
 +/
@@ -1950,7 +2036,7 @@ def main(){
 	};
 
 	if (z){ return 2*z; }(2){ return 2*x; }
-	
+
 	return f(x);
 }
 +/
@@ -2049,7 +2135,7 @@ def main(g0: F,g1: F,g2: F){
 +/
 /+
 def main(){
-    w := flip(1/2) || flip(1/2);	
+    w := flip(1/2) || flip(1/2);
 }
 +/
 /+def main(){
@@ -2390,7 +2476,7 @@ def variance(d: Distribution[ℝ]){
 def main(a,b){
 	assert(a>0&&b>0);
 	//x := expectation(Beta(a,b)); // a/(a+b).
-	//y := variance(Beta(a,b)); 
+	//y := variance(Beta(a,b));
 	//return y;
 	x:=beta(a,b);
 	observe(flip(x^(1/2)));
@@ -2636,7 +2722,7 @@ def rec(){
 }
 
 def main(){
-	
+
 }
 +/
 /+
@@ -2743,7 +2829,7 @@ return x[0];+/
 return x.contains(uniform(0,100));+/
 	/*{a: x, b: y}
 	a := [0,1,0,1,1,0];
-	return a[uniform(0,a.length-1)];*/	
+	return a[uniform(0,a.length-1)];*/
 }+/
 
 /+
@@ -2780,7 +2866,7 @@ def main(){
 	/*x := id(1);
 	y := id(1,2);
 	z := id(1,2,3);
-	
+
 	for i in [0..10){
 		x+=1;
 	}
@@ -2864,7 +2950,7 @@ def main(){
 +/
 
 /+def main(){
-	x := uniform(0,1);	
+	x := uniform(0,1);
 	y := uniform(0,1);
 	z := uniform(0,1);
 	return x+y+z;
@@ -2880,7 +2966,7 @@ def main(){
 	observe(bernoulli(p)==0);
 	observe(bernoulli(p)==0);
 	observe(bernoulli(p)==0);
-	observe(bernoulli(p)==0);	
+	observe(bernoulli(p)==0);
 	return p;
 }
 +/
