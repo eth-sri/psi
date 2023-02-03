@@ -48,10 +48,10 @@ def main(){
                 if guard_flip5 <= 1/10 {
                     if guard_flip6 <= 1/10 {
                         dxc = uniform(1, 14142/10000);
-                        dyc = uniform(1, 14142/10000) 
+                        dyc = uniform(1, 14142/10000);
                     }else{
                         dxc = uniform(1, 14142/10000);
-                        dyc = uniform(-14142/10000, -1)
+                        dyc = uniform(-14142/10000, -1);
                     } 
                 }else{
                     if guard_flip7 <= 1/10 {

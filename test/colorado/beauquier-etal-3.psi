@@ -25,10 +25,10 @@ def main(){
         process2p = 1;
     }
     if uniform(0,1) <= p {
-        process3d = 1
+        process3d = 1;
     }
     if uniform(0,1) <= p {
-        process3p = 1
+        process3p = 1;
     }
     sum := process1p + process2p + process3p;
     notStable := if sum > 1 { 1 } else { 0 };
@@ -101,7 +101,7 @@ def main(){
 
         sum = process1p + process2p + process3p;
 		notStable = if sum > 1 { 1 } else { 0 };
-        count = count + 1
+        count = count + 1;
 	}
 	return count;
     /*estimateProb(count < 1);
