@@ -15,9 +15,9 @@ def estimateLogEGFR(logScr,age,isFemale,isAA){
     
     
     f = if logScr < k {
-        alpha * (logScr - k);
+        alpha * (logScr - k)
     }else{
-        -1209/1000 * (logScr - k);
+        -1209/1000 * (logScr - k)
     };
     f = f - 7*age/1000;
     
