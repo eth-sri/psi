@@ -1,5 +1,23 @@
 // skipped
-
+/+
+def main(){
+	y:=4;
+	1+2:=y;
+	return y;
+}
++/
+/+
+def main(){
+	x:=0;
+	for i in 0..10{
+		y:=x;
+		forget(x);
+		x:=2^(1/2);
+		//forget(y);
+	}
+	return x;
+}
++/
 /+
 def main(){
 	holes := array(20, 0);
@@ -85,7 +103,8 @@ def main() {
         observe( flip(p)==r[i]  );
     }
     return p;
-
+}
++/
 /+
 def foo(x:ℕ)⇒2*x;
 
