@@ -45,6 +45,22 @@ Build with `docker build . -t psi`, then launch the container with `docker run -
 
 You can share folders between your file system and the container using the `-v` option: `docker run -it psi -v host/path:container/path`.
 
+### Using Homebrew
+
+You can also install psi using homebrew.
+
+If you want to install the master branch use:
+```
+brew tap bvoq/bvoq
+brew install psisolver --HEAD --with-gnuplot
+```
+
+If you want to install the version from the PLDI20 paper use:
+```
+brew tap bvoq/bvoq
+brew install psisolver --with-gnuplot
+```
+
 ### Other platforms
 
 The build instructions given here are for GNU/Linux. PSI also works on other platforms.
