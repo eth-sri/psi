@@ -14,10 +14,9 @@ else
     LDMD="ldmd2"
 fi
 
-# release build
-$LDMD -O -release -inline -boundscheck=off -J. -Jlibrary *.d ast/*.d sym/*.d util/*.d -ofpsi
+$LDMD -J. -Jlibrary *.d ast/*.d sym/*.d util/*.d -ofpsi
+
 
 if [ ! -f "test/runtests" ]; then
     $LDMD test/runtests.d -oftest/runtests
 fi
-
