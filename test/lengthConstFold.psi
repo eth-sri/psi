@@ -1,0 +1,10 @@
+
+def a()pure⇒(1,2,(3,4));
+b:=a().length;
+
+def c()pure⇒(1,2,3);
+d:=c().length;
+
+def main(){
+	return (b,d); // expected: δ(3)[b]·δ(3)[d]
+}
