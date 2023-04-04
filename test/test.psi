@@ -1,4 +1,25 @@
 // skipped
+
+def main(){
+	ps:=[1/4,1/2,3/4];
+	p:=ps[uniformInt(0,2)];
+	heads1:=flip(p);
+	heads2:=flip(p);
+	observe(heads1);
+	return heads2;
+}
+
+/+
+def main(){
+	x:=exponential(1);
+	return 2^x;
+}
++/
+/+
+def main(){
+	x:=()=>{};
+}
++/
 /+
 def main(){
 	y:=4;
