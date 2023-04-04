@@ -574,7 +574,7 @@ private struct Analyzer{
 			err.error("unsupported assignment",loc);
 		}
 	}
-	
+
 	void assignTo(Expression lhs,DExpr rhs,Expression ty,Location loc){
 		if(!rhs) return;
 		/+if(!cast(Identifier)lhs&&!cast(FieldExp)lhs){ // TODO
@@ -872,9 +872,11 @@ private struct Analyzer{
 		}else if(auto fe=cast(ForgetExp)e){
 			void doForget(Expression e){
 				if(auto id=cast(Identifier)e){
-					auto var=dVar(id.name);
-					assert(var in dist.freeVars);
-					dist.marginalize(var);
+					if(id.name !in arrays){
+						auto var=dVar(id.name);
+						assert(var in dist.freeVars);
+						dist.marginalize(var);
+					}else arrays.remove(id.name);
 				}else if(auto tpl=cast(TupleExp)e){
 					foreach(t;tpl.e)
 						doForget(t);
@@ -888,7 +890,7 @@ private struct Analyzer{
 			// skip
 		}else if(!cast(ErrorExp)e) err.error("unsupported ",e.loc);
 	}
-	
+
 	Distribution analyze(CompoundExp ce,ref Distribution retDist,FunctionDef functionDef)in{assert(!!ce);}do{
 		foreach(e;ce.s){
 			analyzeStatement(e,retDist,functionDef);

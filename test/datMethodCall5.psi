@@ -1,0 +1,15 @@
+dat Foo{
+	x:ℕ;
+	def Foo(x:ℕ){
+		this.x=x;
+	}
+	def bar(){
+		this.x=3;
+		return this.x;
+	}
+}
+
+def main(){
+	return Foo(2).bar(); // expected: δ(3)[r]
+}
+

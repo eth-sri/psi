@@ -1,0 +1,15 @@
+// compilation errors
+
+dat Foo{
+	x:ℕ;
+	def Foo(x:ℕ){
+		this.x=x;
+	}
+	def bar(){
+		this.x=3/4; // error
+		return this.x;
+	}
+}
+
+def main()⇒Foo(2).bar();
+
