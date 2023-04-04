@@ -4,7 +4,7 @@ import std.algorithm: map;
 import std.array: array;
 import std.range: iota;
 import std.string: startsWith;
-import std.typecons: q=tuple,Q=Tuple;
+import util.tuple: q=tuple,Q=Tuple;
 import std.exception: enforce;
 
 import backend,options;
@@ -633,8 +633,8 @@ class DDPDist: DExpr{
 	mixin Visitors;
 }
 DDPDist dDPDist(Dist dist)in{assert(!dist.tmpVars.length);}do{
-	static MapX!(TupleX!(MapX!(DExpr,DExpr),DExpr),DDPDist) uniq;
-	auto t=tuplex(dist.state,dist.error);
+	static MapX!(Q!(MapX!(DExpr,DExpr),DExpr),DDPDist) uniq;
+	auto t=q(dist.state,dist.error);
 	if(t in uniq) return uniq[t];
 	auto r=new DDPDist(dist);
 	uniq[t]=r;
