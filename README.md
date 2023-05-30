@@ -45,21 +45,10 @@ Build with `docker build . -t psi`, then launch the container with `docker run -
 
 You can share folders between your file system and the container using the `-v` option: `docker run -it psi -v host/path:container/path`.
 
-### Using Homebrew
+### Using Homebrew on macOS
 
-You can also install psi using homebrew.
-
-If you want to install the master branch use:
-```
-brew tap bvoq/bvoq
-brew install psisolver --HEAD --with-gnuplot
-```
-
-If you want to install the version from the PLDI20 paper use:
-```
-brew tap bvoq/bvoq
-brew install psisolver --with-gnuplot
-```
+You can also install psi using homebrew. See the below link for more information:
+https://github.com/bvoq/homebrew-bvoq/
 
 ### Other platforms
 
