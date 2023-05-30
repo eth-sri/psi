@@ -45,6 +45,11 @@ Build with `docker build . -t psi`, then launch the container with `docker run -
 
 You can share folders between your file system and the container using the `-v` option: `docker run -it psi -v host/path:container/path`.
 
+### Using Homebrew on macOS
+
+You can also install psi using homebrew. See the below link for more information:
+https://github.com/bvoq/homebrew-bvoq/
+
 ### Other platforms
 
 The build instructions given here are for GNU/Linux. PSI also works on other platforms.
