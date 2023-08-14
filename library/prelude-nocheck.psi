@@ -90,7 +90,7 @@ def weibull(λ:ℝ,k:ℝ):ℝ ⇒ sampleFrom("(x;l,k)=>([k=0]·[l≠0]+[l=0])·�
 def Weibull(λ:ℝ,k:ℝ)pure:Distribution[ℝ] ⇒ infer(() ⇒ sampleFrom("(x;l,k)=>([k=0]·[l≠0]+[l=0])·δ(0)[x]+[-x≤0]·[k≠0]·[l≠0]·k·x^(-1+k)·⅟e^(x^k·⅟l^k)·⅟l^k",λ,k):ℝ);
 
 def categorical(p:ℝ[]):ℕ ⇒ sampleFrom("(x;p)=>∑_i[0≤i]·[i<p.length]·p@[i]·δ(0)[i-x]",p):ℕ;
-def Categorical(p:ℝ[])pure:Distribution[ℝ] ⇒ infer(() ⇒ sampleFrom("(x;p)=>∑_i[0≤i]·[i<p.length]·p@[i]·δ(0)[i-x]",p):ℕ);
+def Categorical(p:ℝ[])pure:Distribution[ℕ] ⇒ infer(() ⇒ sampleFrom("(x;p)=>∑_i[0≤i]·[i<p.length]·p@[i]·δ(0)[i-x]",p):ℕ);
 
 def dirac[a](x:a)pure ⇒ x;
 def Dirac[a](x:a)pure ⇒ infer(()=>x);
