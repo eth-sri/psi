@@ -39,14 +39,14 @@ DExpr buildContextFor(alias readLocal)(FunctionDef fd,Scope sc)in{assert(fd&&sc)
 	auto msc=fd.realScope;
 	for(auto csc=msc;;csc=(cast(NestedScope)csc).parent){
 		if(!cast(NestedScope)csc) break;
-		auto captures=fd.captures;
+		auto capturedDecls=fd.capturedDecls;
 		if(fd.isConstructor){
 			import ast.semantic_: isInDataScope;
 			auto dsc=isInDataScope(fd.scope_);
 			assert(!!dsc);
-			captures=dsc.decl.captures;
+			capturedDecls=dsc.decl.capturedDecls;
 		}
-		foreach(id;captures){ // TODO: this is a bit hacky
+		foreach(decl;capturedDecls){ // TODO: this is a bit hacky
 			void add(Declaration decl){
 				if(!decl) return;
 				if(decl.scope_ is csc){
@@ -55,10 +55,10 @@ DExpr buildContextFor(alias readLocal)(FunctionDef fd,Scope sc)in{assert(fd&&sc)
 							record[vd.getName]=var;
 				}
 				if(auto fd2=cast(FunctionDef)decl)
-					foreach(id2;fd2.captures)
-						add(id2.meaning);
+					foreach(decl2;fd2.capturedDecls)
+						add(decl2);
 			}
-			add(id.meaning);
+			add(decl);
 		}
 		if(!cast(NestedScope)(cast(NestedScope)csc).parent) break;
 		if(auto dsc=cast(DataScope)csc){

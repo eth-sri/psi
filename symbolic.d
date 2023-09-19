@@ -666,9 +666,7 @@ private struct Analyzer{
 				}
 			}
 		}
-		if(auto nde=cast(DefExp)e){
-			auto de=cast(ODefExp)nde.initializer;
-			assert(!!de);
+		if(auto de=cast(ODefExp)e){
 			// TODO: no real need to repeat checks done by semantic
 			scope(exit) dist.marginalizeTemporaries();
 			void defineVar(Identifier id,DExpr rhs,Expression ty){

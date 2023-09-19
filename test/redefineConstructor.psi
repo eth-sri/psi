@@ -1,0 +1,11 @@
+// compilation errors
+
+dat List{
+    head: ℝ;
+    tail: List;
+    def List(h:ℝ,t:List){
+        this.head = h;
+        this.tail = t;
+    }
+	def List(){} // error
+}

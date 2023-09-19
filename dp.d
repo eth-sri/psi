@@ -1076,9 +1076,7 @@ struct Interpreter{
 	void runStm(Expression e,ref Dist retDist){
 		if(!cur.state.length) return;
 		if(opt.trace) writeln("statement: ",e);
-		if(auto nde=cast(DefExp)e){
-			auto de=cast(ODefExp)nde.initializer;
-			assert(!!de);
+		if(auto de=cast(ODefExp)e){
 			auto lhs=runExp(de.e1).simplify(one), rhs=runExp(de.e2).simplify(one);
 			cur.assignTo(lhs,rhs);
 		}else if(auto ae=cast(AssignExp)e){
