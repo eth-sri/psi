@@ -1,0 +1,4 @@
+
+def main(){
+	return Expectation(gauss(1,5)^3); // expected: δ(16)[r]
+}
