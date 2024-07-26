@@ -1,0 +1,21 @@
+// skipped
+
+nplayers:=4;
+nsnails:=6;
+nsteps:=8;
+
+def main(){
+	won := -1;
+	pos:=vector(nsnails,0);
+	for i in 0..nsnails*nsteps{
+		if won == -1 {
+			snail:=uniformInt(0,nsnails-1);
+			pos[snail]+=1;
+			if pos[snail]>=nsteps{
+				player:=i%8 div 2;
+				won=player;
+			}
+		}
+	}
+	return won;	
+}
