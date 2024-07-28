@@ -5,6 +5,7 @@ import std.array: array;
 import std.range: iota;
 import std.string: startsWith;
 import util.tuple: q=tuple,Q=Tuple;
+import util.io:writeln;
 import std.exception: enforce;
 
 import backend,options;
