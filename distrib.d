@@ -223,7 +223,7 @@ Cond[] categoricalCond(DExpr p){
 
 DExpr diracPDF(DVar var,DExpr e){
 	import ast.type;
-	return dDelta(e,var,varTy("a",typeTy));
+	return dDelta(e,var,varTy(Id.intern("a"),typeTy));
 }
 Cond[] diracCond(DExpr e){
 	return [];

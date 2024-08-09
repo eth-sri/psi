@@ -9,9 +9,10 @@ enum language=psi;
 
 enum defaultExtension="psi";
 
-@property string preludePath(){
+immutable string[] preludePaths=["prelude-nocheck.psi","prelude.psi"];
+int preludeIndex(){
 	// TODO: use conditional compilation within prelude.psi instead
 	import options;
-	if(opt.noCheck) return "prelude-nocheck.psi";
-	return "prelude.psi";		
+	if(opt.noCheck) return 0;
+	return 1;
 }
