@@ -1,5 +1,5 @@
 
-def swap(a,b){
+def swap(a:ℤ,b:ℤ){
 	x:=a,y:=b;
     x xorb= y;
     y xorb= x;
