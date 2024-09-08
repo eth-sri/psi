@@ -33,8 +33,28 @@ auto to(string unit,T)(Duration d)if(unit=="seconds"||unit=="msecs"){
 	return d.total!"hnsecs"/factor;
 }
 
-void main(){
-	auto sources=shell("find . -name '*.psi' -type f").splitLines;
+bool dashDashBad=false;
+bool dashDashTodo=false;
+int parseFlags(string[] flags){
+	foreach(flag;flags){
+		if(flag=="--bad") dashDashBad=true;
+		else if(flag=="--todo") dashDashTodo=true;
+		else{
+			stderr.writeln("unrecognized flag: ",flag);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+int main(string[] args){
+	import std.algorithm:sort;
+	args.sort!((a,b)=>a.startsWith("--")>b.startsWith("--"),SwapStrategy.stable);
+	auto flags=args.until!(a=>!a.startsWith("--")).array;
+	args=args[flags.length..$];
+	bool writeLines=args.length!=1;
+	if(auto r=parseFlags(flags)) return r;
+	auto sources=args.length==1?shell("find . -name '*.psi' -type f").splitLines:args[1..$];
 	Summary total;
 	int skipped=0,passed=0;
 	bool colorize=isATTy(stdout);
@@ -42,13 +62,15 @@ void main(){
 	foreach(source;sources){
 		if(source.startsWith("./")) source=source[2..$];
 		if(source.fileStartsWithFlag("skip")){
-			if(colorize) writeln(TODOColor,BOLD,"skipped",RESET,"         ",source);
-			else writeln("skipping ",source);
+			if(!dashDashBad&&!dashDashTodo){
+				if(colorize) writeln(TODOColor,BOLD,"skipped",RESET,"         ",source);
+				else writeln("skipping ",source);
+			}
 			skipped++;
 			continue;
 		}else{
-			if(colorize) write(BOLD,"running",RESET,"         ",source);
-			else write("running"," ",source);
+			if(colorize) write(CLEAR_LINE,BOLD,"running",RESET,"         ",source);
+			else if(!dashDashBad&&!dashDashTodo) write("running"," ",source);
 		}
 		stdout.flush();
 		auto results=source.getResults;
@@ -60,29 +82,36 @@ void main(){
 			int regressions=summary.unexpectedErrors;
 			if(summary.unexpectedErrors){
 				if(colorize) write(failColor,BOLD,"failed ",RESET);
-				else write("failed");
+				else if(!dashDashBad&&!dashDashTodo) std.stdio.write("failed");
+				else std.stdio.write("running ",source,": failed");
 			}else if (summary.missingErrors) {
 				if(colorize) write(failColor,BOLD,"invalid",RESET);
-				else write("invalid");
+				else if(!dashDashBad&&!dashDashTodo) std.stdio.write("invalid",);
+				else std.stdio.write("running ",source,": invalid");
 			}else{
 				if(summary.todos||!summary.obsoleteTodos){
 					if(colorize) write(TODOColor,BOLD," TODO  ",RESET);
-					else write("TODO");
+					else if(!dashDashTodo) write("TODO");
+					else std.stdio.write("running ",source,": TODO");
 				}else{
 					if(colorize) write(passColor,"fixed  ",RESET);
-					else write("fixed");
+					else if(!dashDashTodo) write("fixed");
+					else std.stdio.write("running ",source,": fixed");
 				}
 			}
 			//write(summary);
-		}else{
-			if(colorize) write(passColor,BOLD,"passed ",RESET);
-			else write("passed");
-			passed++;
-		}
-		write(" % 5.0fms".format(results[0].time.to!("msecs",double)));
+		}else passed++;
+		if((!dashDashBad||summary.isBad)&&(!dashDashTodo||summary.isInteresting)){
+			if(!summary.isInteresting){
+				if(colorize) write(passColor,BOLD,"passed ",RESET);
+				else std.stdio.write("passed");
+			}
+			if(colorize) writef(" % 5.0fms",results[0].time.to!("msecs",double));
+			else writef(" in %.0fms",results[0].time.to!("msecs",double));
+			if(colorize) writeln(" ",source,CLEAR_LINE);
+			else writeln();
+		}else if(colorize) std.stdio.write("\r",CLEAR_LINE);
 		totalTime+=results[0].time;
-		if(colorize) writeln(" ",source);
-		else writeln();
 	}
 	writeln();
 	if(colorize) writeln(BOLD,"TOTAL:",RESET," ",sources.length);
@@ -92,7 +121,8 @@ void main(){
 	if(colorize) writeln(failColor,"skipped:",RESET," ",skipped);
 	else writeln("skipped: ",skipped);
 	writeln(total.toString(colorize,true));
-	if(colorize) writeln("total time: %.1fs".format(totalTime.to!("seconds",double)));	
+	if(colorize) writeln("total time: %.1fs".format(totalTime.to!("seconds",double)));
+	return 0;
 }
 
 struct Summary{
@@ -124,6 +154,9 @@ struct Summary{
 	bool isInteresting(){
 		foreach(i,x;this.tupleof) if(i!=1&&x) return true;
 		return false;
+	}
+	bool isBad(){
+		return unexpectedErrors||missingErrors;
 	}
 	void opOpAssign(string op:"+")(Summary rhs){
 		foreach(i,ref x;this.tupleof) x+=rhs.tupleof[i];
@@ -230,8 +263,7 @@ auto summarize(Comparison[] comp){
 	return result;
 }
 
-
-
+enum CLEAR_LINE=CSI~"0K";
 // (copy of terminal.d)
 enum CSI = "\033[";
 enum RESET=CSI~"0m";
