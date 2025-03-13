@@ -154,8 +154,10 @@ int main(string[] args){
 	}
 	if(opt.dexpr){
 		import sym.dparse,sym.dexpr;
-		foreach(line;stdin.byLineCopy)
+		foreach(line;stdin.byLineCopy) {
 			writeln(dParse(line.strip).simplify(one).toString(opt.formatting));
+			stdout.flush();
+		}
 	}else if(!hasInputFile){
 		stderr.writeln("error: no input files");
 		return 1;
