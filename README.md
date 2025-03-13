@@ -265,7 +265,7 @@ def swapped(a,b){
 }
 
 def main(){
-    (z,w) = swapped(1,2);
+    (z,w) := swapped(1,2);
     return ((z,w),swapped(z,w)); // p(r₁,r₂) = δ_r₁[(2,1)]·δ_r₂[(1,2)]
 }
 ```
