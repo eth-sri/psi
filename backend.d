@@ -1,7 +1,7 @@
 // Written in the D programming language
 // License: http://www.boost.org/LICENSE_1_0.txt, Boost License 1.0
 
-import options,ast.expression,ast.declaration,distrib,ast.error,sym.dexpr,util;
+import options,ast.lexer,ast.expression,ast.declaration,distrib,ast.error,sym.dexpr,util;
 import symbolic,dp;
 import std.stdio, std.path, std.algorithm, std.range;
 
@@ -18,6 +18,27 @@ Distribution getCDF(Distribution dist){
 	}
 	dist.simplify();
 	return dist;
+}
+
+struct ForRangeIteration{
+	ℤ start,step,bound;
+	bool rightExclusive;
+	bool inRange(ℤ j){
+		return step>=0?j+cast(int)rightExclusive<=bound:j-cast(int)rightExclusive>=bound;
+	}
+}
+ForRangeIteration forRangeIteration(ℤ left,ℤ step,ℤ right,bool leftExclusive,bool rightExclusive)in{
+	assert(step!=0);
+}do{
+	ℤ anchor=leftExclusive==rightExclusive?(left+right)>>1:leftExclusive?right:left;
+	auto adj=floormod(anchor-left,step);
+	if(leftExclusive&&adj==0) adj=step;
+	return ForRangeIteration(left+adj,step,right,rightExclusive);
+}
+
+string formatError(string msg,Location loc){
+	import std.conv: text;
+	return text(loc.line,": ",msg); // TODO: column
 }
 
 abstract class Backend{

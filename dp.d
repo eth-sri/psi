@@ -1,6 +1,6 @@
 import std.conv: text;
 import std.string: split;
-import std.algorithm: map;
+import std.algorithm: map, any;
 import std.array: array;
 import std.range: iota;
 import std.string: startsWith;
@@ -13,6 +13,7 @@ import distrib;
 import sym.dexpr,util.hashtable,util;
 import ast.expression,ast.declaration,ast.type,ast.error;
 import ast.semantic_,ast.scope_,context;
+import ast.reverse: knownLength;
 
 import std.random, sample; // (for InferenceMethod.simulate)
 
@@ -64,6 +65,21 @@ struct Dist{
 		tmpVars.clear();
 		return r;
 	}
+	Dist marginalize(string[] vars){
+		if(!vars.length) return this;
+		auto r=distInit;
+		r.error=error;
+		r.tmpVars=tmpVars.dup;
+		foreach(x;vars) r.tmpVars.remove(x);
+		foreach(k,v;state){
+			auto rec=cast(DRecord)k;
+			assert(!!rec,text(k));
+			auto val=rec.values.dup;
+			foreach(x;vars) val.remove(x);
+			r.add(dRecord(val),v);
+		}
+		return r;
+	}
 	void add(DExpr k,DExpr v){
 		if(k in state) state[k]=(state[k]+v).simplify(one);
 		else state[k]=v;
@@ -94,8 +110,9 @@ struct Dist{
 		MapX!(DExpr,Q!(Q!(DExpr,DExpr)[],DExpr,DExpr)) byFrame;
 		foreach(k,v;state){
 			auto frame=dField(k,"`frame").simplify(one);
-			if(frame in byFrame) byFrame[frame][0]~=q(k,v);
-			else byFrame[frame]=q([q(k,v)],zero,zero);
+			auto entry=byFrame.get(frame,q((Q!(DExpr,DExpr)[]).init,zero,zero)); // (hash tables return their values by value)
+			entry[0]~=q(k,v);
+			byFrame[frame]=entry;
 		}
 		foreach(k,ref v;byFrame){
 			foreach(x;v[0]){
@@ -350,7 +367,9 @@ struct Dist{
 		assignToImpl(lhs,rhs);
 	}
 	DExpr call(FunctionDef fun,DExpr thisExp,DExpr arg,Scope sc){
+		auto tmpVarsSave=tmpVars.dup; // (the temporaries of the caller are marginalized after the caller's statement)
 		auto ncur=pushFrame();
+		ncur.tmpVars=SetX!string.init;
 		if(fun.isConstructor) ncur=ncur.map(dLambda(dRUpdate(db1,fun.thisVar.getName,dRecord())));
 		if(thisExp) ncur=ncur.map(dLambda(dRUpdate(db1,fun.contextName,inFrame(thisExp))));
 		else if(fun.isNested) ncur=ncur.map(dLambda(dRUpdate(db1,fun.contextName,inFrame(buildContextFor!readLocal(fun,sc)))));
@@ -371,6 +390,7 @@ struct Dist{
 		static uniq=0;
 		string tmp="`call"~lowNum(++uniq);
 		this=nndist.popFrame(tmp);
+		foreach(v;tmpVarsSave) addTmpVar(v);
 		if(thisExp&&!fun.isConstructor){
 			assignTo(thisExp,dField(db1,tmp)[1.dℚ]);
 			assignTo(dVar(tmp),dField(db1,tmp)[0.dℚ]);
@@ -403,13 +423,15 @@ struct Dist{
 			}
 			assert(!!fdc.context==!!ctx,text(fdc.context," ",ctx," ",cf));
 			if(ctx) nk=dRUpdate(nk,fdc.contextName,ctx).simplify(one);
-			if(fdc !in byFun) byFun[fdc]=typeof(byFun[fdc]).init;
-			byFun[fdc][nk]=v;
+			auto byNk=byFun.get(fdc,typeof(byFun[fdc]).init); // (hash tables return their values by value)
+			byNk[nk]=v;
+			byFun[fdc]=byNk;
 		}
 		foreach(fdc,kv;byFun){
 			auto ncur=distInit;
 			ncur.state=kv;
 			ncur.copyNonState(this);
+			ncur.tmpVars=SetX!string.init; // (the temporaries of the caller are marginalized after the caller's statement)
 			auto intp=Interpreter(fdc,fdc.body_,ncur,true);
 			auto nndist = distInit();
 			intp.runFun(nndist);
@@ -645,8 +667,8 @@ DDPDist dDPDist(Dist dist)in{assert(!dist.tmpVars.length);}do{
 import ast.lexer: Tok;
 alias ODefExp=BinaryExp!(Tok!":=");
 DExpr readLocal(string name){ return dField(db1,name); }
-DExpr readFunction(Identifier id)in{ assert(id && id.scope_ && cast(FunctionDef)id.meaning); }do{
-	auto fd=cast(FunctionDef)id.meaning;
+DExpr readFunction(Identifier id)in{ assert(id && id.scope_ && isFunctionDecl(id.meaning)); }do{
+	auto fd=isFunctionDecl(id.meaning);
 	assert(!!fd);
 	if(!fd.isNested) return dDPFun(fd);
 	return dDPContextFun(fd,buildContextFor!readLocal(fd,id.scope_));
@@ -667,17 +689,137 @@ struct Interpreter{
 		this.cur=cur;
 		this.hasFrame=hasFrame;
 	}
-	DExpr runExp(Expression e){
+	// Forgotten variables are marginalized as soon as they no longer occur in values that are still needed.
+	// Values that have been computed but not yet consumed are kept on the stack `pending` (see `runExp`).
+	static final class Pending{ DExpr[] values; }
+	Pending pending_;
+	@property Pending pending(){
+		if(!pending_) pending_=new Pending();
+		return pending_;
+	}
+	void truncatePending(size_t length){
+		if(pending.values.length<=length) return;
+		pending.values.length=length;
+		pending.values.assumeSafeAppend();
+	}
+	string[] deferredForgets; // forgotten variables that still occur in pending values
+	Interpreter nested(CompoundExp statements,Dist ncur){ // (shares the pending values)
+		auto r=Interpreter(functionDef,statements,ncur,hasFrame);
+		r.pending_=pending;
+		return r;
+	}
+	bool isReceiver(string name){ // (methods implicitly return their receiver)
+		return functionDef&&functionDef.context&&functionDef.contextName.startsWith("this")&&name==functionDef.contextName;
+	}
+	void deferForget(Declaration decl){
+		if(isVariableDecl(decl)&&!isReceiver(decl.getName))
+			deferredForgets~=decl.getName;
+		else if(isClosureDecl(decl)) deferredForgets~=closureName(decl); // (other functions are not stored in the state)
+	}
+	void deferForgets(Declaration[] decls){
+		foreach(decl;decls) deferForget(decl);
+	}
+	void deferForgets(BlockScope blscope_){
+		if(!blscope_) return;
+		deferForgets(blscope_.forgottenVarsOnEntry);
+		deferForgets(blscope_.forgottenVars);
+	}
+	void deferForgets(ForgetExp fe){
+		void defer(Expression e){
+			if(auto id=cast(Identifier)e){
+				if(id.meaning) deferForget(id.meaning);
+				else if(!isReceiver(id.name)) deferredForgets~=id.name;
+			}else if(auto tpl=cast(TupleExp)e)
+				foreach(x;tpl.e) defer(x);
+		}
+		defer(fe.var);
+	}
+	static ForgetExp[] forwardedForgets(LetExp le)in{ assert(!!le.isForward(true)); }do{
+		return le.s.s[1..$].map!(s=>cast(ForgetExp)s).array;
+	}
+	static bool references(DExpr e,string name){ // (whether `e` may refer to field `name` of the state `db1`)
+		bool visit(DExpr e,int depth){ // (`depth` may underestimate the number of enclosing binders)
+			if(auto v=cast(DDeBruijnVar)e) return v.i>depth; // (refers to the entire state)
+			if(auto f=cast(DField)e)
+				if(auto v=cast(DDeBruijnVar)f.e)
+					return v.i>depth&&f.f==name;
+			if(auto l=cast(DLambda)e) return visit(l.expr,depth+1);
+			if(auto l=cast(DDistLambda)e) return visit(l.expr,depth+1);
+			if(auto i=cast(DInt)e) return visit(i.expr,depth+1);
+			if(auto s=cast(DSum)e) return visit(s.expr,depth+1);
+			if(auto l=cast(DLim)e) return visit(l.e,depth)||visit(l.x,depth);
+			if(auto d=cast(DDiff)e) return visit(d.e,depth)||visit(d.x,depth);
+			if(auto d=cast(DDelta)e) return visit(d.var,depth);
+			if(auto d=cast(DDiscDelta)e) return visit(d.e,depth)||visit(d.var,depth);
+			if(cast(DDPDist)e) return false; // (distributions of values)
+			bool r=false;
+			e.forEachSubExpr((DExpr x){ r=visit(x,depth); return r?1:0; });
+			return r;
+		}
+		return visit(e,0);
+	}
+	bool isPending(string name){
+		foreach(value;pending.values)
+			if(references(value,name))
+				return true;
+		return false;
+	}
+	void flushForgets(){ // marginalize the forgotten variables that no longer occur in pending values
+		if(!deferredForgets.length) return;
+		string[] names,rest;
+		foreach(name;deferredForgets){
+			if(!name) continue;
+			if(isPending(name)) rest~=name;
+			else names~=name;
+		}
+		deferredForgets=rest;
+		cur=cur.marginalize(names);
+	}
+	void forgetDecls(Declaration[] decls){
+		deferForgets(decls);
+		flushForgets();
+	}
+	void assignTo(DExpr lhs,DExpr rhs){ // (assignment to a variable within the current state)
+		for(auto root=lhs;;){ // the variable is redefined by the current statement, so it is not forgotten at its end
+			if(auto idx=cast(DIndex)root) root=idx.e;
+			else if(auto fe=cast(DField)root){
+				if(fe.e==db1){
+					cur.tmpVars.remove(fe.f);
+					foreach(ref name;deferredForgets) if(name==fe.f) name=null;
+					break;
+				}
+				root=fe.e;
+			}else break;
+		}
+		cur.assignTo(lhs,rhs);
+	}
+	// The value of each subexpression is pending until its parent expression is computed. If `consumed` is set, the
+	// value of `e` is consumed right away, so variables that are forgotten after `e` are marginalized afterwards.
+	DExpr runExp(Expression e,bool consumed=false){
 		if(!cur.state.length) return zero;
+		DExpr delegate(Expression) doIt; // (see `doItPending`)
+		DExpr doItConsumed(Expression e){ // (the value of `e` is consumed right after it is computed)
+			if(auto le=cast(LetExp)e){
+				if(le.isForward(true)){ // (no need to store the value in a temporary)
+					auto r=doItConsumed(le.isForward(true));
+					foreach(fe;forwardedForgets(le)) deferForgets(fe);
+					return r;
+				}
+			}
+			return doIt(e);
+		}
 		// TODO: get rid of code duplication
-		DExpr doIt(Expression e){
+		DExpr doItImpl(Expression e){
 			if(e.type == typeTy) return dTuple([]); // TODO: get rid of this
 			if(auto pl=cast(PlaceholderExp)e) return dVar(pl.ident.name);
 			if(auto id=cast(Identifier)e){
 				if(!id.meaning&&id.name=="π") return dΠ;
 				if(auto init=id.getInitializer())
 					return doIt(init);
-				if(auto r=lookupMeaning!(readLocal,readFunction)(id)) return r;
+				if(auto r=lookupMeaning!(readLocal,readFunction)(id)){
+					if(isMove(id)) deferForget(id.meaning); // (marginalized once its value is consumed)
+					return r;
+				}
 				assert(0,"unsupported");
 			}
 			if(auto fe=cast(FieldExp)e){
@@ -709,6 +851,7 @@ struct Interpreter{
 			if(auto ce=cast(BitOrExp)e) return dBitOr(doIt(ce.e1),doIt(ce.e2));
 			if(auto ce=cast(BitXorExp)e) return dBitXor(doIt(ce.e1),doIt(ce.e2));
 			if(auto ce=cast(BitAndExp)e) return dBitAnd(doIt(ce.e1),doIt(ce.e2));
+			if(auto upe=cast(UPlusExp)e) return doIt(upe.e);
 			if(auto ume=cast(UMinusExp)e) return -doIt(ume.e);
 			if(auto ume=cast(UNotExp)e) return dEqZ(doIt(ume.e));
 			if(auto ume=cast(UBitNotExp)e) return -doIt(ume.e)-1;
@@ -727,7 +870,7 @@ struct Interpreter{
 					thisExp=doIt(fe.e);
 				}
 				if(id){
-					if(auto fun=cast(FunctionDef)id.meaning){
+					if(auto fun=isFunctionDecl(id.meaning)){
 						auto arg=doIt(ce.arg); // TODO: allow temporaries within arguments
 						return cur.call(fun,thisExp,arg,id.scope_);
 					}
@@ -976,7 +1119,7 @@ struct Interpreter{
 										return cur.distSample(dists[str.ptr]);
 									}
 							case "Expectation":
-								auto arg=doIt(ce.arg);
+								auto arg=doItConsumed(ce.arg);
 								return cur.expectation(dLambda(arg),hasFrame);
 							default:
 								assert(0, text("unsupported: ",id.name));
@@ -998,27 +1141,118 @@ struct Interpreter{
 					return dFloat(to!real(le.lit.str));
 				}
 			}
+			if(auto vfe=cast(VectorForExp)e){
+				enforce(vfe.fd&&cast(FunTy)typeForDecl(vfe.fd),"vector comprehension not analyzed");
+				DExpr[] args;
+				if(auto range=vfe.fe.aggr.isRange){
+					auto l=doIt(range.left).simplify(one), r=doIt(range.right).simplify(one);
+					auto s=range.step?doIt(range.step).simplify(one):one;
+					auto lz=l.isInteger(),rz=r.isInteger(),sz=s.isInteger();
+					enforce(lz&&rz&&sz,"TODO: vector comprehensions with non-constant bounds or steps");
+					enforce(sz.c.num!=0,"vector comprehension step should be nonzero");
+					auto iter=forRangeIteration(lz.c.num,sz.c.num,rz.c.num,range.leftExclusive,range.rightExclusive);
+					for(ℤ j=iter.start;iter.inRange(j);j+=iter.step) args~=dℚ(j);
+				}else if(auto cnt=vfe.fe.aggr.isContainer){
+					auto c=doIt(cnt.e);
+					DExpr len;
+					if(auto tt=cnt.e.type.isTupleTy) len=dℚ(tt.length);
+					else len=dField(c,"length").simplify(one);
+					auto lenz=len.isInteger();
+					enforce(!!lenz,"TODO: vector comprehensions over containers of non-constant length");
+					for(ℤ k=0;k<lenz.c.num;k++) args~=c[dℚ(k)].simplify(one);
+				}else assert(0);
+				DExpr[] values;
+				foreach(arg;args) values~=cur.call(vfe.fd,null,arg,vfe.fd.scope_);
+				return dArray(values);
+			}
+			if(auto le=cast(LetExp)e){
+				static uniq=0;
+				if(auto fwd=le.isForward(true)){ // e.g., `let{ t := e; forget(x); } in t`, as inserted after last uses
+					auto r=doIt(fwd);
+					auto numDeferred=deferredForgets.length;
+					foreach(fe;forwardedForgets(le)) deferForgets(fe);
+					if(deferredForgets[numDeferred..$].any!(name=>references(r,name))){
+						// store the value in a temporary, so that the forgotten variables can be marginalized now
+						string tmp="`let"~lowNum(++uniq);
+						cur.assignTo(dField(db1,tmp),r);
+						r=dField(db1,tmp);
+						assert(pending.values.length);
+						pending.values[$-1]=r;
+						deferredForgets~=tmp; // (marginalized once its value is consumed)
+					}
+					flushForgets();
+					return r;
+				}
+				// the statements are executed as part of the enclosing statement
+				auto tmpVarsSave=cur.tmpVars.dup;
+				cur.tmpVars.clear();
+				auto retDist=distInit;
+				deferForgets(le.s.blscope_);
+				flushForgets();
+				foreach(s;le.s.s){
+					if(auto fe=cast(ForgetExp)s){
+						deferForgets(fe);
+						flushForgets();
+						continue;
+					}
+					runStm(s,retDist);
+				}
+				enforce(!retDist.state.length,"early returns from `let` expression not supported");
+				auto r=doIt(le.e);
+				// keep the result in a temporary, the variables local to the `let` expression are marginalized afterwards
+				string tmp="`let"~lowNum(++uniq);
+				cur.assignTo(dField(db1,tmp),r);
+				foreach(v;tmpVarsSave) cur.addTmpVar(v);
+				pending.values[$-1]=dField(db1,tmp);
+				deferredForgets~=tmp;
+				void markLocals(Expression e){
+					e=unwrap(e);
+					if(auto id=cast(Identifier)e) deferredForgets~=id.name;
+					else if(auto tpl=cast(TupleExp)e) foreach(x;tpl.e) markLocals(x);
+					else if(auto vec=cast(VectorExp)e) foreach(x;vec.e) markLocals(x);
+					else if(auto ce=cast(CatExp)e){ markLocals(ce.e1); markLocals(ce.e2); }
+				}
+				foreach(s;le.s.s)
+					if(auto de=cast(ODefExp)s)
+						markLocals(de.e1);
+				flushForgets();
+				return dField(db1,tmp);
+			}
 			if(auto cmp=cast(CompoundExp)e){
 				if(cmp.s.length==1)
 					return doIt(cmp.s[0]);
 			}else if(auto ite=cast(IteExp)e){
-				auto cond=runExp(ite.cond);
+				auto numPending=pending.values.length;
+				auto cond=runExp(ite.cond,true);
 				auto curP=cur.eraseErrors();
 				cur=cur.observe(dLambda(dNeqZ(cond).simplify(one)));
 				curP=curP.observe(dLambda(dEqZ(cond).simplify(one)));
-				auto thenIntp=Interpreter(functionDef,ite.then,cur,hasFrame);
-				auto r=dNeqZ(cond)*thenIntp.runExp(ite.then.s[0]);
-				cur=thenIntp.cur;
+				truncatePending(numPending); // (the condition is consumed, the pending forgets are performed in the branches)
+				auto forgets=deferredForgets;
+				deferredForgets=[];
+				static uniq=0;
+				string tmp="`ite"~lowNum(++uniq);
+				Dist runBranch(CompoundExp branch,Dist bcur){ // (the value of the branch is stored in a temporary)
+					auto intp=nested(branch,bcur);
+					intp.deferredForgets=forgets.dup;
+					if(branch.blscope_) intp.forgetDecls(branch.blscope_.forgottenVarsOnEntry);
+					auto r=intp.runExp(branch.s.length==1?branch.s[0]:branch);
+					intp.cur.assignTo(dField(db1,tmp),r);
+					truncatePending(numPending);
+					if(branch.blscope_) intp.deferForgets(branch.blscope_.forgottenVars);
+					intp.flushForgets();
+					deferredForgets~=intp.deferredForgets;
+					return intp.cur;
+				}
 				assert(!!ite.othw);
-				auto othwIntp=Interpreter(functionDef,ite.othw,curP,hasFrame);
-				r=r+dEqZ(cond)*othwIntp.runExp(ite.othw);
-				curP=othwIntp.cur;
-				cur+=curP;
-				return r;
+				cur=runBranch(ite.then,cur);
+				cur+=runBranch(ite.othw,curP);
+				deferredForgets~=tmp; // (marginalized once its value is consumed)
+				return dField(db1,tmp);
 			}else if(auto tpl=cast(TupleExp)e){
 				auto dexprs=tpl.e.map!doIt.array;
 				return dTuple(dexprs);
-			}else if(auto arr=cast(ArrayExp)e){
+			}else if(auto arr=cast(VectorExp)e){
 				auto dexprs=arr.e.map!doIt.array;
 				return dArray(dexprs);
 			}else if(auto ae=cast(AssertExp)e){
@@ -1034,19 +1268,29 @@ struct Interpreter{
 				enum common=q{
 					auto e1=doIt(b.e1),e2=doIt(b.e2);
 				};
-				if(auto b=cast(AndExp)e){
+				// TODO: short-circuit evaluation for `&&` and `||`
+				if(auto le=cast(ALogicExp)e){
+					deferForgets(le.blscope_);
+					deferForgets(le.forgetScope);
+				}
+				if(cast(AndThenExp)e||cast(AndExp)e){
+					auto b=cast(ABinaryExp)e;
 					auto e1=doIt(b.e1), e2=doIt(b.e2);
 					return e1*e2;
-				}else if(auto b=cast(OrExp)e){
+				}else if(cast(OrElseExp)e||cast(OrExp)e){
 					DExprSet disjuncts;
 					void collect(Expression e){
-						if(auto or=cast(OrExp)e){
+						if(cast(OrElseExp)e||cast(OrExp)e){
+							auto or=cast(ABinaryExp)e;
 							collect(or.e1);
 							collect(or.e2);
 						}else disjuncts.insert(doIt(e));
 					}
 					collect(e);
 					return dNeqZ(dPlus(disjuncts));
+				}else if(auto b=cast(XorExp)e){
+					mixin(common);
+					return dNeq(dNeqZ(e1),dNeqZ(e2));
 				}else with(DIvr.Type)if(auto b=cast(LtExp)e){
 					mixin(common);
 					return dLt(e1,e2);
@@ -1070,23 +1314,78 @@ struct Interpreter{
 			enforce(0,text("TODO: ",e));
 			assert(0);
 		}
-		return doIt(e);
+		DExpr doItPending(Expression e){
+			auto numPending=pending.values.length;
+			auto r=doItImpl(e);
+			truncatePending(numPending); // (the values of the subexpressions are consumed)
+			pending.values~=r;
+			flushForgets();
+			return r;
+		}
+		doIt=&doItPending;
+		return consumed?doItConsumed(e):doIt(e);
 	}
 	void runStm(Expression e,ref Dist retDist){
 		if(!cur.state.length) return;
 		if(opt.trace) writeln("statement: ",e);
+		scope(success) flushForgets();
+		auto numPending=pending.values.length;
+		scope(exit) truncatePending(numPending); // (the values computed by the statement are consumed)
 		if(auto de=cast(ODefExp)e){
-			auto lhs=runExp(de.e1).simplify(one), rhs=runExp(de.e2).simplify(one);
-			cur.assignTo(lhs,rhs);
+			auto rhs=runExp(de.e2,true).simplify(one);
+			void defineLhs(Expression lhs,DExpr rhs,Expression ty){
+				if(!cur.state.length) return;
+				if(auto tae=cast(TypeAnnotationExp)lhs) return defineLhs(tae.e,rhs,tae.type?tae.type:ty);
+				if(cast(WildcardExp)lhs) return;
+				DExpr bind(DExpr rhs){ // (avoids duplicate evaluation)
+					if(cast(DField)rhs) return rhs;
+					static int unique=0;
+					auto tmp="`def"~lowNum(++unique);
+					cur.addTmpVar(tmp);
+					cur.assignTo(dField(db1,tmp),rhs);
+					return dField(db1,tmp);
+				}
+				if(auto ce=cast(CatExp)lhs){ // split
+					auto l1=knownLength(ce.e1,false), l2=knownLength(ce.e2,false);
+					enforce(l1||l2,"split not supported");
+					rhs=bind(rhs);
+					DExpr len=dField(rhs,"length");
+					if(auto tt=ty.isTupleTy) len=dℚ(tt.length);
+					auto mid=l1?runExp(l1):len-runExp(l2);
+					if(l1&&l2) cur=cur.assertTrue(dLambda(dEq(mid+runExp(l2),len)));
+					else cur=cur.assertTrue(dLambda(dLe(mid,len)*dGeZ(mid)));
+					defineLhs(ce.e1,dSlice(rhs,zero,mid).simplify(one),ce.e1.type);
+					defineLhs(ce.e2,dSlice(rhs,mid,len).simplify(one),ce.e2.type);
+					return;
+				}
+				Expression[] elements;
+				if(auto tpl=cast(TupleExp)lhs) elements=tpl.e;
+				else if(auto vec=cast(VectorExp)lhs) elements=vec.e;
+				else return assignTo(runExp(lhs).simplify(one),rhs);
+				rhs=bind(rhs);
+				if(auto tt=ty.isTupleTy){
+					enforce(tt.length==elements.length,"wrong number of elements to unpack");
+					foreach(k,x;elements) defineLhs(x,rhs[k.dℚ].simplify(one),tt[k]);
+				}else if(auto at=cast(ArrayTy)ty){
+					cur=cur.assertTrue(dLambda(dEq(dField(rhs,"length"),dℚ(elements.length))));
+					foreach(k,x;elements) defineLhs(x,rhs[k.dℚ].simplify(one),at.next);
+				}else enforce(0,text("unsupported left hand side for definition: ",lhs));
+			}
+			defineLhs(de.e1,rhs,de.e2.type);
 		}else if(auto ae=cast(AssignExp)e){
-			auto lhs=runExp(ae.e1),rhs=runExp(ae.e2);
-			cur.assignTo(lhs,rhs);
+			auto lhs=runExp(ae.e1),rhs=runExp(ae.e2,true);
+			assignTo(lhs,rhs);
 		}else if(isOpAssignExp(e)){
 			DExpr perform(DExpr a,DExpr b){
-				if(cast(OrAssignExp)e) return dNeqZ(dNeqZ(a)+dNeqZ(b));
-				if(cast(AndAssignExp)e) return dNeqZ(a)*dNeqZ(b);
+				if(cast(OrElseAssignExp)e||cast(OrAssignExp)e) return dNeqZ(dNeqZ(a)+dNeqZ(b)); // TODO: short-circuit evaluation for `||=`
+				if(cast(AndThenAssignExp)e||cast(AndAssignExp)e) return dNeqZ(a)*dNeqZ(b); // TODO: short-circuit evaluation for `&&=`
+				if(cast(XorAssignExp)e) return dNeq(dNeqZ(a),dNeqZ(b));
 				if(cast(AddAssignExp)e) return a+b;
 				if(cast(SubAssignExp)e) return a-b;
+				if(cast(NSubAssignExp)e){
+					cur=cur.assertTrue(dLambda(dGe(a,b)));
+					return a-b;
+				}
 				if(cast(MulAssignExp)e) return a*b;
 				if(cast(DivAssignExp)e||cast(IDivAssignExp)e){
 					cur=cur.assertTrue(dLambda(dNeqZ(b)));
@@ -1106,30 +1405,42 @@ struct Interpreter{
 			auto be=cast(ABinaryExp)e;
 			assert(!!be);
 			auto lhs=runExp(be.e1); // TODO: keep lhs stable!
-			auto rhs=runExp(be.e2);
-			cur.assignTo(lhs,perform(lhs,rhs));
-		}else if(auto call=cast(CallExp)e){
-			runExp(call);
+			auto rhs=runExp(be.e2,true);
+			assignTo(lhs,perform(lhs,rhs));
+		}else if(cast(CallExp)e||cast(TypeAnnotationExp)e){
+			runExp(e,true);
 		}else if(auto ce=cast(CompoundExp)e){
+			if(ce.blscope_) forgetDecls(ce.blscope_.forgottenVarsOnEntry);
 			foreach(s;ce.s) runStm(s,retDist);
+			if(ce.blscope_) forgetDecls(ce.blscope_.forgottenVars);
 		}else if(auto ite=cast(IteExp)e){
-			auto cond=runExp(ite.cond);
+			auto cond=runExp(ite.cond,true);
 			auto curP=cur.eraseErrors();
 			cur=cur.observe(dLambda(dNeqZ(cond)));
 			curP=curP.observe(dLambda(dEqZ(cond).simplify(one)));
-			auto thenIntp=Interpreter(functionDef,ite.then,cur,hasFrame);
+			truncatePending(numPending); // (the condition is consumed, the pending forgets are performed in the branches)
+			auto forgets=deferredForgets;
+			deferredForgets=[];
+			auto thenIntp=nested(ite.then,cur);
+			thenIntp.deferredForgets=forgets.dup;
+			thenIntp.flushForgets();
 			thenIntp.run(retDist);
 			cur=thenIntp.cur;
-			if(ite.othw){
-				auto othwIntp=Interpreter(functionDef,ite.othw,curP,hasFrame);
-				othwIntp.run(retDist);
-				curP=othwIntp.cur;
-			}
+			deferredForgets~=thenIntp.deferredForgets;
+			auto othwIntp=nested(ite.othw,curP);
+			othwIntp.deferredForgets=forgets.dup;
+			othwIntp.flushForgets();
+			if(ite.othw) othwIntp.run(retDist);
+			curP=othwIntp.cur;
+			deferredForgets~=othwIntp.deferredForgets;
 			cur+=curP;
 		}else if(auto re=cast(RepeatExp)e){
-			auto rep=runExp(re.num).simplify(one);
+			auto rep=runExp(re.num,true).simplify(one);
+			truncatePending(numPending);
+			flushForgets();
 			if(auto z=rep.isInteger()){
-				auto intp=Interpreter(functionDef,re.bdy,cur,hasFrame);
+				auto intp=nested(re.bdy,cur);
+				scope(exit) deferredForgets~=intp.deferredForgets;
 				foreach(x;0.ℤ..z.c.num){
 					if(opt.trace) writeln("repetition: ",x+1);
 					intp.run(retDist);
@@ -1138,7 +1449,8 @@ struct Interpreter{
 				cur=intp.cur;
 			}else{
 				auto bound=dFloor(rep);
-				auto intp=Interpreter(functionDef,re.bdy,distInit(),hasFrame);
+				auto intp=nested(re.bdy,distInit());
+				scope(exit) deferredForgets~=intp.deferredForgets;
 				intp.cur.state = cur.state;
 				cur.state=typeof(cur.state).init;
 				for(ℤ x=0;;++x){
@@ -1151,11 +1463,19 @@ struct Interpreter{
 				}
 			}
 		}else if(auto fe=cast(ForExp)e){
-			auto l=runExp(fe.left).simplify(one), r=runExp(fe.right).simplify(one);
-			auto lz=l.isInteger(),rz=r.isInteger();
-			if(lz&&rz){
-				auto intp=Interpreter(functionDef,fe.bdy,cur,hasFrame);
-				for(ℤ j=lz.c.num+cast(int)fe.leftExclusive;j+cast(int)fe.rightExclusive<=rz.c.num;j++){
+			auto range=fe.aggr.isRange;
+			enforce(!!range,"TODO: for loops over containers"); // (lowered to loops over ranges during semantic analysis)
+			auto l=runExp(range.left,true).simplify(one), r=runExp(range.right,true).simplify(one);
+			auto s=range.step?runExp(range.step,true).simplify(one):one;
+			truncatePending(numPending);
+			flushForgets();
+			auto lz=l.isInteger(),rz=r.isInteger(),sz=s.isInteger();
+			enforce(!sz||sz.c.num!=0,"for loop step should be nonzero");
+			if(lz&&rz&&sz){
+				auto intp=nested(fe.bdy,cur);
+				scope(exit) deferredForgets~=intp.deferredForgets;
+				auto iter=forRangeIteration(lz.c.num,sz.c.num,rz.c.num,range.leftExclusive,range.rightExclusive);
+				for(ℤ j=iter.start;iter.inRange(j);j+=iter.step){
 					if(opt.trace) writeln("loop-index: ",j);
 					intp.cur.assignTo(dVar(fe.var.name),dℚ(j));
 					intp.run(retDist);
@@ -1163,11 +1483,13 @@ struct Interpreter{
 				}
 				cur=intp.cur;
 			}else{
+				enforce(!range.step,"TODO: for loops with non-constant bounds and steps");
 				static uniq=0;
 				auto tmp="`loopIndex"~lowNum(++uniq);
-				cur.assignTo(dVar(tmp),fe.leftExclusive?dFloor(l)+1:dCeil(l));
-				auto bound=fe.rightExclusive?dCeil(r)-1:dFloor(r);
-				auto intp=Interpreter(functionDef,fe.bdy,distInit(),hasFrame);
+				cur.assignTo(dVar(tmp),range.leftExclusive?dFloor(l)+1:dCeil(l));
+				auto bound=range.rightExclusive?dCeil(r)-1:dFloor(r);
+				auto intp=nested(fe.bdy,distInit());
+				scope(exit) deferredForgets~=intp.deferredForgets;
 				intp.cur.state = cur.state;
 				cur.state=typeof(cur.state).init;
 				auto cond = dLambda(dLe(dField(db1,tmp),bound).simplify(one));
@@ -1186,7 +1508,8 @@ struct Interpreter{
 				}
 			}
 		}else if(auto we=cast(WhileExp)e){
-			auto intp=Interpreter(functionDef,we.bdy,distInit(),hasFrame);
+			auto intp=nested(we.bdy,distInit());
+			scope(exit) deferredForgets~=intp.deferredForgets;
 			intp.cur.state=cur.state;
 			cur.state=typeof(cur.state).init;
 			while(intp.cur.state.length){
@@ -1200,48 +1523,45 @@ struct Interpreter{
 				// TODO: marginalize locals
 			}
 		}else if(auto re=cast(ReturnExp)e){
-			auto value = runExp(re.e);
+			auto forgets=deferredForgets.dup;
+			scope(success) deferredForgets=forgets; // (the remaining code is unreachable)
+			auto value = runExp(re.e,true);
 			if(functionDef.context&&functionDef.contextName.startsWith("this"))
 				value = dTuple([value,dField(db1,functionDef.contextName)]);
 			auto rec=["`value":value];
 			if(hasFrame) rec["`frame"]=dField(db1,"`frame");
+			cur.tmpVars=SetX!string.init; // (the variables of the function are not part of the returned state)
 			retDist += cur.map(dLambda(dRecord(rec)));
 			cur=distInit;
 			if(re.expected.length)
 				expected.parse(re.expected,new SimpleErrorHandler(),re.loc);
 		}else if(auto ae=cast(AssertExp)e){
-			auto cond=dNeqZ(runExp(ae.e));
+			auto cond=dNeqZ(runExp(ae.e,true));
 			cur=cur.assertTrue(dLambda(cond));
 		}else if(auto oe=cast(ObserveExp)e){
 			enforce(opt.backend != InferenceMethod.simulate,"TODO: observe with --simulate");
-			auto cond=dNeqZ(runExp(oe.e));
+			auto cond=dNeqZ(runExp(oe.e,true));
 			cur=cur.observe(dLambda(cond));
 		}else if(auto fe=cast(ForgetExp)e){
-			void doForget(Expression e){
-				if(auto id=cast(Identifier)e){
-					cur.addTmpVar(id.name);
-				}else if(auto tpl=cast(TupleExp)e){
-					foreach(t;tpl.e)
-						doForget(t);
-				}
-			}
-			doForget(fe.var);
-			cur.marginalizeTemporaries();
+			deferForgets(fe); // (marginalized at the end of the statement)
 		}else if(auto ce=cast(CommaExp)e){
 			runStm(ce.e1,retDist);
 			runStm(ce.e2,retDist);
-		}else if(cast(Declaration)e){
-			// do nothing
+		}else if(auto decl=cast(Declaration)e){
+			if(isClosureDecl(decl)) // nested functions and data types capture their context when they are defined
+				cur.assignTo(dField(db1,closureName(decl)),captureContext!readLocal(decl,decl.scope_));
 		}else{
 			enforce(0,text("TODO: ",e));
 		}
 		cur=cur.marginalizeTemporaries();
 	}
 	void run(ref Dist retDist){
+		if(statements.blscope_) forgetDecls(statements.blscope_.forgottenVarsOnEntry);
 		foreach(s;statements.s){
 			runStm(s,retDist);
 			// writeln("cur: ",cur);
 		}
+		if(statements.blscope_) forgetDecls(statements.blscope_.forgottenVars);
 	}
 	void runFun(ref Dist retDist){
 		run(retDist);

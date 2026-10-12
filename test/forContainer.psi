@@ -1,0 +1,8 @@
+def main(){
+	v := [1,2,3];
+	s := 0;
+	for x in v { s += x; }
+	t := (1,2,uniformInt(1,2));
+	for x in t { s += x; }
+	return s; // expected: 1/2·δ(10)[s]+1/2·δ(11)[s]
+}

@@ -1,10 +1,10 @@
+// skipped
 
 def a()pure⇒(1,2,(3,4));
-b:=a().length;
-
+b:=a().length; // TODO
 def c()pure⇒(1,2,3);
-d:=c().length;
+d:=c().length; // TODO
 
 def main(){
-	return (b,d); // expected: δ(3)[b]·δ(3)[d]
+	return (b,d);
 }

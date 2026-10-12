@@ -1,6 +1,6 @@
 
 def main(){
-	x := ⊥;
+	x := false;
 	x = 1 ≤ 1;
 	assert(x);
 	x = 1 = 1;
@@ -9,12 +9,20 @@ def main(){
 	(a,b) := (1,2);
 	(a,b) ← (b,a);
 	assert(a=2 ∧ b=1);
-	assert(¬(⊥ ∨ ⊥));
-	assert(⊤ ∨ ⊥);
-	a ∨= 1;
-	a ∧= 7;
-	a ∨← 1;
-	a ∧← 7;
+	assert(¬(false ∨ false));
+	assert(true ∨ false);
+	assert(true ⊻ false ∧ ¬(true ⊻ true));
+	x ∧= true;
+	x ∨= false;
+	x ⊻= false;
+	x ∧← true;
+	x ∨← false;
+	x ⊻← false;
+	assert(x);
+	a |= 1;
+	a &= 7;
+	a |← 1;
+	a &← 7;
 	a +← 3;
 	return 2·a; // expected: δ(12)[r]
 }

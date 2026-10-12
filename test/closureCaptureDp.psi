@@ -1,0 +1,9 @@
+// args: --dp
+def main(){
+	y := flip(1/2);
+	def f(x:ℝ) ⇒ x + y;
+	z := y;
+	y = 2;
+	if flip(1/2) { return f(1) + z; }
+	return z + y; // expected: 1/2·δ(3)[r]+1/4·δ(1)[r]+1/4·δ(2)[r]
+}

@@ -1,0 +1,24 @@
+def mk(a:ℝ){
+	b := a;
+	def f(x:ℝ) ⇒ b + x;
+	def g(y:ℝ) ⇒ f(y) * 2;
+	b = 0;
+	return g;
+}
+def main(){
+	x := uniformInt(1,2);
+	def h(){
+		z := x * 10;
+		def k() ⇒ z + x;
+		return k();
+	}
+	x = 5;
+	s := 0;
+	for i in [0..3){
+		def l() ⇒ i;
+		s += l();
+	}
+	m := (y:ℝ) ⇒ x + y;
+	x = 7;
+	return (mk(1)(2), h(), s, m(0)); // expected: (1/2·δ(11)[r₂]·δ(5)[r₃]+1/2·δ(22)[r₂]·δ(5)[r₃])·δ(3)[s]·δ(6)[r₁]
+}

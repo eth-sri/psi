@@ -9,6 +9,8 @@ enum language=psi;
 
 enum defaultExtension="psi";
 
+string[] importPath;
+
 immutable string[] preludePaths=["prelude-nocheck.psi","prelude.psi"];
 int preludeIndex(){
 	// TODO: use conditional compilation within prelude.psi instead
@@ -16,3 +18,13 @@ int preludeIndex(){
 	if(opt.noCheck) return 0;
 	return 1;
 }
+
+enum operatorLowering=false;
+
+int inferenceLimit=30;
+
+bool allowUnsafeCaptureConst=false;
+
+enum removeLoops=false;
+
+enum splitComponents=false;

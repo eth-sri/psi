@@ -2,6 +2,15 @@
 // implementation of built-in functions based on 'sampleFrom'
 // caution: some backends may special-case strings (see samplefrom.d)
 
+// type aliases
+unit:=𝟙;
+B:=𝔹;
+N:=ℕ;
+Z:=ℤ;
+Q:=ℚ;
+R:=ℝ;
+C:=ℂ;
+
 // deterministic functions
 def exp(x:ℝ)pure:ℝ ⇒ sampleFrom("(y;x)=>δ(0)[-y+e^x]",x);
 def log(x:ℝ)pure:ℝ{

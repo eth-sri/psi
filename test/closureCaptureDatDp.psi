@@ -1,0 +1,14 @@
+// args: --dp
+def main(){
+	x := 1;
+	dat P{
+		v: ℝ;
+		def P(v: ℝ){ this.v = v + x; }
+		def get() ⇒ v * x;
+	}
+	def mkP() ⇒ P(2);
+	x = 3;
+	p := mkP();
+	q := P(2);
+	return (p.get(), q.get()); // expected: δ(3)[r₁]·δ(3)[r₂]
+}

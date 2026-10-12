@@ -52,7 +52,6 @@ struct Options{
 	bool expectation=false;
 	IntegrationLevel integrationLevel=IntegrationLevel.full;
 	OutputForm outputForm;
-	string[] importPath;
 	string[] summarize;
 	ulong numSimulations=1;
 	bool dexpr=false;

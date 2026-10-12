@@ -1,0 +1,9 @@
+// args: --dp
+def main(){
+	x := +3;
+	y := 5;
+	y sub= 2;
+	z := let a := x + y in a * 2;
+	w := (let b := flip(1/2) in b) + 1;
+	return (x,y,z,w); // expected: 1/2·δ(1)[w]·δ(12)[z]·δ(3)[x]·δ(3)[y]+1/2·δ(12)[z]·δ(2)[w]·δ(3)[x]·δ(3)[y]
+}

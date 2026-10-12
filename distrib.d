@@ -331,17 +331,20 @@ class Distribution{
 		auto r=new Distribution();
 		auto d1=distribution;
 		auto d2=b.distribution;
-		// TODO: this should be unnecessary with dead variable analysis
-		foreach(x;this.freeVars) if(x !in b.freeVars){ assert(d1 == zero || d1.hasFreeVar(x)); d1=dIntSmp(x,d1,one); }
-		foreach(x;b.freeVars) if(x !in this.freeVars){ assert(d2 == zero || d2.hasFreeVar(x)); d2=dIntSmp(x,d2,one); }
-		//// /// // /
-		r.vbl=orig.vbl;
-		r.freeVars=orig.freeVars;
-		foreach(x;this.freeVars){
-			if(x in b.freeVars && x !in r.freeVars)
-				r.freeVars.insert(x);
+		// variables that are not defined on both paths are marginalized
+		// (unless they were defined before and are only missing on an infeasible path, e.g., one that has returned early)
+		bool keep(DNVar x){
+			bool in1=x in this.freeVars, in2=x in b.freeVars;
+			if(in1&&in2) return true;
+			if(x !in orig.freeVars) return false;
+			return in1&&d2==zero||in2&&d1==zero;
 		}
-		r.tmpVars=orig.tmpVars;
+		foreach(x;this.freeVars) if(!keep(x)){ assert(d1 == zero || d1.hasFreeVar(x)); d1=dIntSmp(x,d1,one); }
+		foreach(x;b.freeVars) if(!keep(x)){ assert(d2 == zero || d2.hasFreeVar(x)); d2=dIntSmp(x,d2,one); }
+		r.vbl=orig.vbl;
+		foreach(x;orig.freeVars) if(keep(x)) r.freeVars.insert(x);
+		foreach(x;this.freeVars) if(keep(x)&&x !in r.freeVars) r.freeVars.insert(x);
+		foreach(x;orig.tmpVars) if(x in r.freeVars) r.tmpVars.insert(x);
 		r.distribution=d1+d2;
 		r.error=orig.error;
 		r.hasArgs=orig.hasArgs;

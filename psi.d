@@ -7,8 +7,10 @@ import util;
 import ast.lexer, ast.parser, ast.expression, ast.declaration, ast.error;
 import options, ast.scope_, ast.modules, ast.summarize;
 import help, backend;
+import astopt;
+import util.terminal: isATTy;
 
-static this(){ opt.importPath ~= buildPath(dirName(file.thisExePath),"library"); }
+static this(){ astopt.importPath ~= buildPath(dirName(file.thisExePath),"library"); }
 
 int run(string path){
 	path = getActualPath(path);
@@ -17,10 +19,14 @@ int run(string path){
 		stderr.writeln(path~": unrecognized extension: "~ext);
 		return 1;
 	}
-	auto err=new FormattingErrorHandler();
-	auto sc=new TopScope(err);
+	ErrorHandler err;
+	if(opt.errorFormat==ErrorFormat.json) err=new JSONErrorHandler();
+	else if(isATTy(stderr)) err=new FormattingErrorHandler();
+	else err=new VerboseErrorHandler();
+	scope(exit) err.finalize();
+	TopScope sc;
 	Expression[] exprs;
-	if(auto r=importModule(path,err,exprs,sc))
+	if(auto r=importModule(path,err,exprs,sc,Location.init))
 		return r;
 	if(err.nerrors) return 1;
 	FunctionDef[string] functions;
