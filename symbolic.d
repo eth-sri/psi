@@ -1272,7 +1272,7 @@ private struct Analyzer{
 			if(auto var=transformExp(co.var)){
 				if(auto ex=transformExp(co.val,true)){
 					auto tmp=dist.getTmpVar("__cobs");
-					dist.distribution=dDisintegrate(dist.distribution*dDelta(var,tmp)*dDelta(ex,tmp),dLebesgue(tmp));
+					dist.distribution=dDisintegrate(dist.distribution*dDelta(var-ex,tmp),dLebesgue(tmp))*dDelta(zero,tmp);
 				}
 			}
 		}else if(auto fe=cast(ForgetExp)e){
