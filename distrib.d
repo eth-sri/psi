@@ -557,8 +557,9 @@ class Distribution{
 			middle=text(astr,"] := ");
 			errstr=text("Pr_error[",astr.length?astr:"","] := ");
 		}else{
-			initial="p[";
-			middle=text(astr.length?"|":"",astr,"] = ");
+			auto measure=formatting==Format.default_;
+			initial=measure?"p[":"p(";
+			middle=text(astr.length?"|":"",astr,measure?"] = ":") = ");
 			errstr=text("Pr[error",astr.length?"|":"",astr,"] = ");
 		}
 		string r=initial~varsToString(formatting);
