@@ -1,0 +1,5 @@
+def main(){
+	x := gauss(0,1);
+	cobserve(x^2,1);
+	return x; // expected: 1/2·δ(-1)[x]+1/2·δ(1)[x]
+}

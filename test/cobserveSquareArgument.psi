@@ -1,0 +1,5 @@
+def main(c){
+	x := gauss(0,1);
+	cobserve(x^2,c);
+	return x; // expected: (1/2·δ(-√c̅)[x]·⅟e^(1/2·c)·⅟√c̅+1/2·δ(√c̅)[x]·⅟e^(1/2·c)·⅟√c̅)·[-c≤0]·[c≠0]·e^(1/2·c)·√c̅
+}
