@@ -1,0 +1,9 @@
+def g(a){
+	cobserve(a,1);
+	return a;
+}
+
+def main(){
+	a := uniform(0,2);
+	return g(a); // expected: δ(1)[r]
+}

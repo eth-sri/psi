@@ -1,0 +1,10 @@
+def g(a){
+	cobserve(a,1/2);
+	return a;
+}
+
+def main(){
+	a := uniform(-1,1);
+	b := if a>0 { a } else { 2*a };
+	return g(b); // expected: δ(1/2)[r]
+}

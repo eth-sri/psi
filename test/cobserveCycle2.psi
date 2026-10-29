@@ -1,0 +1,6 @@
+def main(){
+	x := gauss(0,1);
+	y := gauss(0,1);
+	cobserve(x,x+y);
+	return (x,y); // expected: δ(0)[y]·λ[x]·⅟e^(1/2·x²)·⅟√2̅·⅟√π̅
+}

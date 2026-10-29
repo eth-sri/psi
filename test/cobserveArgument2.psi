@@ -1,0 +1,11 @@
+def g(a){
+	cobserve(a,1);
+	return a;
+}
+
+def main(){
+	a := uniform(0,2);
+	b := g(a);
+	c := gauss(b,1);
+	return c; // expected: e^(-1/2+-1/2·c²+c)·λ[c]·⅟√2̅·⅟√π̅
+}

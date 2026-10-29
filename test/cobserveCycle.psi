@@ -1,0 +1,7 @@
+def main(){
+	b := flip(1/2);
+	a := uniform(-1,1);
+	y := if b { 2*a } else { 3*a };
+	cobserve(y,a+1/2);
+	return b; // expected: 1/3·δ(0)[b]+2/3·δ(1)[b]
+}
